@@ -9,6 +9,7 @@ const count = ref(0)
 </script>
 
 <template>
+  <el-button type="warning">测试</el-button>
   <h1>{{ msg }}</h1>
 
   <div class="card">
