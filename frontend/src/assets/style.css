@@ -1,0 +1,12 @@
+/* 全局边距设置为0 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* 可选：让盒模型计算更直观 */
+}
+
+/* 针对特定标签的额外重置（如果需要） */
+body, html {
+    margin: 0;
+    padding: 0;
+}
