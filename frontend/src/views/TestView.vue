@@ -1,20 +1,19 @@
 <script setup>
-import { useDark, useToggle } from "@vueuse/core"
+import { useDark, useToggle } from '@vueuse/core'
 import { ref } from 'vue'
 
 const theme = ref(false)
 
 const isDark = useDark({
   // 存储到localStorage/sessionStorage的key 根据自己的需求更改
-  storageKey: "useDarkKEY",
+  storageKey: 'useDarkKEY',
   // 暗黑class名字
-  valueDark: "dark",
+  valueDark: 'dark',
   // 高亮class名字
-  valueLight: "light",
+  valueLight: 'light',
 })
 
 const toggle = useToggle(isDark)
-
 </script>
 
 <template>
@@ -24,6 +23,4 @@ const toggle = useToggle(isDark)
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

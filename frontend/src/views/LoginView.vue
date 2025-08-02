@@ -11,17 +11,15 @@
       <div class="login-form">
         <el-form :model="loginRequest">
           <el-form-item>
-            <el-input
-                placeholder="请输入账号"
-                v-model="loginRequest.username">
-            </el-input>
+            <el-input placeholder="请输入账号" v-model="loginRequest.username"> </el-input>
           </el-form-item>
           <el-form-item>
             <el-input
-                type="password"
-                placeholder="请输入密码"
-                show-password
-                v-model="loginRequest.password">
+              type="password"
+              placeholder="请输入密码"
+              show-password
+              v-model="loginRequest.password"
+            >
             </el-input>
           </el-form-item>
           <el-form-item>
@@ -35,36 +33,57 @@
         <p>登录密码：yh@6位数生日</p>
         <p class="footer-msg">© 企业会议室预约系统</p>
       </div>
-
     </div>
   </div>
 </template>
 
 <script setup>
-import {ref} from 'vue';
+import { ref } from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+
+// axios.defaults.baseURL = 'http://localhost:8080'
 
 // 登录的请求体
 const loginRequest = ref({
-  username: "",
-  password: "",
+  username: '',
+  password: '',
 })
 
+const router = useRouter()
+
 // 登录按钮点击事件
-const login = () => {
-  console.log(loginRequest)
+const login = async () => {
+  // console.log(loginRequest)
   if (!loginRequest.value.username) {
-    ElMessage.warning('请输入账号');
-    return;
+    ElMessage.warning('请输入账号')
+    return
   }
   if (!loginRequest.value.password) {
-    ElMessage.warning('请输入密码');
-    return;
+    ElMessage.warning('请输入密码')
+    return
   }
   // 后续可补充：调用登录接口，比如 axios.post 等
-  console.log('账号：', loginForm.account, '密码：', loginForm.password);
-  ElMessage.success('登录请求已发送，等待响应...');
-}
+  console.log('账号：', loginRequest.value.username, '密码：', loginRequest.value.password)
+  ElMessage.success('登录请求已发送，等待响应...')
 
+  try {
+    console.log(loginRequest.value)
+    // 发送POST请求后端接口
+    const response = await axios.post('http://localhost:8080/users/login', loginRequest.value)
+    // if (response.data)
+    console.log(response)
+  } catch (error) {
+    console.log(error)
+    ElMessage.error(error.message)
+    return
+  }
+
+  // 登录成功后操作
+  ElMessage.success('登录成功')
+  // 跳转至Test页面
+  router.push('/test')
+}
 </script>
 
 <style scoped>

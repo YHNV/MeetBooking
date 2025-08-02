@@ -5,10 +5,10 @@
         <div class="card-header">
           <span>ElementPlus 暗黑模式演示</span>
           <el-switch
-              v-model="isDark"
-              active-text="暗黑模式"
-              inactive-text="明亮模式"
-              @update:model-value="handleDarkModeChange"
+            v-model="isDark"
+            active-text="暗黑模式"
+            inactive-text="明亮模式"
+            @update:model-value="handleDarkModeChange"
           />
         </div>
       </template>
@@ -19,41 +19,18 @@
         <el-button type="warning" class="mb-4">警告按钮</el-button>
         <el-button type="danger" class="mb-4">危险按钮</el-button>
 
-        <el-input
-            v-model="inputValue"
-            placeholder="请输入内容"
-            class="mb-4"
-        />
+        <el-input v-model="inputValue" placeholder="请输入内容" class="mb-4" />
 
-        <el-select
-            v-model="selectedValue"
-            placeholder="请选择"
-            class="mb-4"
-        >
+        <el-select v-model="selectedValue" placeholder="请选择" class="mb-4">
           <el-option label="选项1" value="1" />
           <el-option label="选项2" value="2" />
           <el-option label="选项3" value="3" />
         </el-select>
 
-        <el-table
-            :data="tableData"
-            border
-            style="width: 100%;"
-        >
-          <el-table-column
-              prop="date"
-              label="日期"
-              width="180"
-          />
-          <el-table-column
-              prop="name"
-              label="姓名"
-              width="180"
-          />
-          <el-table-column
-              prop="address"
-              label="地址"
-          />
+        <el-table :data="tableData" border style="width: 100%">
+          <el-table-column prop="date" label="日期" width="180" />
+          <el-table-column prop="name" label="姓名" width="180" />
+          <el-table-column prop="address" label="地址" />
         </el-table>
       </div>
     </el-card>
@@ -61,7 +38,7 @@
 </template>
 
 <script setup>
-import {ref, watch, onMounted} from 'vue'
+import { ref, watch, onMounted } from 'vue'
 
 // 状态管理 - 不依赖@vueuse/core，手动实现暗黑模式切换
 const isDark = ref(false)
@@ -73,18 +50,18 @@ const tableData = ref([
   {
     date: '2023-05-01',
     name: '张三',
-    address: '北京市朝阳区'
+    address: '北京市朝阳区',
   },
   {
     date: '2023-05-02',
     name: '李四',
-    address: '上海市浦东新区'
+    address: '上海市浦东新区',
   },
   {
     date: '2023-05-03',
     name: '王五',
-    address: '广州市天河区'
-  }
+    address: '广州市天河区',
+  },
 ])
 
 // 处理暗黑模式切换
