@@ -1,3 +1,5 @@
+-- 删除部门表之前先删除员工表，有依赖关系
+DROP TABLE IF EXISTS EMPLOYEES;
 DROP TABLE IF EXISTS departments;
 
 -- 创建部门表

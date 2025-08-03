@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS accounts;
 CREATE TABLE accounts
 (
     account_id      BIGINT    DEFAULT NEXTVAL('account_seq') COMMENT '账号ID，主键',
-    password        VARCHAR(127) NOT NULL COMMENT '加密后的密码，非空',
+    password        VARCHAR(63) NOT NULL COMMENT '加密后的密码，非空',
     is_admin        BOOLEAN   DEFAULT FALSE COMMENT '是否为管理员，默认false',
     is_active       BOOLEAN   DEFAULT TRUE COMMENT '账号是否启用，默认true',
     first_login     BOOLEAN   DEFAULT TRUE COMMENT '是否首次登录，默认true',

@@ -1,3 +1,8 @@
 .idea
 .vscode
+# 屏蔽Mac生成的.DS_Store文件
 .DS_Store
+# 屏蔽 H2 数据库相关文件
+db/sample.lock.db
+db/sample.mv.db
+db/sample.trace.db
