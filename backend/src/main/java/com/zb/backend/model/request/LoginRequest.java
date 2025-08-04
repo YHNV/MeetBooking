@@ -1,4 +1,4 @@
-package com.zb.backend.model;
+package com.zb.backend.model.request;
 
 import lombok.Data;
 

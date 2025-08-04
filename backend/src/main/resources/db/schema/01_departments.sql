@@ -9,7 +9,7 @@ CREATE TABLE departments
     dept_name    VARCHAR(63) NOT NULL UNIQUE COMMENT '部门名称，非空，唯一',
     manager_id   BIGINT COMMENT '部门经理ID，关联员工表emp_id',
     dept_address VARCHAR(255) COMMENT '部门地址',
-    dept_desc    TEXT COMMENT '部门详情',
+    dept_desc    CLOB COMMENT '部门详情',
     is_active    BOOLEAN   DEFAULT TRUE COMMENT '部门是否启用，默认true',
     create_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',

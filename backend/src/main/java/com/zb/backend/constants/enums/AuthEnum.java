@@ -4,7 +4,7 @@ import lombok.Getter;
 
 // auth controller 登录返回的状态码和信息
 @Getter
-public enum AuthEnum {
+public enum AuthEnum implements ResultEnum {
     // 登录成功
     SUC(2001, "登录成功"),
     // 登录失败

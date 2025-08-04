@@ -2,7 +2,7 @@ package com.zb.backend.controller;
 
 import com.zb.backend.constants.enums.AuthEnum;
 import com.zb.backend.entity.User;
-import com.zb.backend.model.LoginRequest;
+import com.zb.backend.model.request.LoginRequest;
 import com.zb.backend.model.Result;
 import com.zb.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
