@@ -6,3 +6,4 @@
 db/sample.lock.db
 db/sample.mv.db
 db/sample.trace.db
+backend/db/

@@ -22,7 +22,7 @@ public class UserController {
     // public String login(@RequestBody Map<String, String> loginData) {
     public Result login(@RequestBody LoginRequest loginRequest) {
         System.out.println(loginRequest);
-        String username = loginRequest.getUsername();
+        String username = String.valueOf(loginRequest.getAccountId());
         String password = loginRequest.getPassword();
 
 
@@ -35,10 +35,10 @@ public class UserController {
         User user = userService.login(new User(username, password));
         if (user != null) {
             // return "登录成功，欢迎：" + user.getUsername();
-            return Result.success(AuthEnum.SUC.getCode(), AuthEnum.SUC.getMessage(), user);
+            return Result.success(AuthEnum.SUC_LOGIN.getCode(), AuthEnum.SUC_LOGIN.getMessage(), user);
         } else {
             // return "账号或密码错误";
-            return Result.error(AuthEnum.ERR_WRONG_CRED.getCode(), AuthEnum.ERR_WRONG_CRED.getMessage());
+            return Result.error(AuthEnum.ERR_WRONG_PWD.getCode(), AuthEnum.ERR_WRONG_PWD.getMessage());
         }
     }
 }

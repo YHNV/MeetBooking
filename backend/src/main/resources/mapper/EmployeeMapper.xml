@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- <mapper namespace="com.example.mapper.UserMapper"> -->
+
+<mapper namespace="com.zb.backend.mapper.EmployeeMapper">
+    <!-- Employee实体类与employees表的字段映射 -->
+    <resultMap id="EmployeeResultMap" type="com.zb.backend.entity.Employee">
+        <result property="empId" column="emp_id"/>
+        <result property="empName" column="emp_name"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="position" column="position"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="idCard" column="id_card"/>
+        <result property="isManager" column="is_manager"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+</mapper>

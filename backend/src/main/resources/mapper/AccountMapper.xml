@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- <mapper namespace="com.example.mapper.UserMapper"> -->
+
+<mapper namespace="com.zb.backend.mapper.AccountMapper">
+    <!-- Account实体类与accounts表的字段映射 -->
+    <resultMap id="AccountResultMap" type="com.zb.backend.entity.Account">
+        <result property="accountId" column="account_id"/>
+        <result property="password" column="password"/>
+        <result property="isAdmin" column="is_admin"/>
+        <result property="isActive" column="is_active"/>
+        <result property="firstLogin" column="first_login"/>
+        <result property="lastLoginTime" column="last_login_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <!-- 根据账号ID获取账号信息 -->
+    <select id="selectAccountByAccountId" resultType="com.zb.backend.entity.Account">
+        select account_id, password, is_admin, is_active, first_login, last_login_time, create_time, update_time
+        from ACCOUNTS where ACCOUNT_ID = #{account_id}
+    </select>
+    <select id="getLoginInfoByAccountId" resultType="com.zb.backend.model.response.LoginResponse">
+        SELECT
+            -- 账号表字段
+            a.is_admin        AS isAdmin,
+            a.first_login     AS firstLogin,
+            a.last_login_time AS lastLoginTime,
+            -- 员工表字段
+            e.emp_id          AS empId,
+            e.emp_name        AS empName,
+            e.position        AS position,
+            e.phone           AS phone,
+            e.email           AS email,
+            e.is_manager      AS isManager,
+            e.dept_id         AS deptId,
+            -- 部门表字段
+            d.dept_name       AS deptName
+        FROM
+            accounts a
+                -- 关联员工表（账号ID=员工ID，一对一强制关联）
+                INNER JOIN employees e ON a.account_id = e.emp_id
+                -- 关联部门表（员工所属部门，强制关联）
+                INNER JOIN departments d ON e.dept_id = d.dept_id
+        -- 查询条件：账号ID
+        WHERE
+            a.account_id = #{accountId}
+    </select>
+</mapper>

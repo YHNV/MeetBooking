@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- <mapper namespace="com.example.mapper.UserMapper"> -->
+
+<mapper namespace="com.zb.backend.mapper.DepartmentMapper">
+    <!-- Department实体类与departments表的字段映射 -->
+    <resultMap id="DepartmentResultMap" type="com.zb.backend.entity.Department">
+        <result property="deptId" column="dept_id"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="managerId" column="manager_id"/>
+        <result property="deptAddress" column="dept_address"/>
+        <result property="deptDesc" column="dept_desc"/>
+        <result property="isActive" column="is_active"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+</mapper>
