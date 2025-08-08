@@ -37,7 +37,7 @@ public class AuthService {
 
         // 将用户输入的密码调用加密算法进行对比
         if (passwordEncoder.matches(password, storePassword)) {
-            // 密码校验成功，登录成功，开始获取其他信息
+            // 密码校验成功，登录成功
             return AuthEnum.SUC_LOGIN;
         } else {
             // 登录失败
@@ -66,13 +66,16 @@ public class AuthService {
         * String token;
         *
         *  */
-
         // 通过accountId在account表中联表查询，将数据封装进LoginResponse中
         LoginResponse loginResponse = accountService.getLoginInfo(accountId);
 
         // 查询完成后，获取Token，传入LoginResponse.token
         String token = JwtUtil.createToken(accountId);
         loginResponse.setToken(token);
+
+        // 获取完成后，更新最后登录时间，这样用户获取的就都是上次的登录时间
+        Boolean isUpdate = accountService.updateLastLoginTimeByAccountId(accountId);
+        System.out.println("最后登录时间是否更新成功：" + isUpdate);
 
         return loginResponse;
     }

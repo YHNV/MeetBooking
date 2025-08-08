@@ -8,4 +8,6 @@ public interface AccountMapper {
     Account selectAccountByAccountId(Long accountId);
 
     LoginResponse getLoginInfoByAccountId(Long accountId);
+
+    Boolean updateLastLoginTime(Long accountId);
 }

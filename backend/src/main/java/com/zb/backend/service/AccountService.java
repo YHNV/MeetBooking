@@ -20,4 +20,9 @@ public class AccountService {
         System.out.println("获取登录信息：" + accountId);
         return accountMapper.getLoginInfoByAccountId(accountId);
     }
+
+    public Boolean updateLastLoginTimeByAccountId(Long accountId) {
+        System.out.println("更新最后登录时间：" + accountId);
+        return accountMapper.updateLastLoginTime(accountId);
+    }
 }

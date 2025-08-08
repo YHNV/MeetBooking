@@ -14,11 +14,14 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
+    <update id="updateLastLoginTime">
+        update ACCOUNTS set LAST_LOGIN_TIME = CURRENT_TIMESTAMP where ACCOUNT_ID = #{accountId}
+    </update>
 
     <!-- 根据账号ID获取账号信息 -->
     <select id="selectAccountByAccountId" resultType="com.zb.backend.entity.Account">
         select account_id, password, is_admin, is_active, first_login, last_login_time, create_time, update_time
-        from ACCOUNTS where ACCOUNT_ID = #{account_id}
+        from ACCOUNTS where ACCOUNT_ID = #{accountId}
     </select>
     <select id="getLoginInfoByAccountId" resultType="com.zb.backend.model.response.LoginResponse">
         SELECT
