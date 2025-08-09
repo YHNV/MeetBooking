@@ -11,7 +11,7 @@
       <div class="login-form">
         <el-form :model="loginRequest">
           <el-form-item>
-            <el-input placeholder="请输入账号" v-model="loginRequest.username"> </el-input>
+            <el-input placeholder="请输入账号" v-model="loginRequest.accountId"> </el-input>
           </el-form-item>
           <el-form-item>
             <el-input
@@ -41,21 +41,25 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { useApi } from '@/composables/useApi.js'
+import { useAccountStore } from '@/stores/account.js'
+
+const http = useApi()
+const accountStore = useAccountStore()
+const router = useRouter()
 
 // axios.defaults.baseURL = 'http://localhost:8080'
 
 // 登录的请求体
 const loginRequest = ref({
-  username: '',
+  accountId: '',
   password: '',
 })
 
-const router = useRouter()
-
 // 登录按钮点击事件
 const login = async () => {
-  // console.log(loginRequest)
-  if (!loginRequest.value.username) {
+  // 前端验证输入框是否为空
+  if (!loginRequest.value.accountId) {
     ElMessage.warning('请输入账号')
     return
   }
@@ -63,26 +67,34 @@ const login = async () => {
     ElMessage.warning('请输入密码')
     return
   }
-  // 后续可补充：调用登录接口，比如 axios.post 等
-  console.log('账号：', loginRequest.value.username, '密码：', loginRequest.value.password)
-  ElMessage.success('登录请求已发送，等待响应...')
 
+  // 调用登录接口，发送登录请求
+  console.log('账号：', loginRequest.value.username, '密码：', loginRequest.value.password)
+  // ElMessage.info('登录请求已发送，等待响应...')
+
+  // 调用登录接口
   try {
-    console.log(loginRequest.value)
-    // 发送POST请求后端接口
-    const response = await axios.post('http://localhost:8080/users/login', loginRequest.value)
-    // if (response.data)
+    const response = await http.post('/auth/login', loginRequest.value)
     console.log(response)
+    // 如果登录失败，提示msg，清空登陆框
+    if (response.code !== 2001) {
+      ElMessage.error(response.msg)
+      loginRequest.value = {
+        accountId: '',
+        password: '',
+      }
+      return
+    }
+
+    // 如果登录成功，将用户信息存储到小菠萝，并跳转到首页，提示登录成功
+    ElMessage.success(response.msg)
+    accountStore.setAccountInfo(response.data)
+    return router.push('/test')
   } catch (error) {
-    console.log(error)
-    ElMessage.error(error.message)
+    console.log('服务器异常' + error)
+    ElMessage.error('服务器异常')
     return
   }
-
-  // 登录成功后操作
-  ElMessage.success('登录成功')
-  // 跳转至Test页面
-  router.push('/test')
 }
 </script>
 
