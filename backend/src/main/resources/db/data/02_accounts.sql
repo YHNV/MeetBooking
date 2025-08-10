@@ -9,7 +9,7 @@ VALUES (NEXTVAL('admin_seq'), '$2a$10$p6Qnyo.WA5zfXYuUedpl1uTT/BHGGd4yRZPOkG.Ver
 
 -- 插入员工账号信息数据
 INSERT INTO accounts (password, IS_ACTIVE)
-VALUES ('$2a$10$p6Qnyo.WA5zfXYuUedpl1uTT/BHGGd4yRZPOkG.Ver7cRkIBjxEza'),
+VALUES ('$2a$10$p6Qnyo.WA5zfXYuUedpl1uTT/BHGGd4yRZPOkG.Ver7cRkIBjxEza', true),
        ('$2a$10$p6Qnyo.WA5zfXYuUedpl1uTT/BHGGd4yRZPOkG.Ver7cRkIBjxEza', false),
-       ('$2a$10$p6Qnyo.WA5zfXYuUedpl1uTT/BHGGd4yRZPOkG.Ver7cRkIBjxEza');
+       ('$2a$10$p6Qnyo.WA5zfXYuUedpl1uTT/BHGGd4yRZPOkG.Ver7cRkIBjxEza', true);
 

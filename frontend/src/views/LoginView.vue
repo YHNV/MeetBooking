@@ -9,7 +9,7 @@
       </div>
       <!-- 登录表单 -->
       <div class="login-form">
-        <el-form :model="loginRequest">
+        <el-form :model="loginRequest" @keyup.enter.native="login">
           <el-form-item>
             <el-input placeholder="请输入账号" v-model="loginRequest.accountId"> </el-input>
           </el-form-item>
@@ -39,7 +39,6 @@
 
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { useApi } from '@/composables/useApi.js'
 import { useAccountStore } from '@/stores/account.js'

@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import router from './router'
 import App from './App.vue'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import { useAccountStore } from '@/stores/account.js'
 
 // 导入全局CSS
 import './assets/style.css'
@@ -18,4 +19,10 @@ pinia.use(piniaPluginPersistedstate)
 
 app.use(pinia)
 app.use(router)
+
+// 初始化用户信息（从localStore加载）
+const accountStore = useAccountStore()
+// accountStore.logout()
+accountStore.init()
+
 app.mount('#app') // 挂载 app
