@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import {formatDate} from "@/utils/date.js";
 
 export const useAccountStore = defineStore(
   'account',
@@ -54,6 +55,7 @@ export const useAccountStore = defineStore(
           ? new Date(loginResponse.lastLoginTime)
           : new Date(),
       }
+      // accountInfo.value.lastLoginTime = formatDate(loginResponse.lastLoginTime)
       // 持久化到本地存储
       saveToLocalStorage()
     }

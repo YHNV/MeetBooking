@@ -5,11 +5,20 @@ import TestView from '@/views/TestView.vue'
 import LoginView from '@/views/LoginView.vue'
 import DarkAndLight from '@/views/DarkAndLight.vue'
 import { useAccountStore } from '@/stores/account.js'
+import Navbar1 from '@/components/Navbar1.vue'
+import Navbar from '@/components/Navbar.vue'
+import HomeView from "@/views/HomeView.vue";
 
 const routes = [
   {
     path: '/',
-    component: LoginView,
+    component: HomeView,
+    children: [
+      {path: 'rooms', component: TestView},
+      {path: 'booking', component: Navbar},
+      {path: 'notice', component: DarkAndLight},
+      {path: 'profile', component: LoginView},
+    ],
     meta: { requiresAuth: true },
   },
   {
@@ -27,10 +36,16 @@ const routes = [
     component: DarkAndLight,
     meta: { requiresAuth: true },
   },
-  // {
-  //     path: '/',
-  //     redirect: '/login',
-  // },
+  {
+    path: '/navbar',
+    component: Navbar,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: '/navbar1',
+    component: Navbar1,
+    meta: { requiresAuth: false },
+  },
 ]
 
 const router = createRouter({
@@ -61,7 +76,7 @@ router.beforeEach((to, from, next) => {
       ElMessage.warning('请登录')
       next({
         path: '/login',
-        query: { redirect: to.fullPath }, // 存储要访问的路径
+        // query: { redirect: to.fullPath }, // 存储要访问的路径
       })
     }
   } else {

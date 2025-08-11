@@ -11,11 +11,18 @@ import './assets/style.css'
 // 导入 element-plus 样式，防止自动导入样式缺失
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
+// 导入ElementPlus icon
+// import * as Icons from '@element-plus/icons-vue'
 
 // 创建 app 实例
 const app = createApp(App)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
+
+// 注册所有图标
+// Object.keys(Icons).forEach(key => {
+//     app.component(key, Icons[key])
+// })
 
 app.use(pinia)
 app.use(router)

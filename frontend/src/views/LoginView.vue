@@ -88,7 +88,7 @@ const login = async () => {
     // 如果登录成功，将用户信息存储到小菠萝，并跳转到首页，提示登录成功
     ElMessage.success(response.msg)
     accountStore.setAccountInfo(response.data)
-    return router.push('/test')
+    return router.push('/')
   } catch (error) {
     console.log('服务器异常' + error)
     ElMessage.error('服务器异常')

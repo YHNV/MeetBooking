@@ -5,6 +5,17 @@
   box-sizing: border-box; /* 可选：让盒模型计算更直观 */
 }
 
+/* 移除所有路由页面的默认边距 */
+.router-view-container > * {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* 如果使用了 Element Plus 的 el-main */
+.el-main {
+  padding: 0 !important;
+}
+
 /* 针对特定标签的额外重置（如果需要） */
 body,
 html {

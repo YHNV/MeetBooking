@@ -5,10 +5,10 @@
       <!-- 头部容器，用作导航栏 -->
       <el-header class="header-container">
         <!-- 左侧logo -->
-        <div class="logo" @click="logo">
+        <div class="logo">
           <img src="/logo.png" alt="logo"/>
         </div>
-        <!-- 中间菜单，使用遍历，使用路由 -->
+        <!-- 中间菜单，使用遍历 -->
         <el-menu
             mode="horizontal"
             :default-active="activeIndex"
@@ -29,12 +29,11 @@
         <div class="right-tools">
           <!--消息通知按钮-->
           <el-button circle size="default" class="notification-btn" @click="handleNotificationClick">
-            <!--通知icon-->
             <Bell class="notification-icon"/>
-            <!--消息数量-->
             <span v-if="msgCount > 0" class="notification-badge">{{ msgCount }}</span>
           </el-button>
-          <!-- 用户信息，触碰弹窗 -->
+          <!-- 用户信息 -->
+          <!-- 用户头像弹出框 -->
           <el-popover placement="bottom" :width="250" trigger="hover" :show-arrow="false">
             <template #reference>
               <div class="avatar-info">
@@ -54,7 +53,6 @@
               </div>
               <div class="account-meta">
                 <div class="login-time">最后登录时间：<br/>{{ accountInfo.lastLoginTime }}</div>
-                <!--判断账号类型-->
                 <div class="account-type">
                   {{ accountInfo.isAdmin ? '管理员' : (accountInfo.isManager ? '部门经理' : '部门员工') }}
                 </div>
@@ -72,35 +70,14 @@
               </div>
             </div>
           </el-popover>
+
         </div>
       </el-header>
       <!-- 中间容器，放置路由 -->
       <el-main class="main-container">
-        <RouterView/>
+        <RouterView />
       </el-main>
     </el-container>
-
-    <!-- 消息通知侧边弹窗 -->
-    <!-- 消息通知面板 -->
-    <transition name="slide-fade">
-      <div v-if="showNotificationPanel" class="notification-panel">
-        <!-- 这里放你的消息通知内容 -->
-        <div class="notification-header">
-          <h3>消息通知</h3>
-          <el-button circle size="small" @click="showNotificationPanel = false">
-            <Close/>
-          </el-button>
-        </div>
-        <div class="notification-content">
-          <!-- 消息列表内容 -->
-        </div>
-      </div>
-    </transition>
-
-    <!-- 遮罩层 -->
-    <transition name="fade">
-      <div v-if="showNotificationPanel" class="notification-overlay" @click="showNotificationPanel = false"></div>
-    </transition>
   </div>
 </template>
 
@@ -131,10 +108,7 @@ const accountInfo = ref({
   token: '未获取',
 })
 
-// 获取小菠萝中的账号信息
 accountInfo.value = accountStore.accountInfo
-// 转换日期格式
-accountInfo.value.lastLoginTime = formatDate(accountStore.accountInfo.lastLoginTime)
 console.log(accountInfo.value)
 
 // 菜单栏
@@ -164,78 +138,40 @@ const handleSelect = (index) => {
   // }
 }
 
-// logo点击事件
-const logo = () => {
-  console.log('点击logo')
-  router.push('/')
-  activeIndex.value = '1'
-  console.log(activeIndex.value)
-
-}
-
-const showNotificationPanel = ref(false)
-
 // 消息通知点击事件
 const handleNotificationClick = () => {
   // 点击通知按钮弹出侧边消息栏
   console.log('消息数量为：' + msgCount.value)
-  showNotificationPanel.value = !showNotificationPanel.value
 }
 
 // 个人中心点击事件
 const profile = (empId) => {
-  router.push('/profile')
   console.log('profile:' + empId)
 }
 
 // 退出登录点击事件
-const logout = (empId) => {
+const logout = async (empId) => {
   console.log('logout:' + empId)
-  // 调用小菠萝退出登录
-  accountStore.logout()
-
-  // TODO 后续可以加一个后端退出登录逻辑，使用数据库黑名单存储
-  ElMessage.success('退出登录成功')
-  router.push('/')
 
   // 调用后端退出登录接口
-  // try {
-  //   const response = useApi().post('/auth/logout', accountInfo.value.empId)
-  //   console.log(response)
-  //
-  //   if (response.code !== 20003) {
-  //     ElMessage.error('退出登录失败')
-  //     return
-  //   }
-  //
-  //   // 退出成功，给一个弹窗
-  //   ElMessage.success('退出登录成功')
-  //   await router.push('/')
-  // } catch (error) {
-  //   console.log('服务器异常' + error)
-  //   ElMessage.error('服务器异常')
-  //   return
-  // }
+  try {
+    const response = useApi().post('/auth/logout', accountInfo.value.empId)
+    console.log(response)
+
+    if (response.code !== 20003) {
+      ElMessage.error('退出登录失败')
+      return
+    }
+
+    // 退出成功，给一个弹窗
+    ElMessage.success('退出登录成功')
+    router.push('/')
+  } catch (error) {
+    console.log('服务器异常' + error)
+    ElMessage.error('服务器异常')
+    return
+  }
 }
-
-// 监听路由变化，自动更新选中的菜单
-watch(
-    // 监听路由路径变化
-    () => router.currentRoute.value.path,
-    (newPath) => {
-      console.log('newPath:' + newPath)
-      // 找到对应路径的菜单项index
-      const matchedItem = menuItems.value.find(item => item.route === newPath)
-      if (matchedItem) {
-        activeIndex.value = matchedItem.index
-        console.log(activeIndex.value, matchedItem.index)
-      } else {
-        activeIndex.value = 0
-      }
-    },
-    { immediate: true } // 初始加载时就执行一次
-)
-
 
 // 挂载登录检查
 onMounted(() => {
@@ -267,14 +203,12 @@ onMounted(() => {
 }
 
 .logo {
-  cursor: pointer;
   display: flex;
   align-items: center;
 }
 
 /*logo*/
 .logo img {
-  pointer-events: none; /* 让点击穿透到父元素 */
   height: 50px;
 }
 
@@ -401,66 +335,5 @@ onMounted(() => {
 
 .logout {
   color: #f56c6c;
-}
-
-/*消息通知侧边栏*/
-/* 消息通知面板样式 */
-.notification-panel {
-  position: fixed;
-  top: 64px; /* 与导航栏高度一致 */
-  right: 0;
-  width: 400px;
-  height: calc(100vh - 64px); /* 减去导航栏高度 */
-  background-color: white;
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
-  z-index: 2001;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.notification-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-.notification-content {
-  /* 消息内容样式 */
-}
-
-/* 遮罩层样式 */
-.notification-overlay {
-  position: fixed;
-  top: 64px; /* 从导航栏下方开始 */
-  left: 0;
-  width: 100%;
-  height: calc(100vh - 64px); /* 减去导航栏高度 */
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 2000;
-}
-
-/* 过渡动画 */
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  transition: all 0.3s ease;
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-  transform: translateX(100%);
-  opacity: 0;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
 }
 </style>
