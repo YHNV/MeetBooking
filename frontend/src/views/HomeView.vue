@@ -6,21 +6,21 @@
       <el-header class="header-container">
         <!-- 左侧logo -->
         <div class="logo" @click="logo">
-          <img src="/logo.png" alt="logo"/>
+          <img src="/logo.png" alt="logo" />
         </div>
         <!-- 中间菜单，使用遍历，使用路由 -->
         <el-menu
-            mode="horizontal"
-            :default-active="activeIndex"
-            class="center-menu"
-            @select="handleSelect"
-            router
+          mode="horizontal"
+          :default-active="activeIndex"
+          class="center-menu"
+          @select="handleSelect"
+          router
         >
           <el-menu-item
-              v-for="item in menuItems"
-              :key="item.index"
-              :index="item.index"
-              :route="item.route"
+            v-for="item in menuItems"
+            :key="item.index"
+            :index="item.index"
+            :route="item.route"
           >
             {{ item.name }}
           </el-menu-item>
@@ -28,9 +28,14 @@
         <!-- 右侧个人信息 -->
         <div class="right-tools">
           <!--消息通知按钮-->
-          <el-button circle size="default" class="notification-btn" @click="handleNotificationClick">
+          <el-button
+            circle
+            size="default"
+            class="notification-btn"
+            @click="handleNotificationClick"
+          >
             <!--通知icon-->
-            <Bell class="notification-icon"/>
+            <Bell class="notification-icon" />
             <!--消息数量-->
             <span v-if="msgCount > 0" class="notification-badge">{{ msgCount }}</span>
           </el-button>
@@ -40,7 +45,7 @@
               <div class="avatar-info">
                 <!-- 用户头像 -->
                 <el-avatar size="default" fit="fill" class="avatar-trigger">
-                  <Avatar/>
+                  <Avatar />
                 </el-avatar>
                 <!-- 用户名展示 -->
                 <span class="emp-name">{{ accountInfo.empName }}</span>
@@ -53,10 +58,12 @@
                 <strong>工号：{{ accountInfo.empId }}</strong>
               </div>
               <div class="account-meta">
-                <div class="login-time">最后登录时间：<br/>{{ accountInfo.lastLoginTime }}</div>
+                <div class="login-time">最后登录时间：<br />{{ accountInfo.lastLoginTime }}</div>
                 <!--判断账号类型-->
                 <div class="account-type">
-                  {{ accountInfo.isAdmin ? '管理员' : (accountInfo.isManager ? '部门经理' : '部门员工') }}
+                  {{
+                    accountInfo.isAdmin ? '管理员' : accountInfo.isManager ? '部门经理' : '部门员工'
+                  }}
                 </div>
               </div>
               <div class="emp-dept" v-if="accountInfo.isAdmin != true">
@@ -64,7 +71,7 @@
                 <span class="emp-position">{{ accountInfo.position }}</span>
               </div>
               <!--分割线-->
-              <el-divider/>
+              <el-divider />
               <!-- 菜单选项 -->
               <div class="menu-item">
                 <span class="personal" @click="profile(accountInfo.empId)">个人中心</span>
@@ -76,7 +83,7 @@
       </el-header>
       <!-- 中间容器，放置路由 -->
       <el-main class="main-container">
-        <RouterView/>
+        <RouterView />
       </el-main>
     </el-container>
 
@@ -88,7 +95,7 @@
         <div class="notification-header">
           <h3>消息通知</h3>
           <el-button circle size="small" @click="showNotificationPanel = false">
-            <Close/>
+            <Close />
           </el-button>
         </div>
         <div class="notification-content">
@@ -99,22 +106,27 @@
 
     <!-- 遮罩层 -->
     <transition name="fade">
-      <div v-if="showNotificationPanel" class="notification-overlay" @click="showNotificationPanel = false"></div>
+      <div
+        v-if="showNotificationPanel"
+        class="notification-overlay"
+        @click="showNotificationPanel = false"
+      ></div>
     </transition>
   </div>
 </template>
 
 <script setup>
-import {ref} from 'vue'
+import { ref } from 'vue'
 import Bell from '@/components/svg/Bell.vue'
 import Avatar from '@/components/svg/Avatar.vue'
 import avatar from '@/assets/images/avatar.svg'
-import {formatDate} from "@/utils/date.js";
+import { formatDate } from '@/utils/date.js'
 
-import {useRouter} from 'vue-router'
-import {useAccountStore} from '@/stores/account.js'
-import {useApi} from "@/composables/useApi.js";
+import { useRouter } from 'vue-router'
+import { useAccountStore } from '@/stores/account.js'
+import { useApi } from '@/composables/useApi.js'
 
+const http = useApi()
 const router = useRouter()
 const accountStore = useAccountStore()
 
@@ -139,10 +151,10 @@ console.log(accountInfo.value)
 
 // 菜单栏
 const menuItems = ref([
-  {index: '1', name: '首页', route: '/'},
-  {index: '2', name: '会议室列表', route: '/rooms'},
-  {index: '3', name: '我的预约', route: '/booking'},
-  {index: '4', name: '公告中心', route: '/notice'},
+  { index: '1', name: '首页', route: '/' },
+  { index: '2', name: '会议室列表', route: '/rooms' },
+  { index: '3', name: '我的预约', route: '/booking' },
+  { index: '4', name: '公告中心', route: '/notice' },
 ])
 
 // 定义默认激活菜单索引
@@ -170,7 +182,6 @@ const logo = () => {
   router.push('/')
   activeIndex.value = '1'
   console.log(activeIndex.value)
-
 }
 
 const showNotificationPanel = ref(false)
@@ -189,60 +200,61 @@ const profile = (empId) => {
 }
 
 // 退出登录点击事件
-const logout = (empId) => {
+const logout = async (empId) => {
   console.log('logout:' + empId)
   // 调用小菠萝退出登录
-  accountStore.logout()
+  // accountStore.logout()
 
-  // TODO 后续可以加一个后端退出登录逻辑，使用数据库黑名单存储
-  ElMessage.success('退出登录成功')
-  router.push('/')
+  // ElMessage.success('退出登录成功')
+  // router.push('/')
 
   // 调用后端退出登录接口
-  // try {
-  //   const response = useApi().post('/auth/logout', accountInfo.value.empId)
-  //   console.log(response)
-  //
-  //   if (response.code !== 20003) {
-  //     ElMessage.error('退出登录失败')
-  //     return
-  //   }
-  //
-  //   // 退出成功，给一个弹窗
-  //   ElMessage.success('退出登录成功')
-  //   await router.push('/')
-  // } catch (error) {
-  //   console.log('服务器异常' + error)
-  //   ElMessage.error('服务器异常')
-  //   return
-  // }
+  try {
+    const response = await http.post('/auth/logout', empId)
+    console.log(response)
+
+    if (response.code !== 20003) {
+      ElMessage.success(response.msg)
+      accountStore.logout()
+      await router.push('/login')
+      return
+    }
+
+    // 退出成功，给一个弹窗
+    ElMessage.info(response.msg)
+    accountStore.logout()
+
+    await router.push('/')
+  } catch (error) {
+    console.log('服务器异常' + error)
+    ElMessage.error('服务器异常')
+    return
+  }
 }
 
 // 监听路由变化，自动更新选中的菜单
 watch(
-    // 监听路由路径变化
-    () => router.currentRoute.value.path,
-    (newPath) => {
-      console.log('newPath:' + newPath)
-      // 找到对应路径的菜单项index
-      const matchedItem = menuItems.value.find(item => item.route === newPath)
-      if (matchedItem) {
-        activeIndex.value = matchedItem.index
-        console.log(activeIndex.value, matchedItem.index)
-      } else {
-        activeIndex.value = 0
-      }
-    },
-    { immediate: true } // 初始加载时就执行一次
+  // 监听路由路径变化
+  () => router.currentRoute.value.path,
+  (newPath) => {
+    console.log('newPath:' + newPath)
+    // 找到对应路径的菜单项index
+    const matchedItem = menuItems.value.find((item) => item.route === newPath)
+    if (matchedItem) {
+      activeIndex.value = matchedItem.index
+      console.log(activeIndex.value, matchedItem.index)
+    } else {
+      activeIndex.value = 0
+    }
+  },
+  { immediate: true }, // 初始加载时就执行一次
 )
-
 
 // 挂载登录检查
 onMounted(() => {
   accountStore.init()
   console.log(accountStore.accountInfo)
 })
-
 </script>
 
 <style scoped>
@@ -306,7 +318,6 @@ onMounted(() => {
   display: flex; /* 启用 Flex 布局 */
   align-items: center; /* 垂直居中 */
   justify-content: center;
-
 }
 
 .notification-icon {

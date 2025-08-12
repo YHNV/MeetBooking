@@ -7,17 +7,17 @@ import DarkAndLight from '@/views/DarkAndLight.vue'
 import { useAccountStore } from '@/stores/account.js'
 import Navbar1 from '@/components/Navbar1.vue'
 import Navbar from '@/components/Navbar.vue'
-import HomeView from "@/views/HomeView.vue";
+import HomeView from '@/views/HomeView.vue'
 
 const routes = [
   {
     path: '/',
     component: HomeView,
     children: [
-      {path: 'rooms', component: TestView},
-      {path: 'booking', component: Navbar},
-      {path: 'notice', component: DarkAndLight},
-      {path: 'profile', component: LoginView},
+      { path: 'rooms', component: TestView },
+      { path: 'booking', component: Navbar },
+      { path: 'notice', component: DarkAndLight },
+      { path: 'profile', component: LoginView },
     ],
     meta: { requiresAuth: true },
   },

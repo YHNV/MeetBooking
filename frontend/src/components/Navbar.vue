@@ -6,21 +6,21 @@
       <el-header class="header-container">
         <!-- 左侧logo -->
         <div class="logo">
-          <img src="/logo.png" alt="logo"/>
+          <img src="/logo.png" alt="logo" />
         </div>
         <!-- 中间菜单，使用遍历 -->
         <el-menu
-            mode="horizontal"
-            :default-active="activeIndex"
-            class="center-menu"
-            @select="handleSelect"
-            router
+          mode="horizontal"
+          :default-active="activeIndex"
+          class="center-menu"
+          @select="handleSelect"
+          router
         >
           <el-menu-item
-              v-for="item in menuItems"
-              :key="item.index"
-              :index="item.index"
-              :route="item.route"
+            v-for="item in menuItems"
+            :key="item.index"
+            :index="item.index"
+            :route="item.route"
           >
             {{ item.name }}
           </el-menu-item>
@@ -28,8 +28,13 @@
         <!-- 右侧个人信息 -->
         <div class="right-tools">
           <!--消息通知按钮-->
-          <el-button circle size="default" class="notification-btn" @click="handleNotificationClick">
-            <Bell class="notification-icon"/>
+          <el-button
+            circle
+            size="default"
+            class="notification-btn"
+            @click="handleNotificationClick"
+          >
+            <Bell class="notification-icon" />
             <span v-if="msgCount > 0" class="notification-badge">{{ msgCount }}</span>
           </el-button>
           <!-- 用户信息 -->
@@ -39,7 +44,7 @@
               <div class="avatar-info">
                 <!-- 用户头像 -->
                 <el-avatar size="default" fit="fill" class="avatar-trigger">
-                  <Avatar/>
+                  <Avatar />
                 </el-avatar>
                 <!-- 用户名展示 -->
                 <span class="emp-name">{{ accountInfo.empName }}</span>
@@ -52,9 +57,11 @@
                 <strong>工号：{{ accountInfo.empId }}</strong>
               </div>
               <div class="account-meta">
-                <div class="login-time">最后登录时间：<br/>{{ accountInfo.lastLoginTime }}</div>
+                <div class="login-time">最后登录时间：<br />{{ accountInfo.lastLoginTime }}</div>
                 <div class="account-type">
-                  {{ accountInfo.isAdmin ? '管理员' : (accountInfo.isManager ? '部门经理' : '部门员工') }}
+                  {{
+                    accountInfo.isAdmin ? '管理员' : accountInfo.isManager ? '部门经理' : '部门员工'
+                  }}
                 </div>
               </div>
               <div class="emp-dept" v-if="accountInfo.isAdmin != true">
@@ -62,7 +69,7 @@
                 <span class="emp-position">{{ accountInfo.position }}</span>
               </div>
               <!--分割线-->
-              <el-divider/>
+              <el-divider />
               <!-- 菜单选项 -->
               <div class="menu-item">
                 <span class="personal" @click="profile(accountInfo.empId)">个人中心</span>
@@ -70,7 +77,6 @@
               </div>
             </div>
           </el-popover>
-
         </div>
       </el-header>
       <!-- 中间容器，放置路由 -->
@@ -82,15 +88,15 @@
 </template>
 
 <script setup>
-import {ref} from 'vue'
+import { ref } from 'vue'
 import Bell from '@/components/svg/Bell.vue'
 import Avatar from '@/components/svg/Avatar.vue'
 import avatar from '@/assets/images/avatar.svg'
-import {formatDate} from "@/utils/date.js";
+import { formatDate } from '@/utils/date.js'
 
-import {useRouter} from 'vue-router'
-import {useAccountStore} from '@/stores/account.js'
-import {useApi} from "@/composables/useApi.js";
+import { useRouter } from 'vue-router'
+import { useAccountStore } from '@/stores/account.js'
+import { useApi } from '@/composables/useApi.js'
 
 const router = useRouter()
 const accountStore = useAccountStore()
@@ -113,10 +119,10 @@ console.log(accountInfo.value)
 
 // 菜单栏
 const menuItems = ref([
-  {index: '1', name: '首页', route: '/'},
-  {index: '2', name: '会议室列表', route: '/rooms'},
-  {index: '3', name: '我的预约', route: '/booking'},
-  {index: '4', name: '公告中心', route: '/notice'},
+  { index: '1', name: '首页', route: '/' },
+  { index: '2', name: '会议室列表', route: '/rooms' },
+  { index: '3', name: '我的预约', route: '/booking' },
+  { index: '4', name: '公告中心', route: '/notice' },
 ])
 
 // 定义默认激活菜单索引
@@ -178,7 +184,6 @@ onMounted(() => {
   accountStore.init()
   console.log(accountStore.accountInfo)
 })
-
 </script>
 
 <style scoped>
@@ -240,7 +245,6 @@ onMounted(() => {
   display: flex; /* 启用 Flex 布局 */
   align-items: center; /* 垂直居中 */
   justify-content: center;
-
 }
 
 .notification-icon {

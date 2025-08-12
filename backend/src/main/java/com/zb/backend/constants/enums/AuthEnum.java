@@ -14,7 +14,11 @@ public enum AuthEnum implements ResultEnum {
     // 获取用户信息相关
     SUC_INFO(2002, "获取用户信息成功"),
     ERR_NO_LOGIN(4004, "用户未登录或令牌无效"),
-    ERR_INFO_NOT_EXIST(4005, "用户信息不存在");
+    ERR_INFO_NOT_EXIST(4005, "用户信息不存在"),
+
+    // 退出登录相关
+    SUC_LOGOUT(2003, "退出登录成功"),
+    ERR_LOGOUT(4006, "令牌失效，请重新登录");
 
     private final Integer code;
     private final String message;

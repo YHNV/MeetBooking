@@ -1,8 +1,10 @@
 package com.zb.backend.config.interceptor;
 
+import com.zb.backend.service.TokenService;
 import com.zb.backend.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -12,12 +14,18 @@ import java.io.IOException;
 public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        // 不验证OPTIONS请求，直接放行，带有Authorization
+        // 关键：放行OPTIONS预检请求
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true; // 直接通过，不验证Token
+        }
+
         // 1. 从请求头获取令牌
         String token = request.getHeader(JwtUtil.AUTH_HEADER_KEY);
 
         // 2. 验证令牌是否存在
         if (token == null || token.trim().isEmpty()) {
-            sendErrorResponse(response, "未提供令牌，请先登录");
+            sendErrorResponse(response, "令牌失效，请重新登录");
             return false;
         }
 

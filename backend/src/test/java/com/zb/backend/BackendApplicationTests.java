@@ -36,6 +36,7 @@ class BackendApplicationTests {
             Long verifyToken = JwtUtil.verifyToken(token);
             System.out.println("验证Token：" + verifyToken);
         } catch (Exception e) {
+            System.out.println("错误：" + e.getMessage());
             throw new RuntimeException(e);
         }
     }

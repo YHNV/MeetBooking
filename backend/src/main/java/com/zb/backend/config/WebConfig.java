@@ -3,6 +3,7 @@ package com.zb.backend.config;
 import com.zb.backend.config.interceptor.LoginInterceptor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -33,6 +34,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 // .allowedOrigins("*")
                 .allowedOriginPatterns("*")
+                // .allowedOriginPatterns("http://localhost:5173")
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true);

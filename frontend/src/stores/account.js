@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import {formatDate} from "@/utils/date.js";
+import { formatDate } from '@/utils/date.js'
 
 export const useAccountStore = defineStore(
   'account',

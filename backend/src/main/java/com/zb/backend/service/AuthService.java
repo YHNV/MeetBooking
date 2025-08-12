@@ -3,7 +3,6 @@ package com.zb.backend.service;
 import com.zb.backend.constants.enums.AuthEnum;
 import com.zb.backend.constants.enums.ResultEnum;
 import com.zb.backend.entity.Account;
-import com.zb.backend.mapper.AccountMapper;
 import com.zb.backend.model.response.LoginResponse;
 import com.zb.backend.util.JwtUtil;
 import com.zb.backend.util.security.crypto.password.PasswordEncoder;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     private final AccountService accountService;
     private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
     // 登录
     public ResultEnum login(Long accountId, String password) {
@@ -73,10 +73,34 @@ public class AuthService {
         String token = JwtUtil.createToken(accountId);
         loginResponse.setToken(token);
 
+        // 删除数据库中已过期的Token
+        int deleteExpiredTokens = tokenService.deleteExpiredTokens();
+        System.out.println("删除了" + deleteExpiredTokens + "条过期Token");
+
+        // 将生成的Token放入Token表中
+        Boolean isToken = tokenService.insertToken(accountId, token);
+        System.out.println("是否存入Token：" + isToken);
+
         // 获取完成后，更新最后登录时间，这样用户获取的就都是上次的登录时间
         Boolean isUpdate = accountService.updateLastLoginTimeByAccountId(accountId);
         System.out.println("最后登录时间是否更新成功：" + isUpdate);
 
         return loginResponse;
+    }
+
+    // 退出登录
+    public ResultEnum logout(Long accountId, String token) {
+        System.out.println("需要退出的accountId：" + accountId);
+        // 删除数据库中已过期的Token
+        int deleteExpiredTokens = tokenService.deleteExpiredTokens();
+        System.out.println("删除了" + deleteExpiredTokens + "条过期Token");
+        // 如果能进到这个接口，说明Token一定有效，因为前面有拦截器拦截，过期Token过不来，所以只需要删除Token就可以了
+        int deleteTokenByAccountId = tokenService.deleteTokenByAccountId(accountId);
+        System.out.println(accountId + "用户删除Token：" + deleteTokenByAccountId + "条");
+        if (deleteTokenByAccountId <= 0) {
+            return AuthEnum.ERR_LOGOUT;
+        }
+        // 删除成功
+        return AuthEnum.SUC_LOGOUT;
     }
 }

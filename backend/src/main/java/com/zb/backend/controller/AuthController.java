@@ -7,10 +7,7 @@ import com.zb.backend.model.request.LoginRequest;
 import com.zb.backend.model.response.LoginResponse;
 import com.zb.backend.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -55,11 +52,17 @@ public class AuthController {
         return Result.success(resultEnum, loginResponse);
     }
 
-    // // 获取前端账号展示信息
-    // @PostMapping("/info")
-    // public Result info(@RequestBody Long accountId) {
-    //     System.out.println("需要获取信息的账号" + accountId);
-    //
-    //     return Result.success(200, "获取成功", null);
-    // }
+    // 退出登录
+    @PostMapping("/logout")
+    public Result logout(
+            @RequestHeader("Authorization") String token,
+            @RequestBody Long accountId
+    ) {
+        ResultEnum resultEnum = authService.logout(accountId, token);
+        if (!resultEnum.getCode().equals(4006)) {
+            return Result.error(resultEnum, accountId);
+        }
+        return Result.success(resultEnum, accountId);
+    }
+
 }
