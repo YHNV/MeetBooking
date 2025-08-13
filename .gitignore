@@ -6,5 +6,5 @@
 #db/sample.lock.db
 #db/sample.mv.db
 #db/sample.trace.db
-db/
-backend/db/
+#db/
+#backend/db/
