@@ -14,12 +14,7 @@
             <el-input placeholder="请输入账号" v-model="loginRequest.accountId"> </el-input>
           </el-form-item>
           <el-form-item>
-            <el-input
-              type="password"
-              placeholder="请输入密码"
-              show-password
-              v-model="loginRequest.password"
-            >
+            <el-input type="password" placeholder="请输入密码" show-password v-model="loginRequest.password">
             </el-input>
           </el-form-item>
           <el-form-item>

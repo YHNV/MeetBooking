@@ -9,38 +9,22 @@
           <img src="/logo.png" alt="logo" />
         </div>
         <!-- 中间菜单，使用遍历，使用路由 -->
-        <el-menu
-          mode="horizontal"
-          :default-active="activeIndex"
-          class="center-menu"
-          @select="handleSelect"
-          router
-        >
-          <el-menu-item
-            v-for="item in menuItems"
-            :key="item.index"
-            :index="item.index"
-            :route="item.route"
-          >
+        <el-menu mode="horizontal" :default-active="activeIndex" class="center-menu" @select="handleSelect" router>
+          <el-menu-item v-for="item in menuItems" :key="item.index" :index="item.index" :route="item.route">
             {{ item.name }}
           </el-menu-item>
         </el-menu>
         <!-- 右侧个人信息 -->
         <div class="right-tools">
           <!--消息通知按钮-->
-          <el-button
-            circle
-            size="default"
-            class="notification-btn"
-            @click="handleNotificationClick"
-          >
+          <el-button circle size="default" class="notification-btn" @click="handleNotificationClick">
             <!--通知icon-->
             <Bell class="notification-icon" />
             <!--消息数量-->
             <span v-if="msgCount > 0" class="notification-badge">{{ msgCount }}</span>
           </el-button>
           <!-- 用户信息，触碰弹窗 -->
-          <el-popover placement="bottom" :width="250" trigger="hover" :show-arrow="false">
+          <el-popover placement="bottom" :width="275" trigger="hover" :show-arrow="false">
             <template #reference>
               <div class="avatar-info">
                 <!-- 用户头像 -->
@@ -52,30 +36,72 @@
               </div>
             </template>
             <!-- 用户信息卡片内容 -->
-            <div class="account-info-card">
-              <!--绑定对象获取信息-->
-              <div class="account-id">
-                <strong>工号：{{ accountInfo.empId }}</strong>
-              </div>
-              <div class="account-meta">
-                <div class="login-time">最后登录时间：<br />{{ accountInfo.lastLoginTime }}</div>
-                <!--判断账号类型-->
-                <div class="account-type">
-                  {{
-                    accountInfo.isAdmin ? '管理员' : accountInfo.isManager ? '部门经理' : '部门员工'
-                  }}
+            <div class="account-info-card" id="accountCard">
+              <div class="card-content">
+                <div class="user-info-top">
+                  <div>
+                    <div class="user-name text-xl font-semibold text-primary">
+                      <!-- 显示员工名字和部门信息 -->
+                      {{ accountInfo.empName }}
+                      <span class="account-type" id="accountType">{{
+                        accountInfo.isAdmin ? '管理员' : accountInfo.isManager ? '部门经理' : '部门员工'
+                      }}</span>
+                    </div>
+                    <!-- 显示员工工号 -->
+                    <div class="user-id text-md text-secondary" id="empId">
+                      {{ accountInfo.empId }}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="emp-dept" v-if="accountInfo.isAdmin != true">
-                <span class="emp-dept">{{ accountInfo.deptName }}</span>
-                <span class="emp-position">{{ accountInfo.position }}</span>
-              </div>
-              <!--分割线-->
-              <el-divider />
-              <!-- 菜单选项 -->
-              <div class="menu-item">
-                <span class="personal" @click="profile(accountInfo.empId)">个人中心</span>
-                <span class="logout" @click="logout(accountInfo.empId)">退出登录</span>
+
+                <!-- 显示最后登陆时间 -->
+                <div class="last-login text-sm text-secondary">
+                  最后登陆：<span>{{ accountInfo.lastLoginTime }}</span>
+                </div>
+
+                <!-- 显示部门以及职位信息 -->
+                <div class="dept-position rounded" v-if="accountInfo.isAdmin != true">
+                  <div class="dept">
+                    <span class="text-sm text-secondary">部门</span>
+                    <span class="text-md font-medium text-primary" id="deptName">{{ accountInfo.deptName }}</span>
+                  </div>
+                  <div class="position">
+                    <span class="text-sm text-secondary">职位</span>
+                    <span class="text-md font-medium text-primary" id="position">{{ accountInfo.position }}</span>
+                  </div>
+                </div>
+
+                <!--分割线-->
+                <el-divider />
+
+                <ul class="menu-list">
+                  <li class="menu-item clickable hover-bg rounded text-lg text-primary" id="profileBtn">
+                    <span @click="profile(accountInfo.empId)">个人中心</span>
+                    <svg class="menu-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M858.5 768c-.2 37.5-30.4 68-68 68h-612c-37.6 0-67.8-30.5-68-68v-512c0-37.5 30.4-68 68-68h612c37.6 0 67.8 30.5 68 68v512zM832 800H192V288h640v512z"
+                        fill="currentColor"
+                      />
+                      <path
+                        d="M464 528a48 48 0 1 0 96 0 48 48 0 1 0-96 0zM320 592a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm384 0a32 32 0 1 0 0-64 32 32 0 1 0 0 64z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  </li>
+                  <li class="menu-item logout clickable hover-bg rounded text-lg" id="logoutBtn">
+                    <span @click="logout(accountInfo.empId)">退出登录</span>
+                    <svg class="menu-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M864 352H736v-80c0-35.3-28.7-64-64-64h-80c-35.3 0-64 28.7-64 64v80H160c-17.7 0-32 14.3-32 32v448c0 17.7 14.3 32 32 32h704c17.7 0 32-14.3 32-32V384c0-17.7-14.3-32-32-32zM640 352V272h144v80H640zM192 768H160V416h32v352zm256 0H416V416h32v352zm256 0H672V416h32v352z"
+                        fill="currentColor"
+                      />
+                      <path
+                        d="M505.4 613.4l-77.2 77.2c-6.2 6.2-16.4 6.2-22.6 0l-45.4-45.4c-6.2-6.2-6.2-16.4 0-22.6l77.2-77.2-77.2-77.2c-6.2-6.2-6.2-16.4 0-22.6l45.4-45.4c6.2-6.2 16.4-6.2 22.6 0l77.2 77.2 77.2-77.2c6.2-6.2 16.4-6.2 22.6 0l45.4 45.4c6.2 6.2 6.2 16.4 0 22.6l-77.2 77.2 77.2 77.2c6.2 6.2 6.2 16.4 0 22.6l-45.4 45.4c-6.2 6.2-16.4 6.2-22.6 0l-77.2-77.2z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  </li>
+                </ul>
               </div>
             </div>
           </el-popover>
@@ -106,11 +132,7 @@
 
     <!-- 遮罩层 -->
     <transition name="fade">
-      <div
-        v-if="showNotificationPanel"
-        class="notification-overlay"
-        @click="showNotificationPanel = false"
-      ></div>
+      <div v-if="showNotificationPanel" class="notification-overlay" @click="showNotificationPanel = false"></div>
     </transition>
   </div>
 </template>
@@ -355,7 +377,7 @@ onMounted(() => {
 
 /* 用户信息卡片 */
 .account-info-card {
-  padding: 12px;
+  padding: 4px;
 }
 
 .account-id {
@@ -396,7 +418,7 @@ onMounted(() => {
   margin: 8px 10px;
 }
 
-.menu-item {
+/* .menu-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -404,10 +426,17 @@ onMounted(() => {
   font-size: 16px;
   padding: 5px 10px;
   user-select: none;
-}
+} */
 
-.personal:hover {
-  color: #87c8ff;
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 12px 16px;
+  margin-bottom: 4px;
+  user-select: none;
 }
 
 .logout {
@@ -440,6 +469,7 @@ onMounted(() => {
 
 .notification-content {
   /* 消息内容样式 */
+  color: unset;
 }
 
 /* 遮罩层样式 */
@@ -473,5 +503,185 @@ onMounted(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+/* -------------------------------------------------------------------- */
+/* 共享样式 - 提取重复定义 */
+.clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hover-bg:hover {
+  background-color: #f7f8fa;
+}
+
+.rounded {
+  border-radius: 8px;
+}
+
+.text-primary {
+  color: #1d2129;
+}
+
+.text-secondary {
+  color: #86909c;
+}
+
+.text-sm {
+  font-size: 12px;
+}
+
+.text-md {
+  font-size: 14px;
+}
+
+.text-lg {
+  font-size: 15px;
+}
+
+.text-xl {
+  font-size: 20px;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.trigger-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 24px;
+}
+
+.avatar-trigger {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: 500;
+  /* box-shadow: 0 4px 12px rgba(64, 158, 255, 0.25); */
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.avatar-trigger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(64, 158, 255, 0.3);
+}
+
+.avatar-trigger.active {
+  border-color: rgba(64, 158, 255, 0.3);
+  box-shadow: 0 0 0 3px rgba(64, 158, 255, 0.1);
+}
+
+.account-info-card.show {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: all;
+}
+
+/* 卡片内容区域 */
+.card-content {
+  /* padding: 50px 24px 20px; */
+  padding: 12px 10px;
+}
+
+/* 信息布局 */
+.user-info-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 8px;
+}
+
+.user-id {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.user-id::before {
+  content: '工号:';
+  margin-right: 6px;
+  /* color: #c9cdD4; */
+  color: #86909c;
+}
+
+.last-login {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* 部门和职位 */
+.dept-position {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: #f7f8fa;
+  margin-bottom: 24px;
+}
+
+.dept,
+.position {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 菜单样式 */
+.menu-list {
+  list-style: none;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  margin-bottom: 4px;
+}
+
+.menu-item.logout {
+  color: #f53f3f;
+}
+
+.menu-icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.menu-item:hover .menu-icon {
+  opacity: 0.8;
+}
+
+/* 账户类型标签 */
+.account-type {
+  display: inline-block;
+  padding: 3px 10px;
+  background-color: rgba(64, 158, 255, 0.1);
+  color: #409eff;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 12px;
+  margin-left: 8px;
+}
+
+:deep(.custom-popover) {
+  padding: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  border: none;
+  overflow: hidden;
 }
 </style>

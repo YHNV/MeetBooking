@@ -9,31 +9,15 @@
           <img src="/logo.png" alt="logo" />
         </div>
         <!-- 中间菜单，使用遍历 -->
-        <el-menu
-          mode="horizontal"
-          :default-active="activeIndex"
-          class="center-menu"
-          @select="handleSelect"
-          router
-        >
-          <el-menu-item
-            v-for="item in menuItems"
-            :key="item.index"
-            :index="item.index"
-            :route="item.route"
-          >
+        <el-menu mode="horizontal" :default-active="activeIndex" class="center-menu" @select="handleSelect" router>
+          <el-menu-item v-for="item in menuItems" :key="item.index" :index="item.index" :route="item.route">
             {{ item.name }}
           </el-menu-item>
         </el-menu>
         <!-- 右侧个人信息 -->
         <div class="right-tools">
           <!--消息通知按钮-->
-          <el-button
-            circle
-            size="default"
-            class="notification-btn"
-            @click="handleNotificationClick"
-          >
+          <el-button circle size="default" class="notification-btn" @click="handleNotificationClick">
             <Bell class="notification-icon" />
             <span v-if="msgCount > 0" class="notification-badge">{{ msgCount }}</span>
           </el-button>
@@ -59,9 +43,7 @@
               <div class="account-meta">
                 <div class="login-time">最后登录时间：<br />{{ accountInfo.lastLoginTime }}</div>
                 <div class="account-type">
-                  {{
-                    accountInfo.isAdmin ? '管理员' : accountInfo.isManager ? '部门经理' : '部门员工'
-                  }}
+                  {{ accountInfo.isAdmin ? '管理员' : accountInfo.isManager ? '部门经理' : '部门员工' }}
                 </div>
               </div>
               <div class="emp-dept" v-if="accountInfo.isAdmin != true">

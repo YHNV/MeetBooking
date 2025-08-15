@@ -24,13 +24,7 @@
       <!-- 右侧功能区 -->
       <div class="right-tools">
         <!-- 消息通知按钮 -->
-        <el-button
-          icon="bell"
-          circle
-          size="small"
-          class="notification-btn"
-          @click="handleNotificationClick"
-        >
+        <el-button icon="bell" circle size="small" class="notification-btn" @click="handleNotificationClick">
           <span v-if="unreadCount > 0" class="notification-badge">{{ unreadCount }}</span>
         </el-button>
         <!-- 用户信息 -->

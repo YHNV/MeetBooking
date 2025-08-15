@@ -51,9 +51,7 @@ export const useAccountStore = defineStore(
         ...accountInfo.value,
         ...loginResponse,
         // 确保lastLoginTime是Date类型
-        lastLoginTime: loginResponse.lastLoginTime
-          ? new Date(loginResponse.lastLoginTime)
-          : new Date(),
+        lastLoginTime: loginResponse.lastLoginTime ? new Date(loginResponse.lastLoginTime) : new Date(),
       }
       // accountInfo.value.lastLoginTime = formatDate(loginResponse.lastLoginTime)
       // 持久化到本地存储
