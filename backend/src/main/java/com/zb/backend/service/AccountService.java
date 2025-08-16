@@ -16,9 +16,14 @@ public class AccountService {
         return accountMapper.selectAccountByAccountId(accountId);
     }
 
-    public LoginResponse getLoginInfo(Long accountId) {
-        System.out.println("获取登录信息：" + accountId);
-        return accountMapper.getLoginInfoByAccountId(accountId);
+    public LoginResponse getEmpLoginInfo(Long accountId) {
+        System.out.println("获取登录信息员工：" + accountId);
+        return accountMapper.getEmpLoginInfoByAccountId(accountId);
+    }
+
+    public LoginResponse getAdminLoginInfo(Long accountId) {
+        System.out.println("获取登录信息管理员：" + accountId);
+        return accountMapper.getAdminLoginInfoByAccountId(accountId);
     }
 
     public Boolean updateLastLoginTimeByAccountId(Long accountId) {

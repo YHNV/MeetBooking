@@ -66,8 +66,17 @@ public class AuthService {
         * String token;
         *
         *  */
+
+        // 普通员工登录
         // 通过accountId在account表中联表查询，将数据封装进LoginResponse中
-        LoginResponse loginResponse = accountService.getLoginInfo(accountId);
+        LoginResponse loginResponse = accountService.getAdminLoginInfo(accountId);
+
+        // 分两种情况，管理员登录，一种普通员工，判断accountId长度，长度为3就是管理员账号
+        // 先查询一管理员，因为只查询accounts表不会报错，如果id为员工id，那么就重新调用员工信息查询
+        if (accountId.toString().length() != 3) {
+            // 当id为员工类型
+            loginResponse = accountService.getEmpLoginInfo(accountId);
+        }
 
         // 查询完成后，获取Token，传入LoginResponse.token
         String token = JwtUtil.createToken(accountId);
@@ -76,6 +85,10 @@ public class AuthService {
         // 删除数据库中已过期的Token
         int deleteExpiredTokens = tokenService.deleteExpiredTokens();
         System.out.println("删除了" + deleteExpiredTokens + "条过期Token");
+
+        // 删除当前登录id的Token
+        int deleteTokenByAccountId = tokenService.deleteTokenByAccountId(accountId);
+        System.out.println(accountId + "用户删除Token：" + deleteTokenByAccountId + "条");
 
         // 将生成的Token放入Token表中
         Boolean isToken = tokenService.insertToken(accountId, token);
@@ -94,9 +107,13 @@ public class AuthService {
         // 删除数据库中已过期的Token
         int deleteExpiredTokens = tokenService.deleteExpiredTokens();
         System.out.println("删除了" + deleteExpiredTokens + "条过期Token");
+
         // 如果能进到这个接口，说明Token一定有效，因为前面有拦截器拦截，过期Token过不来，所以只需要删除Token就可以了
+
+        // 删除当前登录id的Token
         int deleteTokenByAccountId = tokenService.deleteTokenByAccountId(accountId);
         System.out.println(accountId + "用户删除Token：" + deleteTokenByAccountId + "条");
+
         if (deleteTokenByAccountId <= 0) {
             return AuthEnum.ERR_LOGOUT;
         }

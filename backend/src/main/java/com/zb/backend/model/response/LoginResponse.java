@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 // 返回首页基本信息就行了，个人详情界面再返回详细数据
 @Data
 public class LoginResponse {
+    private Long accountId;
     private Boolean isAdmin;
     private Boolean isManager;
     private Boolean firstLogin;

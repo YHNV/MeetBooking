@@ -22,6 +22,6 @@
         delete from TOKENS where ACCOUNT_ID = #{accountId};
     </delete>
     <select id="selectByToken" resultType="com.zb.backend.entity.Token">
-        select id, token, account_id, expiry_time from TOKEN_BLACKLIST where TOKEN = #{token};
+        select id, token, account_id, expiry_time from TOKENS where TOKEN = #{token};
     </select>
 </mapper>

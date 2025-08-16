@@ -9,6 +9,7 @@ export const useAccountStore = defineStore(
     const isLoggedIn = ref(false)
     // 用户数据，为了方便显示，有默认值
     const accountInfo = ref({
+        accountId:0,
       empId: 0,
       empName: '未登录用户',
       isAdmin: false,
@@ -85,6 +86,7 @@ export const useAccountStore = defineStore(
     const reset = () => {
       isLoggedIn.value = false
       accountInfo.value = {
+          accountId:0,
         empId: 0,
         empName: '未登录用户',
         isAdmin: false,

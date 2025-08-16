@@ -1,6 +1,6 @@
 -- 主 schema.sql 文件
 
--- Token黑名单
+-- Token表
 RUNSCRIPT FROM 'classpath:/db/schema/tokens.sql';
 
 -- ID 序列

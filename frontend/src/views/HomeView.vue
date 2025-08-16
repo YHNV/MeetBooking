@@ -32,7 +32,7 @@
                   <Avatar />
                 </el-avatar>
                 <!-- 用户名展示 -->
-                <span class="emp-name">{{ accountInfo.empName }}</span>
+                <span class="emp-name">{{ accountInfo.isAdmin ? '管理员' : accountInfo.empName }}</span>
               </div>
             </template>
             <!-- 用户信息卡片内容 -->
@@ -42,14 +42,14 @@
                   <div>
                     <div class="user-name text-xl font-semibold text-primary">
                       <!-- 显示员工名字和部门信息 -->
-                      {{ accountInfo.empName }}
+                      {{ accountInfo.isAdmin ? '管理员' : accountInfo.empName }}
                       <span class="account-type" id="accountType">{{
                         accountInfo.isAdmin ? '管理员' : accountInfo.isManager ? '部门经理' : '部门员工'
                       }}</span>
                     </div>
                     <!-- 显示员工工号 -->
                     <div class="user-id text-md text-secondary" id="empId">
-                      {{ accountInfo.empId }}
+                      {{ accountInfo.accountId }}
                     </div>
                   </div>
                 </div>
@@ -75,31 +75,13 @@
                 <el-divider />
 
                 <ul class="menu-list">
-                  <li class="menu-item clickable hover-bg rounded text-lg text-primary" id="profileBtn">
-                    <span @click="profile(accountInfo.empId)">个人中心</span>
-                    <svg class="menu-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M858.5 768c-.2 37.5-30.4 68-68 68h-612c-37.6 0-67.8-30.5-68-68v-512c0-37.5 30.4-68 68-68h612c37.6 0 67.8 30.5 68 68v512zM832 800H192V288h640v512z"
-                        fill="currentColor"
-                      />
-                      <path
-                        d="M464 528a48 48 0 1 0 96 0 48 48 0 1 0-96 0zM320 592a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm384 0a32 32 0 1 0 0-64 32 32 0 1 0 0 64z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                  <li class="menu-item clickable hover-bg rounded text-lg text-primary" id="profileBtn"  @click="profile(accountInfo.empId)">
+                    <span>个人中心</span>
+                    <Info class="menu-icon"/>
                   </li>
-                  <li class="menu-item logout clickable hover-bg rounded text-lg" id="logoutBtn">
-                    <span @click="logout(accountInfo.empId)">退出登录</span>
-                    <svg class="menu-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M864 352H736v-80c0-35.3-28.7-64-64-64h-80c-35.3 0-64 28.7-64 64v80H160c-17.7 0-32 14.3-32 32v448c0 17.7 14.3 32 32 32h704c17.7 0 32-14.3 32-32V384c0-17.7-14.3-32-32-32zM640 352V272h144v80H640zM192 768H160V416h32v352zm256 0H416V416h32v352zm256 0H672V416h32v352z"
-                        fill="currentColor"
-                      />
-                      <path
-                        d="M505.4 613.4l-77.2 77.2c-6.2 6.2-16.4 6.2-22.6 0l-45.4-45.4c-6.2-6.2-6.2-16.4 0-22.6l77.2-77.2-77.2-77.2c-6.2-6.2-6.2-16.4 0-22.6l45.4-45.4c6.2-6.2 16.4-6.2 22.6 0l77.2 77.2 77.2-77.2c6.2-6.2 16.4-6.2 22.6 0l45.4 45.4c6.2 6.2 6.2 16.4 0 22.6l-77.2 77.2 77.2 77.2c6.2 6.2 6.2 16.4 0 22.6l-45.4 45.4c-6.2 6.2-16.4 6.2-22.6 0l-77.2-77.2z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                  <li class="menu-item logout clickable hover-bg rounded text-lg" id="logoutBtn" @click="logout(accountInfo.empId)">
+                    <span>退出登录</span>
+                    <Logout class="menu-icon"/>
                   </li>
                 </ul>
               </div>
@@ -141,7 +123,8 @@
 import { ref } from 'vue'
 import Bell from '@/components/svg/Bell.vue'
 import Avatar from '@/components/svg/Avatar.vue'
-import avatar from '@/assets/images/avatar.svg'
+import Logout from '@/components/svg/Logout.vue'
+import Info from '@/components/svg/Info.vue'
 import { formatDate } from '@/utils/date.js'
 
 import { useRouter } from 'vue-router'
@@ -154,6 +137,7 @@ const accountStore = useAccountStore()
 
 // 定义默认个人信息对象
 const accountInfo = ref({
+  accountId: 0,
   empId: 0,
   empName: '未登录用户',
   isAdmin: false,
@@ -235,7 +219,12 @@ const logout = async (empId) => {
     const response = await http.post('/auth/logout', empId)
     console.log(response)
 
-    if (response.code !== 20003) {
+    // 关键判断：如果是401拦截器处理过的响应，直接返回，不执行任何提示
+    // if (response.__is401Handled) {
+    //   return;
+    // }
+
+    if (response.code === 20003) {
       ElMessage.success(response.msg)
       accountStore.logout()
       await router.push('/login')
@@ -274,8 +263,8 @@ watch(
 
 // 挂载登录检查
 onMounted(() => {
-  accountStore.init()
-  console.log(accountStore.accountInfo)
+  // accountStore.init()
+  // console.log(accountStore.accountInfo)
 })
 </script>
 
@@ -610,7 +599,7 @@ onMounted(() => {
 }
 
 .user-id::before {
-  content: '工号:';
+  content: 'ID:';
   margin-right: 6px;
   /* color: #c9cdD4; */
   color: #86909c;
@@ -683,5 +672,10 @@ onMounted(() => {
   border-radius: 12px;
   border: none;
   overflow: hidden;
+}
+
+.user-name {
+  display: flex;
+  align-items: center;
 }
 </style>

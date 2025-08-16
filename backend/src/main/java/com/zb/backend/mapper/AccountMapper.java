@@ -7,7 +7,9 @@ public interface AccountMapper {
     // 通过账号ID获取用户
     Account selectAccountByAccountId(Long accountId);
 
-    LoginResponse getLoginInfoByAccountId(Long accountId);
+    LoginResponse getEmpLoginInfoByAccountId(Long accountId);
+
+    LoginResponse getAdminLoginInfoByAccountId(Long accountId);
 
     Boolean updateLastLoginTime(Long accountId);
 }

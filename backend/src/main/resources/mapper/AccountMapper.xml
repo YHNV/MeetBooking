@@ -23,9 +23,10 @@
         select account_id, password, is_admin, is_active, first_login, last_login_time, create_time, update_time
         from ACCOUNTS where ACCOUNT_ID = #{accountId}
     </select>
-    <select id="getLoginInfoByAccountId" resultType="com.zb.backend.model.response.LoginResponse">
+    <select id="getEmpLoginInfoByAccountId" resultType="com.zb.backend.model.response.LoginResponse">
         SELECT
             -- 账号表字段
+            a.account_id      AS accountId,
             a.is_admin        AS isAdmin,
             a.first_login     AS firstLogin,
             a.last_login_time AS lastLoginTime,
@@ -48,5 +49,24 @@
         -- 查询条件：账号ID
         WHERE
             a.account_id = #{accountId}
+    </select>
+    <select id="getAdminLoginInfoByAccountId" resultType="com.zb.backend.model.response.LoginResponse">
+        SELECT
+            account_id AS accountId,
+            is_admin AS isAdmin,
+            -- 管理员默认不是经理（根据业务可调整）
+            FALSE AS isManager,
+            first_login AS firstLogin,
+            last_login_time AS lastLoginTime,
+            -- 管理员无部门和职位，返回null（可不写，默认就是null）
+            NULL AS deptName,
+            NULL AS position,
+            -- 管理员无员工ID和姓名，返回null
+            NULL AS empId,
+            NULL AS empName
+        FROM accounts
+        WHERE account_id = #{accountId}
+          AND is_admin = TRUE  -- 确保只查询管理员账号
+          AND is_active = TRUE -- 只查询启用状态的账号
     </select>
 </mapper>

@@ -1,7 +1,7 @@
 -- 如果表已存在，先删除（避免冲突）
 DROP TABLE IF EXISTS tokens;
 
--- 创建 Token 黑名单表
+-- 创建 Token表
 CREATE TABLE tokens
 (
     id          INT AUTO_INCREMENT PRIMARY KEY, -- 自增主键
