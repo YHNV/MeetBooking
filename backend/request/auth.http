@@ -7,6 +7,22 @@ POST http://localhost:8080/auth/login
 Content-Type: application/json
 
 {
-  "accountId": "10001",
+  "accountId": "10004",
   "password": "123456"
+}
+
+### 注册
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMSwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU1NDQyODU4LCJleHAiOjE3NTU0NTAwNTh9.cXiizZeNWv7EnmWgxIZlaTZl0BwNN41uipLVGDX0ex3mCU-FAOWTUpTXSP4aY0YcbiR_d7P2B4qYKiRSoWyXhg
+
+{
+  "empName": "null",
+  "deptId": 10002,
+  "phone": 18888788406,
+  "idCard": "430420199808080755",
+  "password": "123456",
+  "position": "超神",
+  "email": "33@qq.com",
+  "isManager": false
 }

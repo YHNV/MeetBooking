@@ -9,7 +9,7 @@ CREATE TABLE employees
     emp_name    VARCHAR(31) NOT NULL COMMENT '员工姓名，非空',
     dept_id     BIGINT      NOT NULL COMMENT '所属部门ID，关联部门表dept_id，非空',
     position    VARCHAR(31) COMMENT '部门职位，可空',
-    phone       VARCHAR(15) NOT NULL COMMENT '联系电话，非空',
+    phone       VARCHAR(15) NOT NULL UNIQUE COMMENT '联系电话，非空',
     email       VARCHAR(63) COMMENT '提醒邮箱，可空',
     id_card     VARCHAR(18) NOT NULL UNIQUE COMMENT '身份证号，非空唯一',
     is_manager  BOOLEAN   DEFAULT FALSE COMMENT '是否为经理，默认false',

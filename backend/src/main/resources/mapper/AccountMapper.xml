@@ -14,10 +14,13 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
+    <insert id="insertAccount">
+        insert into ACCOUNTS (PASSWORD)
+        values (#{password});
+    </insert>
     <update id="updateLastLoginTime">
         update ACCOUNTS set LAST_LOGIN_TIME = CURRENT_TIMESTAMP where ACCOUNT_ID = #{accountId}
     </update>
-
     <!-- 根据账号ID获取账号信息 -->
     <select id="selectAccountByAccountId" resultType="com.zb.backend.entity.Account">
         select account_id, password, is_admin, is_active, first_login, last_login_time, create_time, update_time
@@ -68,5 +71,10 @@
         WHERE account_id = #{accountId}
           AND is_admin = TRUE  -- 确保只查询管理员账号
           AND is_active = TRUE -- 只查询启用状态的账号
+    </select>
+    <select id="isAdminByAccountId" resultType="java.lang.Boolean">
+        select IS_ADMIN
+        from ACCOUNTS
+        where ACCOUNT_ID = #{accountId};
     </select>
 </mapper>

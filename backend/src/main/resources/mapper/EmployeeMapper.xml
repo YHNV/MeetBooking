@@ -16,4 +16,23 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
+    <insert id="insertEmployee">
+        insert into EMPLOYEES (emp_name, dept_id, position, phone, email, id_card, is_manager)
+        values (#{empName}, #{deptId}, #{position}, #{phone}, #{email}, #{idCard}, #{isManager});
+    </insert>
+    <select id="existsByPhone" resultType="java.lang.Boolean">
+        select count(*) > 0
+        from EMPLOYEES
+        where PHONE = #{phone};
+    </select>
+    <select id="existsByIdCard" resultType="java.lang.Boolean">
+        select count(*) > 0
+        from EMPLOYEES
+        where ID_CARD = #{idCard};
+    </select>
+    <select id="selectEmployeeByEmpId" resultType="com.zb.backend.entity.Employee">
+        select emp_id, emp_name, dept_id, position, phone, email, id_card, is_manager, create_time, update_time
+        from EMPLOYEES
+        where EMP_ID = #{empId};
+    </select>
 </mapper>

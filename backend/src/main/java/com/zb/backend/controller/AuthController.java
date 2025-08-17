@@ -1,12 +1,19 @@
 package com.zb.backend.controller;
 
 import com.zb.backend.constants.enums.AuthEnum;
+import com.zb.backend.constants.enums.ErrorEnum;
 import com.zb.backend.constants.enums.ResultEnum;
 import com.zb.backend.model.Result;
 import com.zb.backend.model.request.LoginRequest;
+import com.zb.backend.model.request.RegisterRequest;
 import com.zb.backend.model.response.LoginResponse;
 import com.zb.backend.service.AuthService;
+import com.zb.backend.util.EnumUtil;
+import com.zb.backend.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,6 +38,7 @@ public class AuthController {
      *  */
 
     // 登录
+    @Operation(summary = "登录")
     @PostMapping("/login")
     public Result login(@RequestBody LoginRequest loginRequest) {
         // 打印获取到的登录请求
@@ -53,16 +61,43 @@ public class AuthController {
     }
 
     // 退出登录
+    @Operation(summary = "退出登录")
     @PostMapping("/logout")
-    public Result logout(
-            @RequestHeader("Authorization") String token,
-            @RequestBody Long accountId
-    ) {
-        ResultEnum resultEnum = authService.logout(accountId, token);
+    public Result logout(@RequestBody Long accountId) {
+        ResultEnum resultEnum = authService.logout(accountId);
         if (!resultEnum.getCode().equals(4006)) {
             return Result.error(resultEnum, accountId);
         }
         return Result.success(resultEnum, accountId);
+    }
+
+    // 注册
+    @Operation(summary = "注册 Admin")
+    @PostMapping("/register")
+    public Result register(@Valid @RequestBody RegisterRequest registerRequest) throws Exception {
+        /*
+        * 注册逻辑
+        * 接收到注册请求
+        * 传给Service进行处理
+        *  */
+        System.out.println(this.getClass().getSimpleName() + "：" + registerRequest);
+
+        try {
+            ResultEnum resultEnum = authService.register(registerRequest);
+            // 注册成功，返回注册成功的员工姓名
+            return Result.success(resultEnum, registerRequest.getEmpName());
+        } catch (RuntimeException e) {
+            String errorMsg = e.getMessage();
+            System.out.println(this.getClass().getSimpleName() + "：" + errorMsg);
+            // 调用工具类，传入所有实现ResultEnum的枚举类
+            ResultEnum errorEnum = EnumUtil.findByMessage(errorMsg, AuthEnum.class, ErrorEnum.class);
+            // 若未找到匹配的枚举类，是用默认错误
+            if (errorEnum == null) {
+                errorEnum = ErrorEnum.ERR_SERVER;
+            }
+            return Result.error(5001, e.getMessage());
+        }
+
     }
 
 }

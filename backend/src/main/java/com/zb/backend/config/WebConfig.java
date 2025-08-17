@@ -1,5 +1,6 @@
 package com.zb.backend.config;
 
+import com.zb.backend.config.interceptor.AdminInterceptor;
 import com.zb.backend.config.interceptor.LoginInterceptor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     private final LoginInterceptor loginInterceptor;
+    private final AdminInterceptor adminInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // 通用拦截器
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
@@ -24,6 +27,12 @@ public class WebConfig implements WebMvcConfigurer {
                         "/v3/**",
                         "/auth/login",
                         "/h2-console/**"
+                );
+
+        // 管理员拦截器
+        registry.addInterceptor(adminInterceptor)
+                .addPathPatterns(
+                        "/auth/register"
                 );
 
         WebMvcConfigurer.super.addInterceptors(registry);

@@ -1,5 +1,6 @@
 package com.zb.backend.config.interceptor;
 
+import com.zb.backend.model.JwtClaim;
 import com.zb.backend.service.TokenService;
 import com.zb.backend.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,11 +30,11 @@ public class LoginInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        // 3. 验证令牌并提取accountId
-        Long accountId;
+        // 3. 验证令牌并提取对象
+        JwtClaim jwtClaim;
         try {
-            // 调用工具类验证令牌，成功则返回accountId
-            accountId = JwtUtil.verifyToken(token);
+            // 调用工具类验证令牌，成功则返回对象
+            jwtClaim = JwtUtil.verifyToken(token);
         } catch (Exception e) {
             // 验证失败（过期、篡改等）
             sendErrorResponse(response, e.getMessage());
@@ -41,7 +42,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
 
         // 4. 令牌有效，将accountId存入请求属性（供后续接口使用）
-        request.setAttribute("accountId", accountId);
+        request.setAttribute("TokenParsing", jwtClaim);
 
         // 5. 放行请求
         return true;

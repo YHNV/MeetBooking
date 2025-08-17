@@ -18,7 +18,14 @@ public enum AuthEnum implements ResultEnum {
 
     // 退出登录相关
     SUC_LOGOUT(2003, "退出登录成功"),
-    ERR_LOGOUT(4006, "令牌失效，请重新登录");
+    ERR_LOGOUT(4006, "令牌失效，请重新登录"),
+
+    // 注册相关
+    SUC_REGISTER(2004, "注册成功"),
+    ERR_PHONE_DUPLICATE(4007, "电话号码已被占用"),
+    ERR_IDCARD_DUPLICATE(4008, "身份证号码已被占用"),
+    ERR_DEPT_NOT_EXIST(4009, "部门ID不存在"),
+    ERR_NO_PERMISSION(4010, "无权限，无法执行操作");
 
     private final Integer code;
     private final String message;

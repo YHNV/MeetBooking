@@ -1,5 +1,6 @@
 package com.zb.backend;
 
+import com.zb.backend.model.JwtClaim;
 import com.zb.backend.util.JwtUtil;
 import com.zb.backend.util.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.junit.jupiter.api.Test;
@@ -29,12 +30,13 @@ class BackendApplicationTests {
     @Test
     // 测试Jwt
     void JwtUtil() {
-        String token = JwtUtil.createToken(10001L);
+        JwtClaim jwtClaim = new JwtClaim(10001L, false);
+        String token = JwtUtil.createToken(jwtClaim);
         System.out.println("Token：" + token);
 
         try {
-            Long verifyToken = JwtUtil.verifyToken(token);
-            System.out.println("验证Token：" + verifyToken);
+            JwtClaim jwtClaim1 = JwtUtil.verifyToken(token);
+            System.out.println("验证Token：" + jwtClaim1.toString());
         } catch (Exception e) {
             System.out.println("错误：" + e.getMessage());
             throw new RuntimeException(e);

@@ -14,4 +14,14 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
+    <select id="selectDepartmentByDeptId" resultType="com.zb.backend.entity.Department">
+        select dept_id, dept_name, manager_id, dept_address, dept_desc, is_active, create_time, update_time
+        from DEPARTMENTS
+        where DEPT_ID = #{deptId};
+    </select>
+    <select id="existsByDeptId" resultType="java.lang.Boolean">
+        select count(*) > 0
+        from DEPARTMENTS
+        where DEPT_ID = #{deptId};
+    </select>
 </mapper>

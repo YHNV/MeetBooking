@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.zb.backend.model.JwtClaim;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -26,12 +28,12 @@ public class JwtUtil {
 
     /**
      * 生成JWT令牌
-     * @param accountId 用户账号ID（作为令牌的核心标识）
+     * @param jwtClaim 用户账号ID和isAdmin（作为令牌的核心标识）
      * @return 带前缀的完整令牌字符串（格式："Bearer xxxxxx"）
      */
-    public static String createToken(Long accountId) {
+    public static String createToken(JwtClaim jwtClaim) {
         // 将accountId转为字符串存入令牌主题（subject）
-        String content = accountId.toString();
+        // String content = accountId.toString();
 
         // 当前时间
         Date now = new Date();
@@ -39,12 +41,14 @@ public class JwtUtil {
         Date expireDate = new Date(now.getTime() + EXPIRATION_TIME);
 
         // 构建JWT令牌：
-        // 1. 设置主题（存储accountId）
+        // 1. 设置主题（存储jwtClaim）
         // 2. 设置过期时间
         // 3. 使用HMAC512算法和密钥签名（防止篡改）
         // 4. 拼接前缀后返回
         return TOKEN_PREFIX + JWT.create()
-                .withSubject(content) //将账号存入主题
+                // .withSubject(content) //将账号存入主题
+                .withClaim("accountId", jwtClaim.getAccountId())
+                .withClaim("isAdmin", jwtClaim.getIsAdmin())
                 .withIssuedAt(now) // 签发时间
                 .withExpiresAt(expireDate) // 过期时间
                 .sign(Algorithm.HMAC512(KEY)); // 签名密钥
@@ -56,7 +60,7 @@ public class JwtUtil {
      * @return 验证成功返回账号ID（Long类型）
      * @throws Exception 验证失败时抛出异常（包含具体原因）
      */
-    public static Long verifyToken(String token) throws Exception {
+    public static JwtClaim verifyToken(String token) throws Exception {
         try {
             // 1. 去除令牌前缀（如果存在）
             String pureToken = token.replace(TOKEN_PREFIX, "");
@@ -64,13 +68,22 @@ public class JwtUtil {
             // 2. 验证令牌：
             // - 签名是否正确（使用相同密钥验证）
             // - 是否在有效期内
-            String content = JWT.require(Algorithm.HMAC512(KEY))
+            DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512(KEY))
                     .build()
-                    .verify(pureToken)
-                    .getSubject(); // 获取存储的accountId字符串
+                    .verify(pureToken);
+                    // .getSubject(); // 获取存储的accountId字符串
 
             // 3. 将字符串转回Long类型并返回
-            return Long.parseLong(content);
+            // 3. 从解码后的JWT中获取各个claim的值
+            Long accountId = decodedJWT.getClaim("accountId").asLong();
+            Boolean isAdmin = decodedJWT.getClaim("isAdmin").asBoolean();
+
+            // 4. 构建JwtClaim对象并返回
+            JwtClaim jwtClaim = new JwtClaim();
+            jwtClaim.setAccountId(accountId);
+            jwtClaim.setIsAdmin(isAdmin);
+
+            return jwtClaim;
 
         } catch (TokenExpiredException e) {
             // 令牌已过期（常见错误，需提示用户重新登录）

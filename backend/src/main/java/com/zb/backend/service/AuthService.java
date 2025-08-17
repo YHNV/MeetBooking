@@ -1,18 +1,24 @@
 package com.zb.backend.service;
 
 import com.zb.backend.constants.enums.AuthEnum;
+import com.zb.backend.constants.enums.ErrorEnum;
 import com.zb.backend.constants.enums.ResultEnum;
 import com.zb.backend.entity.Account;
+import com.zb.backend.model.JwtClaim;
+import com.zb.backend.model.request.RegisterRequest;
 import com.zb.backend.model.response.LoginResponse;
 import com.zb.backend.util.JwtUtil;
 import com.zb.backend.util.security.crypto.password.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
     private final AccountService accountService;
+    private final DepartmentService departmentService;
+    private final EmployeeService employeeService;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
@@ -79,7 +85,7 @@ public class AuthService {
         }
 
         // 查询完成后，获取Token，传入LoginResponse.token
-        String token = JwtUtil.createToken(accountId);
+        String token = JwtUtil.createToken(new JwtClaim(accountId, loginResponse.getIsAdmin()));
         loginResponse.setToken(token);
 
         // 删除数据库中已过期的Token
@@ -102,7 +108,7 @@ public class AuthService {
     }
 
     // 退出登录
-    public ResultEnum logout(Long accountId, String token) {
+    public ResultEnum logout(Long accountId) {
         System.out.println("需要退出的accountId：" + accountId);
         // 删除数据库中已过期的Token
         int deleteExpiredTokens = tokenService.deleteExpiredTokens();
@@ -119,5 +125,55 @@ public class AuthService {
         }
         // 删除成功
         return AuthEnum.SUC_LOGOUT;
+    }
+
+    // 注册
+    @Transactional(rollbackFor = Exception.class)
+    public ResultEnum register(RegisterRequest registerRequest) {
+        /*
+        * 注册逻辑
+        * 接收到注册请求模型，进行四个操作
+        * 1.判断是否为管理员，使用accountId进行查询；已在拦截其中实现
+        * 2.判断所添加的部门是否存在
+        * 3.判断手机号是否存在
+        * 4.判断身份证号是否存在
+        *  */
+
+        // 判断部门是否存在，如果不存在返回，抛出异常
+        if(!departmentService.existsByDeptId(registerRequest.getDeptId())) {
+            throw new RuntimeException(AuthEnum.ERR_DEPT_NOT_EXIST.getMessage());
+        }
+
+        // 判断手机号是否存在，如果存在，抛出异常
+        if (employeeService.existsPhone(registerRequest.getPhone())) {
+            throw new RuntimeException(AuthEnum.ERR_PHONE_DUPLICATE.getMessage());
+        }
+
+        // 判断身份证号是否存在，如果存在，抛出异常
+        if (employeeService.existsIdCard(registerRequest.getIdCard())) {
+            throw new RuntimeException(AuthEnum.ERR_IDCARD_DUPLICATE.getMessage());
+        }
+
+        // 都不存在，执行注册逻辑，需要Accounts和Employees一起执行
+        // 新增Accounts，固定密码123456，并加密
+        // 获取请求中的密码
+        String password = registerRequest.getPassword();
+
+        // 如果密码不存在（为空或空白字符串），则使用默认密码123456
+        if (password == null || password.trim().isEmpty()) {
+            password = "123456";
+        }
+
+        // 密码加密
+        String encodedPassword = passwordEncoder.encode(password);
+
+        // 执行注册（操作失败抛异常）
+        Boolean addAccount = accountService.addAccount(encodedPassword);
+        Boolean addEmployee = employeeService.addEmployee(registerRequest);
+        if (!addAccount || !addEmployee) {
+            throw new RuntimeException(ErrorEnum.ERR_SERVER.getMessage());
+        }
+
+        return AuthEnum.SUC_REGISTER;
     }
 }
