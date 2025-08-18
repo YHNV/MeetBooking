@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS reservation_attendees;
+DROP TABLE IF EXISTS reservations;
 DROP TABLE IF EXISTS accounts;
 
 -- 创建账号表
