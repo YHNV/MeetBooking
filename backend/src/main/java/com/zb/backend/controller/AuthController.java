@@ -52,7 +52,7 @@ public class AuthController {
         // 判断resultEnum的Code是否为2001登录成功
         if (!resultEnum.getCode().equals(2001)) {
             // 如果不成功，返回ResultEnum，不带数据体
-            return Result.error(resultEnum, null);
+            return Result.error(resultEnum);
         }
 
         // 如果是登录成功，则调用getLoginInfo
@@ -74,7 +74,7 @@ public class AuthController {
     // 注册
     @Operation(summary = "注册 Admin")
     @PostMapping("/register")
-    public Result register(@Valid @RequestBody RegisterRequest registerRequest) throws Exception {
+    public Result register(@Valid @RequestBody RegisterRequest registerRequest) {
         /*
         * 注册逻辑
         * 接收到注册请求
@@ -82,21 +82,27 @@ public class AuthController {
         *  */
         System.out.println(this.getClass().getSimpleName() + "：" + registerRequest);
 
-        try {
+        // try {
             ResultEnum resultEnum = authService.register(registerRequest);
-            // 注册成功，返回注册成功的员工姓名
-            return Result.success(resultEnum, registerRequest.getEmpName());
-        } catch (RuntimeException e) {
-            String errorMsg = e.getMessage();
-            System.out.println(this.getClass().getSimpleName() + "：" + errorMsg);
-            // 调用工具类，传入所有实现ResultEnum的枚举类
-            ResultEnum errorEnum = EnumUtil.findByMessage(errorMsg, AuthEnum.class, ErrorEnum.class);
-            // 若未找到匹配的枚举类，是用默认错误
-            if (errorEnum == null) {
-                errorEnum = ErrorEnum.ERR_SERVER;
+
+            if (resultEnum.getCode().equals(2004)) {
+                // 注册成功，返回注册成功的员工姓名
+                return Result.success(resultEnum, registerRequest.getEmpName());
             }
-            return Result.error(5001, e.getMessage());
-        }
+
+            return Result.error(resultEnum);
+
+        // } catch (RuntimeException e) {
+        //     String errorMsg = e.getMessage();
+        //     System.out.println(this.getClass().getSimpleName() + "：" + errorMsg);
+        //     // 调用工具类，传入所有实现ResultEnum的枚举类
+        //     ResultEnum errorEnum = EnumUtil.findByMessage(errorMsg, AuthEnum.class, ErrorEnum.class);
+        //     // 若未找到匹配的枚举类，是用默认错误
+        //     if (errorEnum == null) {
+        //         errorEnum = ErrorEnum.ERR_SERVER;
+        //     }
+        //     return Result.error(5001, e.getMessage());
+        // }
 
     }
 

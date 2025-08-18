@@ -8,6 +8,3 @@ RUNSCRIPT FROM 'classpath:/db/data/02_accounts.sql';
 
 -- 员工数据
 RUNSCRIPT FROM 'classpath:/db/data/03_employees.sql';
-
--- Test用户数据
-RUNSCRIPT FROM 'classpath:/db/data/t_01_users.sql';

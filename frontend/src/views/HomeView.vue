@@ -79,7 +79,7 @@
                     <span>个人中心</span>
                     <Info class="menu-icon"/>
                   </li>
-                  <li class="menu-item logout clickable hover-bg rounded text-lg" id="logoutBtn" @click="logout(accountInfo.empId)">
+                  <li class="menu-item logout clickable hover-bg rounded text-lg" id="logoutBtn" @click="logout(accountInfo.accountId)">
                     <span>退出登录</span>
                     <Logout class="menu-icon"/>
                   </li>

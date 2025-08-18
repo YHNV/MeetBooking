@@ -18,14 +18,20 @@ public class GlobalExceptionHandler {
     public Result<Object> handleException(Exception e) {
         String message = e.getClass().getName() + ": " + e.getMessage();
         System.out.println(message);
-        MethodArgumentNotValidException exception = (MethodArgumentNotValidException) e;
-        String errorMsg = exception.getBindingResult()
-                .getFieldError() // 获取第一个错误字段
-                .getDefaultMessage(); // 获取你在注解中定义的message（如"邮箱长度不能超过63个字符"）
 
-        // 输出到控制台（可选）
-        System.out.println("校验错误：" + errorMsg);
-        log.error(message);
-        return Result.error(50001, errorMsg);
+        log.error(message, e); // 打印完整堆栈信息，方便调试
+        // 先判断异常是否为参数校验异常
+        // if (e instanceof MethodArgumentNotValidException) {
+        //     // 是参数校验异常，才进行转换
+        //     MethodArgumentNotValidException exception = (MethodArgumentNotValidException) e;
+        //     String errorMsg = exception.getBindingResult()
+        //             .getFieldError() // 获取第一个错误字段
+        //             .getDefaultMessage(); // 获取注解中定义的提示信息
+        //     System.out.println("校验错误：" + errorMsg);
+        //     return Result.error(5001, errorMsg);
+        // } else {
+            // 不是参数校验异常，返回通用错误信息
+            return Result.error(500, "系统异常");
+        // }
     }
 }

@@ -141,17 +141,20 @@ public class AuthService {
 
         // 判断部门是否存在，如果不存在返回，抛出异常
         if(!departmentService.existsByDeptId(registerRequest.getDeptId())) {
-            throw new RuntimeException(AuthEnum.ERR_DEPT_NOT_EXIST.getMessage());
+            // throw new RuntimeException(AuthEnum.ERR_DEPT_NOT_EXIST.getMessage());
+            return AuthEnum.ERR_DEPT_NOT_EXIST;
         }
 
         // 判断手机号是否存在，如果存在，抛出异常
         if (employeeService.existsPhone(registerRequest.getPhone())) {
-            throw new RuntimeException(AuthEnum.ERR_PHONE_DUPLICATE.getMessage());
+            // throw new RuntimeException(AuthEnum.ERR_PHONE_DUPLICATE.getMessage());
+            return AuthEnum.ERR_PHONE_DUPLICATE;
         }
 
         // 判断身份证号是否存在，如果存在，抛出异常
         if (employeeService.existsIdCard(registerRequest.getIdCard())) {
-            throw new RuntimeException(AuthEnum.ERR_IDCARD_DUPLICATE.getMessage());
+            // throw new RuntimeException(AuthEnum.ERR_IDCARD_DUPLICATE.getMessage());
+            return AuthEnum.ERR_IDCARD_DUPLICATE;
         }
 
         // 都不存在，执行注册逻辑，需要Accounts和Employees一起执行
@@ -167,11 +170,26 @@ public class AuthService {
         // 密码加密
         String encodedPassword = passwordEncoder.encode(password);
 
-        // 执行注册（操作失败抛异常）
-        Boolean addAccount = accountService.addAccount(encodedPassword);
-        Boolean addEmployee = employeeService.addEmployee(registerRequest);
+        // 执行注册（try catch包围，两条语句只要有一条执行，哪怕出错，第二条也必须执行）
+        Boolean addAccount = false;
+        Boolean addEmployee = false;
+
+        try {
+            addAccount = accountService.addAccount(encodedPassword);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            addEmployee = employeeService.addEmployee(registerRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 如果执行出现异常，手动抛出异常，否则不能回滚
         if (!addAccount || !addEmployee) {
             throw new RuntimeException(ErrorEnum.ERR_SERVER.getMessage());
+            // return ErrorEnum.ERR_SERVER;
         }
 
         return AuthEnum.SUC_REGISTER;
