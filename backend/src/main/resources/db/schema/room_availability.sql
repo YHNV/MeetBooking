@@ -10,8 +10,8 @@ CREATE TABLE room_availability
     -- 用16位整数表示状态：每位对应一个区间（0=可用，1=不可用）
     -- 二进制位从右到左对应区间：0=9:00-9:30，1=9:30-10:00，...，15=16:30-17:00
     slot_status   INT    NOT NULL DEFAULT 0 COMMENT '16个区间的状态（默认全可用）',
-    create_time   TIMESTAMP       DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    update_time   TIMESTAMP       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+--     create_time   TIMESTAMP       DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+--     update_time   TIMESTAMP       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
 
     PRIMARY KEY (room_id, schedule_date),                                       -- 复合主键：确保一个会议室一天一条记录
     FOREIGN KEY (room_id) REFERENCES meeting_rooms (room_id) ON DELETE CASCADE, -- 关联会议室表

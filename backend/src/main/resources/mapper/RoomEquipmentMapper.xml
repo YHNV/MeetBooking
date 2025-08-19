@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- <mapper namespace="com.example.mapper.UserMapper"> -->
+
+<mapper namespace="com.zb.backend.mapper.RoomEquipmentMapper">
+    <!-- RoomEquipment实体类与room_equipment表的字段映射 -->
+    <resultMap id="RoomEquipmentResultMap" type="com.zb.backend.entity.RoomEquipment">
+        <result property="roomId" column="room_id"/>
+        <result property="equipmentId" column="equipment_id"/>
+    </resultMap>
+</mapper>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- <mapper namespace="com.example.mapper.UserMapper"> -->
+
+<mapper namespace="com.zb.backend.mapper.AnnouncementMapper">
+    <!-- Announcement实体类与announcements表的字段映射 -->
+    <resultMap id="AnnouncementResultMap" type="com.zb.backend.entity.Announcement">
+        <result property="announcementId" column="announcement_id"/>
+        <result property="senderId" column="sender_id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="isActive" column="is_active"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+</mapper>

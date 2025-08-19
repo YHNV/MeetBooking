@@ -40,7 +40,7 @@ public class AuthController {
     // 登录
     @Operation(summary = "登录")
     @PostMapping("/login")
-    public Result login(@RequestBody LoginRequest loginRequest) {
+    public Result<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         // 打印获取到的登录请求
         System.out.println("登录请求体" + loginRequest);
         // Long accountId = loginRequest.getAccountId();
@@ -63,18 +63,18 @@ public class AuthController {
     // 退出登录
     @Operation(summary = "退出登录")
     @PostMapping("/logout")
-    public Result logout(@RequestBody Long accountId) {
+    public Result<Boolean> logout(@RequestBody Long accountId) {
         ResultEnum resultEnum = authService.logout(accountId);
         if (!resultEnum.getCode().equals(4006)) {
-            return Result.error(resultEnum, accountId);
+            return Result.error(resultEnum, false);
         }
-        return Result.success(resultEnum, accountId);
+        return Result.success(resultEnum, true);
     }
 
     // 注册
     @Operation(summary = "注册 Admin")
     @PostMapping("/register")
-    public Result register(@Valid @RequestBody RegisterRequest registerRequest) {
+    public Result<Boolean> register(@Valid @RequestBody RegisterRequest registerRequest) {
         /*
         * 注册逻辑
         * 接收到注册请求
@@ -86,11 +86,11 @@ public class AuthController {
             ResultEnum resultEnum = authService.register(registerRequest);
 
             if (resultEnum.getCode().equals(2004)) {
-                // 注册成功，返回注册成功的员工姓名
-                return Result.success(resultEnum, registerRequest.getEmpName());
+                // 注册成功，返回注册成功
+                return Result.success(resultEnum, true);
             }
 
-            return Result.error(resultEnum);
+            return Result.error(resultEnum, false);
 
         // } catch (RuntimeException e) {
         //     String errorMsg = e.getMessage();

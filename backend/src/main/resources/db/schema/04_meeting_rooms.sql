@@ -9,10 +9,17 @@ CREATE TABLE meeting_rooms
 (
     room_id     BIGINT                                        DEFAULT NEXTVAL('room_seq') COMMENT '会议室ID，主键',
     room_name   VARCHAR(31)             NOT NULL UNIQUE COMMENT '会议室名称',
-    room_type   ENUM ('SMALL', 'LARGE') DEFAULT 'SMALL' NOT NULL COMMENT '会议室种类：小型、大型',
+    room_type   ENUM (
+        'SMALL', -- 小型会议室
+        'LARGE' -- 大型会议室
+        ) DEFAULT 'SMALL' NOT NULL COMMENT '会议室种类：小型、大型',
     capacity    INT                     NOT NULL COMMENT '会议室容量',
     location    VARCHAR(255)            NOT NULL COMMENT '会议室地址',
-    room_status ENUM ('AVAILABLE', 'DISABLED', 'MAINTENANCE') DEFAULT 'AVAILABLE' COMMENT '会议室状态：可用、不可用、维护',
+    room_status ENUM (
+        'AVAILABLE', -- 可用
+        'DISABLED', -- 不可用
+        'MAINTENANCE' -- 维护
+        ) DEFAULT 'AVAILABLE' COMMENT '会议室状态：可用、不可用、维护',
     image_url   VARCHAR(255) COMMENT '会议室展示图片URL',
     create_time TIMESTAMP                                     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time TIMESTAMP                                     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
