@@ -29,6 +29,7 @@ CREATE SEQUENCE equipment_seq START WITH 10001;
 CREATE SEQUENCE reservation_seq START WITH 10001;
 
 -- 通知 ID 序列
-
+CREATE SEQUENCE notification_seq START WITH 10001;
 
 -- 公告 ID序列
+CREATE SEQUENCE announcement_seq START WITH 10001;

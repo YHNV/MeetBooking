@@ -36,3 +36,9 @@ RUNSCRIPT FROM 'classpath:/db/schema/06_reservations.sql';
 -- 会议人员参与表
 RUNSCRIPT FROM 'classpath:/db/schema/reservation_attendees.sql';
 
+-- 通知表
+RUNSCRIPT FROM 'classpath:/db/schema/07_notifications.sql';
+
+-- 公告表
+RUNSCRIPT FROM 'classpath:/db/schema/08_announcements.sql';
+
