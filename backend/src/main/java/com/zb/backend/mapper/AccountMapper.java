@@ -21,4 +21,7 @@ public interface AccountMapper {
 
     // 新增账号
     Boolean insertAccount(String password);
+
+    // 修改账号状态
+    Boolean updateAccountStatus(Long accountId);
 }

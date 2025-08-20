@@ -44,4 +44,9 @@ public class AccountService {
     public Boolean addAccount(String password) {
         return accountMapper.insertAccount(password);
     }
+
+    // 修改账号状态
+    public Boolean toggleAccountStatus(Long accountId) {
+        return accountMapper.updateAccountStatus(accountId);
+    }
 }

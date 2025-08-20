@@ -5,7 +5,9 @@ import com.zb.backend.mapper.EmployeeMapper;
 import com.zb.backend.model.PageResult;
 import com.zb.backend.model.request.QueryEmployeesRequest;
 import com.zb.backend.model.request.RegisterRequest;
+import com.zb.backend.model.request.UpdateEmployeeInfo;
 import com.zb.backend.model.response.QueryEmployeesResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -72,5 +74,9 @@ public class EmployeeService {
         List<QueryEmployeesResponse> employeesResponseList = employeeMapper.selectEmployeeList(queryRequest);
 
         return new PageResult<>(total, queryRequest.getPageNum(), queryRequest.getPageSize(), employeesResponseList);
+    }
+
+    public Boolean updateEmployeeInfo(@Valid UpdateEmployeeInfo updateEmployeeInfo) {
+        return employeeMapper.updateEmployeeInfo(updateEmployeeInfo);
     }
 }

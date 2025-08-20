@@ -3,7 +3,9 @@ package com.zb.backend.mapper;
 import com.zb.backend.entity.Employee;
 import com.zb.backend.model.request.QueryEmployeesRequest;
 import com.zb.backend.model.request.RegisterRequest;
+import com.zb.backend.model.request.UpdateEmployeeInfo;
 import com.zb.backend.model.response.QueryEmployeesResponse;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -25,4 +27,6 @@ public interface EmployeeMapper {
 
     // 分页查询员工所有信息
     List<QueryEmployeesResponse> selectEmployeeList(QueryEmployeesRequest queryRequest);
+
+    Boolean updateEmployeeInfo(@Valid UpdateEmployeeInfo updateEmployeeInfo);
 }

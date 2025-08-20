@@ -20,6 +20,16 @@
         insert into EMPLOYEES (emp_name, dept_id, position, phone, email, id_card, is_manager)
         values (#{empName}, #{deptId}, #{position}, #{phone}, #{email}, #{idCard}, #{isManager});
     </insert>
+    <update id="updateEmployeeInfo">
+        update EMPLOYEES
+        set EMP_NAME = #{empName},
+            DEPT_ID = #{deptId},
+            POSITION = #{position},
+            PHONE = #{phone},
+            EMAIL = #{email},
+            ID_CARD = #{idCard}
+        where EMP_ID = #{empId};
+    </update>
     <select id="existsByPhone" resultType="java.lang.Boolean">
         select count(*) > 0
         from EMPLOYEES
