@@ -35,4 +35,60 @@
         from EMPLOYEES
         where EMP_ID = #{empId};
     </select>
+    <select id="countEmployeeList" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM employees e
+        INNER JOIN accounts a ON e.emp_id = a.account_id
+        INNER JOIN departments d ON e.dept_id = d.dept_id
+        <where>
+            <if test="deptId != null">
+                AND e.dept_id = #{deptId}
+            </if>
+            <if test="isActive != null">
+                AND a.is_active = #{isActive}
+            </if>
+            <if test="isManager != null">
+                AND e.is_manager = #{isManager}
+            </if>
+            <if test="empName != null and empName != ''">
+                AND e.emp_name LIKE CONCAT('%', #{empName}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="selectEmployeeList" resultType="com.zb.backend.model.response.QueryEmployeesResponse">
+        SELECT
+            a.account_id,
+            a.is_active,
+            a.last_login_time,
+            e.emp_id,
+            e.emp_name,
+            e.position,
+            e.phone,
+            e.email,
+            e.id_card,
+            e.is_manager,
+            e.create_time,
+            d.dept_id,
+            d.dept_name
+        FROM employees e
+                 INNER JOIN accounts a ON e.emp_id = a.account_id
+                 INNER JOIN departments d ON e.dept_id = d.dept_id
+        <where>
+            <if test="deptId != null">
+                AND e.dept_id = #{deptId}
+            </if>
+            <if test="isActive != null">
+                AND a.is_active = #{isActive}
+            </if>
+            <if test="isManager != null">
+                AND e.is_manager = #{isManager}
+            </if>
+            <if test="empName != null and empName != ''">
+                AND e.emp_name LIKE CONCAT('%', #{empName}, '%')
+            </if>
+        </where>
+        ORDER BY a.account_id ASC
+        <!-- 关键：使用 ${} 直接拼接，因为 MyBatis 对 LIMIT 子句中的 #{} 处理在不同数据库下可能有问题 -->
+        LIMIT ${(pageNum - 1) * pageSize}, #{pageSize}
+    </select>
 </mapper>
