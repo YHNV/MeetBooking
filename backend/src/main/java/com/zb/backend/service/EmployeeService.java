@@ -1,5 +1,7 @@
 package com.zb.backend.service;
 
+import com.zb.backend.constants.enums.EmployeeEnum;
+import com.zb.backend.constants.enums.ResultEnum;
 import com.zb.backend.entity.Employee;
 import com.zb.backend.mapper.EmployeeMapper;
 import com.zb.backend.model.PageResult;
@@ -61,7 +63,7 @@ public class EmployeeService {
         // }
 
         // 如果当前页参数大于总页数，那么将其改为第一页
-        if (queryRequest.getPageNum() >= ( (int) Math.ceil((double)total / queryRequest.getPageSize()) ) ) {
+        if (queryRequest.getPageNum() >= ((int) Math.ceil((double) total / queryRequest.getPageSize()))) {
             queryRequest.setPageNum(1);
         }
 
@@ -76,7 +78,34 @@ public class EmployeeService {
         return new PageResult<>(total, queryRequest.getPageNum(), queryRequest.getPageSize(), employeesResponseList);
     }
 
-    public Boolean updateEmployeeInfo(@Valid UpdateEmployeeInfo updateEmployeeInfo) {
-        return employeeMapper.updateEmployeeInfo(updateEmployeeInfo);
+    // 更新员工信息
+    public ResultEnum updateEmployeeInfo(@Valid UpdateEmployeeInfo updateEmployeeInfo) {
+        // 首先通过id，查询原数据是否正常，经理数据
+        Employee employee = employeeMapper.selectEmployeeByEmpId(updateEmployeeInfo.getEmpId());
+
+        // 当修改的员工为经理是，部门ID、职位不能修改，
+        if (employee.getIsManager()) {
+            if (
+                    !employee.getEmpId().equals(updateEmployeeInfo.getEmpId())
+                            ||
+                            !employee.getPosition().equals(updateEmployeeInfo.getPosition())) {
+                return EmployeeEnum.ERR_UPDATE_MANAGER;
+            }
+        }
+
+        // 当修改为员工时，职位不能带有“经理”、“管理”字样
+        if (!employee.getIsManager()) {
+            if (updateEmployeeInfo.getPosition().contains("经理") || updateEmployeeInfo.getPosition().contains("管理")) {
+                return EmployeeEnum.ERR_UPDATE_POSITION;
+            }
+        }
+
+        Boolean updateInfo = employeeMapper.updateEmployeeInfo(updateEmployeeInfo);
+
+        if (!updateInfo) {
+            return EmployeeEnum.ERR_UPDATE_INFO;
+        }
+
+        return EmployeeEnum.SUC_UPDATE_INFO;
     }
 }

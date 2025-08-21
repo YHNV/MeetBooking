@@ -13,7 +13,7 @@ public class UpdateEmployeeInfo {
     private String empName;
     @NotNull(message = "部门ID不能为空")
     private Long deptId;
-    @ValidPosition(message = "职位不能包含'经理'或'管理'字样")
+    // @ValidPosition(message = "职位不能包含'经理'或'管理'字样")
     @Size(max = 31, message = "职位长度不能超过31个字符")
     private String position;
     @NotBlank(message = "联系电话不能为空")

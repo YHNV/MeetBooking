@@ -65,7 +65,7 @@ public class AuthController {
     @PostMapping("/logout")
     public Result<Boolean> logout(@RequestBody Long accountId) {
         ResultEnum resultEnum = authService.logout(accountId);
-        if (!resultEnum.getCode().equals(4006)) {
+        if (!resultEnum.getCode().equals(2001)) {
             return Result.error(resultEnum, false);
         }
         return Result.success(resultEnum, true);
@@ -85,7 +85,7 @@ public class AuthController {
         // try {
             ResultEnum resultEnum = authService.register(registerRequest);
 
-            if (resultEnum.getCode().equals(2004)) {
+            if (resultEnum.getCode().equals(2001)) {
                 // 注册成功，返回注册成功
                 return Result.success(resultEnum, true);
             }

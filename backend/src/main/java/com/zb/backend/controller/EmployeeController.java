@@ -1,5 +1,7 @@
 package com.zb.backend.controller;
 
+import com.zb.backend.constants.enums.EmployeeEnum;
+import com.zb.backend.constants.enums.ResultEnum;
 import com.zb.backend.model.PageResult;
 import com.zb.backend.model.Result;
 import com.zb.backend.model.request.QueryEmployeesRequest;
@@ -28,7 +30,7 @@ public class EmployeeController {
 
         PageResult<QueryEmployeesResponse> pageResult = employeeService.queryEmployees(queryRequest);
 
-        return Result.success(2001, "查询成功", pageResult);
+        return Result.success(EmployeeEnum.SUC_QUERY_INFO, pageResult);
     }
 
     // 修改员工信息
@@ -36,12 +38,12 @@ public class EmployeeController {
     @PostMapping("/updateEmployeeInfo")
     public Result<Boolean> updateEmployeeInfo(@Valid @RequestBody UpdateEmployeeInfo updateEmployeeInfo) {
 
-        Boolean update = employeeService.updateEmployeeInfo(updateEmployeeInfo);
+        ResultEnum resultEnum = employeeService.updateEmployeeInfo(updateEmployeeInfo);
 
-        if (!update) {
-            return Result.success(4001, "修改失败", false);
+        if (resultEnum.getCode().equals(2001)) {
+            return Result.error(resultEnum, false);
         }
 
-        return Result.success(2001, "修改成功", true);
+        return Result.success(resultEnum, true);
     }
 }

@@ -24,4 +24,6 @@ public interface AccountMapper {
 
     // 修改账号状态
     Boolean updateAccountStatus(Long accountId);
+
+    Boolean updatePasswordByAccountId(Long accountId, String password);
 }
