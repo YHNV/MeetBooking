@@ -9,6 +9,8 @@ public enum EmployeeEnum implements ResultEnum {
     ERR_UPDATE_INFO(4001, "修改失败"),
     ERR_UPDATE_POSITION(4002, "职位非法修改"),
     ERR_UPDATE_MANAGER(4003, "经理非法修改"),
+    ERR_PHONE_DUPLICATE(4004, "电话号码已被占用"),
+    ERR_IDCARD_DUPLICATE(4005, "身份证号码已被占用"),
 
     // 分页查询员工信息
     SUC_QUERY_INFO(2001, "查询成功"),

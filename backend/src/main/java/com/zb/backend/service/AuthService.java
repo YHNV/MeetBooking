@@ -42,13 +42,13 @@ public class AuthService {
         String storePassword = account.getPassword();
 
         // 将用户输入的密码调用加密算法进行对比
-        if (passwordEncoder.matches(password, storePassword)) {
-            // 密码校验成功，登录成功
-            return AuthEnum.SUC_LOGIN;
-        } else {
+        if (!passwordEncoder.matches(password, storePassword)) {
             // 登录失败
             return AuthEnum.ERR_WRONG_PWD;
         }
+
+        // 密码校验成功，登录成功
+        return AuthEnum.SUC_LOGIN;
     }
 
     // 登录获取用户信息

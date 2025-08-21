@@ -1,5 +1,6 @@
 package com.zb.backend.service;
 
+import com.zb.backend.constants.enums.AuthEnum;
 import com.zb.backend.constants.enums.EmployeeEnum;
 import com.zb.backend.constants.enums.ResultEnum;
 import com.zb.backend.entity.Employee;
@@ -97,6 +98,20 @@ public class EmployeeService {
         if (!employee.getIsManager()) {
             if (updateEmployeeInfo.getPosition().contains("经理") || updateEmployeeInfo.getPosition().contains("管理")) {
                 return EmployeeEnum.ERR_UPDATE_POSITION;
+            }
+        }
+
+        // 判断手机号是否存在，如果修改的手机号和当前手机号不一样
+        if (!employee.getPhone().equals(updateEmployeeInfo.getPhone())) {
+            if (existsPhone(updateEmployeeInfo.getPhone())) {
+                return EmployeeEnum.ERR_PHONE_DUPLICATE;
+            }
+        }
+
+        // 判断身份证号是否存在，如果修改的身份证和当前身份证不一样
+        if (!employee.getIdCard().equals(updateEmployeeInfo.getIdCard())) {
+            if (existsIdCard(updateEmployeeInfo.getIdCard())) {
+                return EmployeeEnum.ERR_IDCARD_DUPLICATE;
             }
         }
 

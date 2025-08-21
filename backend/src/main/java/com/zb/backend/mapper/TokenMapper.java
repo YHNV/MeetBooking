@@ -17,4 +17,6 @@ public interface TokenMapper {
     // 检查Token是否存在
     Token selectByToken(String token);
 
+    // 通过accountId查找Token
+    Token selectTokenByAccountId(Long accountId);
 }

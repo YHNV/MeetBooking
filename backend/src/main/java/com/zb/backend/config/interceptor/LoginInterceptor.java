@@ -1,5 +1,7 @@
 package com.zb.backend.config.interceptor;
 
+import com.zb.backend.entity.Token;
+import com.zb.backend.mapper.TokenMapper;
 import com.zb.backend.model.JwtClaim;
 import com.zb.backend.service.TokenService;
 import com.zb.backend.util.JwtUtil;
@@ -13,6 +15,13 @@ import java.io.IOException;
 
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
+
+    private final TokenService tokenService;
+
+    public LoginInterceptor(TokenService tokenService) {
+        this.tokenService = tokenService;
+    }
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 不验证OPTIONS请求，直接放行，带有Authorization
@@ -41,6 +50,14 @@ public class LoginInterceptor implements HandlerInterceptor {
             return false;
         }
 
+        // 判断数据库中，是否存在这个Token
+        Token tokenByAccountId = tokenService.selectTokenByAccountId(jwtClaim.getAccountId());
+        System.out.println(this.getClass().getSimpleName() + " 获取Token：" + tokenByAccountId);
+        if (tokenByAccountId == null) {
+            sendErrorResponse(response, "令牌失效，请重新登录");
+            return false;
+        }
+
         // 4. 令牌有效，将accountId存入请求属性（供后续接口使用）
         request.setAttribute("TokenParsing", jwtClaim);
 
@@ -55,4 +72,8 @@ public class LoginInterceptor implements HandlerInterceptor {
         // 返回JSON格式的错误信息（与前端约定格式）
         response.getWriter().write("{\"code\":401,\"msg\":\"" + message + "\"}");
     }
+
+    // public void setTokenService(TokenService tokenService) {
+    //     this.tokenService = tokenService;
+    // }
 }

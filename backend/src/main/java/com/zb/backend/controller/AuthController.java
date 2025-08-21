@@ -1,5 +1,6 @@
 package com.zb.backend.controller;
 
+import com.zb.backend.annotation.CurrentAccount;
 import com.zb.backend.constants.enums.AuthEnum;
 import com.zb.backend.constants.enums.ErrorEnum;
 import com.zb.backend.constants.enums.ResultEnum;
@@ -63,7 +64,7 @@ public class AuthController {
     // 退出登录
     @Operation(summary = "退出登录")
     @PostMapping("/logout")
-    public Result<Boolean> logout(@RequestBody Long accountId) {
+    public Result<Boolean> logout(@CurrentAccount Long accountId) {
         ResultEnum resultEnum = authService.logout(accountId);
         if (!resultEnum.getCode().equals(2001)) {
             return Result.error(resultEnum, false);
@@ -85,12 +86,13 @@ public class AuthController {
         // try {
             ResultEnum resultEnum = authService.register(registerRequest);
 
-            if (resultEnum.getCode().equals(2001)) {
-                // 注册成功，返回注册成功
-                return Result.success(resultEnum, true);
+            if (!resultEnum.getCode().equals(2001)) {
+                // 注册失败
+                return Result.error(resultEnum, false);
             }
 
-            return Result.error(resultEnum, false);
+            // 注册成功，返回注册成功
+            return Result.success(resultEnum, true);
 
         // } catch (RuntimeException e) {
         //     String errorMsg = e.getMessage();

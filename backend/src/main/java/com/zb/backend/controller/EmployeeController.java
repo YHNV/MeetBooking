@@ -40,7 +40,7 @@ public class EmployeeController {
 
         ResultEnum resultEnum = employeeService.updateEmployeeInfo(updateEmployeeInfo);
 
-        if (resultEnum.getCode().equals(2001)) {
+        if (!resultEnum.getCode().equals(2001)) {
             return Result.error(resultEnum, false);
         }
 

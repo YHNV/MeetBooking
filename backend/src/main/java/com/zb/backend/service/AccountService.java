@@ -4,8 +4,10 @@ import com.zb.backend.constants.enums.AccountEnum;
 import com.zb.backend.constants.enums.ResultEnum;
 import com.zb.backend.entity.Account;
 import com.zb.backend.mapper.AccountMapper;
+import com.zb.backend.model.request.ChangePassword;
 import com.zb.backend.model.response.LoginResponse;
 import com.zb.backend.util.security.crypto.password.PasswordEncoder;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -73,5 +75,38 @@ public class AccountService {
         }
 
         return AccountEnum.SUC_RESET_PASSWORD;
+    }
+
+    // 修改密码
+    public ResultEnum changePassword(Long accountId, @Valid ChangePassword changePassword) {
+        /*
+        * 通过accountId获取账号信息，对比原密码，是否正确
+        * 判断新密码和确认密码是否相同
+        * 判断完成后修改密码
+        * 修改完成后，调用退出登录接口
+        *  */
+
+        Account account = accountMapper.selectAccountByAccountId(accountId);
+        // 判断旧密码是否和数据库中相同
+        if (!passwordEncoder.matches(changePassword.getOldPassword(), account.getPassword())) {
+            return AccountEnum.ERR_OLD_PASSWORD;
+        }
+
+        // 判断新密码和确认密码是否相同
+        if (!changePassword.getNewPassword().equals(changePassword.getConfirmPassword())) {
+            return AccountEnum.ERR_MATCH_PASSWORD;
+        }
+
+        // 如果不存在上述错误，开始修改密码
+        // 将新密码加密后传入Mapper
+        String newPassword = passwordEncoder.encode(changePassword.getNewPassword());
+
+        Boolean change = accountMapper.updatePasswordByAccountId(accountId, newPassword);
+
+        if (!change) {
+            return AccountEnum.ERR_CHANGE_PASSWORD;
+        }
+
+        return AccountEnum.SUC_CHANGE_PASSWORD;
     }
 }

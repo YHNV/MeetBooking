@@ -24,4 +24,9 @@
     <select id="selectByToken" resultType="com.zb.backend.entity.Token">
         select id, token, account_id, expiry_time from TOKENS where TOKEN = #{token};
     </select>
+    <select id="selectTokenByAccountId" resultType="com.zb.backend.entity.Token">
+        select id, token, account_id, expiry_time
+        from TOKENS
+        where ACCOUNT_ID = #{accountId};
+    </select>
 </mapper>

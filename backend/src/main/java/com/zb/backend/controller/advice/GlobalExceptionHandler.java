@@ -9,9 +9,25 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    // 处理校验异常
+    // 1. 优先处理参数校验异常（MethodArgumentNotValidException）
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // 400状态码，符合参数错误语义
+    public Result<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
+        // 获取第一个校验失败的message（也可收集所有错误）
+        String errorMsg = e.getBindingResult()
+                .getFieldError() // 获取第一个错误字段
+                .getDefaultMessage(); // 提取注解中的message
+
+        // 打印错误日志（便于排查问题）
+        System.out.println("参数校验错误：" + errorMsg);
+
+        // 返回校验错误信息（使用400类错误码，区分系统异常）
+        return Result.error(400, errorMsg);
+    }
+
     // 处理所有异常
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -19,7 +35,6 @@ public class GlobalExceptionHandler {
         String message = e.getClass().getName() + ": " + e.getMessage();
         System.out.println(message);
 
-        log.error(message, e); // 打印完整堆栈信息，方便调试
         // 先判断异常是否为参数校验异常
         // if (e instanceof MethodArgumentNotValidException) {
         //     // 是参数校验异常，才进行转换
