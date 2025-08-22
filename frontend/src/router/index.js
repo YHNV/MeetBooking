@@ -8,6 +8,7 @@ import { useAccountStore } from '@/stores/account.js'
 import Navbar1 from '@/components/Navbar1.vue'
 import Navbar from '@/components/Navbar.vue'
 import HomeView from '@/views/HomeView.vue'
+import EmployeeManageView from '@/views/EmployeeManageView.vue'
 
 const routes = [
   {
@@ -17,7 +18,7 @@ const routes = [
       { path: 'rooms', component: TestView },
       { path: 'booking', component: Navbar },
       { path: 'notice', component: DarkAndLight },
-      { path: 'profile', component: LoginView },
+      { path: 'profile', component: EmployeeManageView },
     ],
     meta: { requiresAuth: true },
   },

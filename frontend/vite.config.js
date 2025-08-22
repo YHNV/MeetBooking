@@ -28,7 +28,6 @@ export default defineConfig({
     //     rewrite: (path) => path.replace(/^\/api/, '')
     //   }
     // }
-
   },
   plugins: [
     vue(),
@@ -36,21 +35,21 @@ export default defineConfig({
       // 自动导入Vue的API，如ref
       imports: ['vue'],
       resolvers: [
-          ElementPlusResolver(),
-          // 自动导入图表组件
-          IconsResolver({
-            prefix: 'Icon',
-          }),
+        ElementPlusResolver(),
+        // 自动导入图表组件
+        IconsResolver({
+          prefix: 'Icon',
+        }),
       ],
     }),
     Components({
       resolvers: [
-          // 自动导入ElementPlus组件
-          ElementPlusResolver(),
-          // 自动注册图表组件
-          IconsResolver({
-            enabledCollections: ['ep'],
-          })
+        // 自动导入ElementPlus组件
+        ElementPlusResolver(),
+        // 自动注册图表组件
+        IconsResolver({
+          enabledCollections: ['ep'],
+        }),
       ],
     }),
     Icons({
@@ -61,6 +60,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
-    }
-  }
+    },
+  },
 })
