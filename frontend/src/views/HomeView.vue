@@ -75,13 +75,21 @@
                 <el-divider />
 
                 <ul class="menu-list">
-                  <li class="menu-item clickable hover-bg rounded text-lg text-primary" id="profileBtn"  @click="profile(accountInfo.empId)">
+                  <li
+                    class="menu-item clickable hover-bg rounded text-lg text-primary"
+                    id="profileBtn"
+                    @click="profile(accountInfo.empId)"
+                  >
                     <span>个人中心</span>
-                    <Info class="menu-icon"/>
+                    <Info class="menu-icon" />
                   </li>
-                  <li class="menu-item logout clickable hover-bg rounded text-lg" id="logoutBtn" @click="logout(accountInfo.accountId)">
+                  <li
+                    class="menu-item logout clickable hover-bg rounded text-lg"
+                    id="logoutBtn"
+                    @click="logout(accountInfo.accountId)"
+                  >
                     <span>退出登录</span>
-                    <Logout class="menu-icon"/>
+                    <Logout class="menu-icon" />
                   </li>
                 </ul>
               </div>
