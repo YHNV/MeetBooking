@@ -44,6 +44,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         try {
             // 调用工具类验证令牌，成功则返回对象
             jwtClaim = JwtUtil.verifyToken(token);
+            System.out.println("解析出来的Token：" + jwtClaim);
         } catch (Exception e) {
             // 验证失败（过期、篡改等）
             sendErrorResponse(response, e.getMessage());
@@ -51,9 +52,15 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
 
         // 判断数据库中，是否存在这个Token
-        Token tokenByAccountId = tokenService.selectTokenByAccountId(jwtClaim.getAccountId());
-        System.out.println(this.getClass().getSimpleName() + " 获取Token：" + tokenByAccountId);
-        if (tokenByAccountId == null) {
+        // Token tokenByAccountId = tokenService.selectTokenByAccountId(jwtClaim.getAccountId());
+        // System.out.println(this.getClass().getSimpleName() + " 获取Token：" + tokenByAccountId);
+        // if (tokenByAccountId == null) {
+        //     sendErrorResponse(response, "令牌失效，请重新登录");
+        //     return false;
+        // }
+        Token selectByToken = tokenService.selectByToken(token);
+        System.out.println(this.getClass().getSimpleName() + " 获取Token：" + selectByToken);
+        if (selectByToken == null) {
             sendErrorResponse(response, "令牌失效，请重新登录");
             return false;
         }

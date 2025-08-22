@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-// Jwt主题类
+// Jwt声明信息
 public class JwtClaim {
     private Long accountId;
     private Boolean isAdmin;

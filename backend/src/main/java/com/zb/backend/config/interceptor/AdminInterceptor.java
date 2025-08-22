@@ -16,6 +16,7 @@ public class AdminInterceptor implements HandlerInterceptor {
 
         // 在AdminInterceptor的preHandle中简化代码
         JwtClaim jwtClaim = (JwtClaim) request.getAttribute("TokenParsing");
+        System.out.println("管理员拦截器获取Token解析：" + jwtClaim);
         if (jwtClaim == null || !jwtClaim.getIsAdmin()) {
             sendErrorResponse(response, "没有管理员权限");
             return false;

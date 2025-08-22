@@ -38,7 +38,7 @@ public class TokenService {
     }
 
     // 查询Token是否存在
-    Token selectByToken(String token) {
+    public Token selectByToken(String token) {
         return tokenMapper.selectByToken(token);
     }
 }

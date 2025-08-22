@@ -4,8 +4,11 @@ import com.zb.backend.constants.enums.AccountEnum;
 import com.zb.backend.constants.enums.ResultEnum;
 import com.zb.backend.entity.Account;
 import com.zb.backend.mapper.AccountMapper;
+import com.zb.backend.model.JwtClaim;
 import com.zb.backend.model.request.ChangePassword;
+import com.zb.backend.model.response.AccountDetailResponse;
 import com.zb.backend.model.response.LoginResponse;
+import com.zb.backend.util.IdCardUtil;
 import com.zb.backend.util.security.crypto.password.PasswordEncoder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,16 +26,13 @@ public class AccountService {
         return accountMapper.selectAccountByAccountId(accountId);
     }
 
-    // 获取员工登录信息，联表查询
-    public LoginResponse getEmpLoginInfo(Long accountId) {
-        System.out.println("获取登录信息员工：" + accountId);
-        return accountMapper.getEmpLoginInfoByAccountId(accountId);
-    }
-
-    // 获取管理员登录信息
-    public LoginResponse getAdminLoginInfo(Long accountId) {
-        System.out.println("获取登录信息管理员：" + accountId);
-        return accountMapper.getAdminLoginInfoByAccountId(accountId);
+    // 获取账号登录信息，判断是否是管理员调用不同的方法
+    public LoginResponse getAccountLoginInfo(Long accountId, Boolean isAdmin) {
+        System.out.println("获取登录信息账号：" + accountId);
+        if (isAdmin) {
+            return accountMapper.selectAdminLoginInfoByAccountId(accountId);
+        }
+        return accountMapper.selectEmpLoginInfoByAccountId(accountId);
     }
 
     // 更新最后登录时间
@@ -108,5 +108,23 @@ public class AccountService {
         }
 
         return AccountEnum.SUC_CHANGE_PASSWORD;
+    }
+
+    // 获取个人信息详情
+    public AccountDetailResponse getAccountDetail(JwtClaim jwtClaim) {
+        // 判断当前账号是管理员还是员工
+        if (jwtClaim.getIsAdmin()) {
+            // 当前账号为管理员，调用查询管理员账号详情方法
+            return accountMapper.selectAdminDetailByAccountId(jwtClaim.getAccountId());
+        }
+        AccountDetailResponse EmpDetail = accountMapper.selectEmpDetailAccountId(jwtClaim.getAccountId());
+        // 处理身份证信息，将身份证信息解析为：年龄、性别、出生日期，并将身份证号设置为null
+        String idCard = EmpDetail.getIdCard();
+        EmpDetail.setAge(IdCardUtil.calculateAge(idCard));
+        EmpDetail.setGender(IdCardUtil.parseGender(idCard));
+        EmpDetail.setFormattedBirthday(IdCardUtil.parseBirthdayWithYear(idCard));
+        EmpDetail.setIdCard(null);
+
+        return EmpDetail;
     }
 }

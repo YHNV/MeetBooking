@@ -54,35 +54,29 @@ public class AuthService {
     // 登录获取用户信息
     public LoginResponse getLoginInfo(Long accountId) {
         /*
-        * 账号表：
-        * Boolean isAdmin;
-        * Boolean firstLogin;
-        * LocalDateTime lastLoginTime;
-        *
-        * 员工表：
-        * Long empId;
-        * String empName;
-        * Boolean isManager;
-        * String position;
-        *
-        * 部门表：
-        * String deptName;
-        *
-        * 获取Token
-        * String token;
-        *
-        *  */
+         * 账号表：
+         * Boolean isAdmin;
+         * Boolean firstLogin;
+         * LocalDateTime lastLoginTime;
+         *
+         * 员工表：
+         * Long empId;
+         * String empName;
+         * Boolean isManager;
+         * String position;
+         *
+         * 部门表：
+         * String deptName;
+         *
+         * 获取Token
+         * String token;
+         *
+         *  */
 
-        // 普通员工登录
-        // 通过accountId在account表中联表查询，将数据封装进LoginResponse中
-        LoginResponse loginResponse = accountService.getAdminLoginInfo(accountId);
+        // 通过accountId获取账号信息，有accountService判断是否管理员
+        Account account = accountService.getAccountByAccountId(accountId);
 
-        // 分两种情况，管理员登录，一种普通员工，判断accountId长度，长度为3就是管理员账号
-        // 先查询一管理员，因为只查询accounts表不会报错，如果id为员工id，那么就重新调用员工信息查询
-        if (accountId.toString().length() != 3) {
-            // 当id为员工类型
-            loginResponse = accountService.getEmpLoginInfo(accountId);
-        }
+        LoginResponse loginResponse = accountService.getAccountLoginInfo(accountId, account.getIsAdmin());
 
         // 查询完成后，获取Token，传入LoginResponse.token
         String token = JwtUtil.createToken(new JwtClaim(accountId, loginResponse.getIsAdmin()));
@@ -131,16 +125,16 @@ public class AuthService {
     @Transactional(rollbackFor = Exception.class)
     public ResultEnum register(RegisterRequest registerRequest) {
         /*
-        * 注册逻辑
-        * 接收到注册请求模型，进行四个操作
-        * 1.判断是否为管理员，使用accountId进行查询；已在拦截其中实现
-        * 2.判断所添加的部门是否存在
-        * 3.判断手机号是否存在
-        * 4.判断身份证号是否存在
-        *  */
+         * 注册逻辑
+         * 接收到注册请求模型，进行四个操作
+         * 1.判断是否为管理员，使用accountId进行查询；已在拦截其中实现
+         * 2.判断所添加的部门是否存在
+         * 3.判断手机号是否存在
+         * 4.判断身份证号是否存在
+         *  */
 
         // 判断部门是否存在，如果不存在返回，抛出异常
-        if(!departmentService.existsByDeptId(registerRequest.getDeptId())) {
+        if (!departmentService.existsByDeptId(registerRequest.getDeptId())) {
             // throw new RuntimeException(AuthEnum.ERR_DEPT_NOT_EXIST.getMessage());
             return AuthEnum.ERR_DEPT_NOT_EXIST;
         }

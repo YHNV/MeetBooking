@@ -12,6 +12,10 @@ public enum AccountEnum implements ResultEnum {
     SUC_RESET_PASSWORD(2001, "重置成功"),
     ERR_RESET_PASSWORD(4001, "重置失败"),
 
+    // 获取个人信息详情
+    SUC_DETAIL(2001, "获取成功"),
+    ERR_DETAIL(4001, "获取失败"),
+
     // 修改密码
     SUC_CHANGE_PASSWORD(2001, "修改成功"),
     ERR_OLD_PASSWORD(4001, "原密码错误"),

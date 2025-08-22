@@ -1,6 +1,7 @@
 package com.zb.backend.mapper;
 
 import com.zb.backend.entity.Account;
+import com.zb.backend.model.response.AccountDetailResponse;
 import com.zb.backend.model.response.LoginResponse;
 
 public interface AccountMapper {
@@ -8,10 +9,10 @@ public interface AccountMapper {
     Account selectAccountByAccountId(Long accountId);
 
     // 通过id获取员工信息，Account、Department、Employee三表联表查询
-    LoginResponse getEmpLoginInfoByAccountId(Long accountId);
+    LoginResponse selectEmpLoginInfoByAccountId(Long accountId);
 
     // 通过id获取管理员信息
-    LoginResponse getAdminLoginInfoByAccountId(Long accountId);
+    LoginResponse selectAdminLoginInfoByAccountId(Long accountId);
 
     // 更新最后登录时间
     Boolean updateLastLoginTime(Long accountId);
@@ -25,5 +26,12 @@ public interface AccountMapper {
     // 修改账号状态
     Boolean updateAccountStatus(Long accountId);
 
+    // 更新密码
     Boolean updatePasswordByAccountId(Long accountId, String password);
+
+    // 获取管理员账号详情
+    AccountDetailResponse selectAdminDetailByAccountId(Long accountId);
+
+    // 获取员工账号详情
+    AccountDetailResponse selectEmpDetailAccountId(Long accountId);
 }

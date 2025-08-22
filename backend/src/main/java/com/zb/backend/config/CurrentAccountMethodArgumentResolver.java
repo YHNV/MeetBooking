@@ -16,7 +16,7 @@ public class CurrentAccountMethodArgumentResolver implements HandlerMethodArgume
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.hasParameterAnnotation(CurrentAccount.class) &&
-                parameter.getParameterType().equals(Long.class);
+                parameter.getParameterType().equals(JwtClaim.class);
     }
 
     @Override
@@ -32,6 +32,6 @@ public class CurrentAccountMethodArgumentResolver implements HandlerMethodArgume
             throw new Exception("未获取到用户信息");
         }
 
-        return jwtClaim.getAccountId();
+        return jwtClaim;
     }
 }

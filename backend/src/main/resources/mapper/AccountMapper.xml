@@ -36,7 +36,7 @@
         select account_id, password, is_admin, is_active, first_login, last_login_time, create_time, update_time
         from ACCOUNTS where ACCOUNT_ID = #{accountId}
     </select>
-    <select id="getEmpLoginInfoByAccountId" resultType="com.zb.backend.model.response.LoginResponse">
+    <select id="selectEmpLoginInfoByAccountId" resultType="com.zb.backend.model.response.LoginResponse">
         SELECT
             -- 账号表字段
             a.account_id      AS accountId,
@@ -63,28 +63,61 @@
         WHERE
             a.account_id = #{accountId}
     </select>
-    <select id="getAdminLoginInfoByAccountId" resultType="com.zb.backend.model.response.LoginResponse">
+    <select id="selectAdminLoginInfoByAccountId" resultType="com.zb.backend.model.response.LoginResponse">
         SELECT
             account_id AS accountId,
             is_admin AS isAdmin,
             -- 管理员默认不是经理（根据业务可调整）
-            FALSE AS isManager,
+            -- FALSE AS isManager,
             first_login AS firstLogin,
-            last_login_time AS lastLoginTime,
-            -- 管理员无部门和职位，返回null（可不写，默认就是null）
-            NULL AS deptName,
-            NULL AS position,
-            -- 管理员无员工ID和姓名，返回null
-            NULL AS empId,
-            NULL AS empName
+            last_login_time AS lastLoginTime
         FROM accounts
         WHERE account_id = #{accountId}
           AND is_admin = TRUE  -- 确保只查询管理员账号
-          AND is_active = TRUE -- 只查询启用状态的账号
+          -- AND is_active = TRUE -- 只查询启用状态的账号
     </select>
     <select id="isAdminByAccountId" resultType="java.lang.Boolean">
         select IS_ADMIN
         from ACCOUNTS
         where ACCOUNT_ID = #{accountId};
+    </select>
+    <select id="selectAdminDetailByAccountId" resultType="com.zb.backend.model.response.AccountDetailResponse">
+        SELECT
+            a.account_id AS accountId,
+            a.is_admin AS isAdmin,
+            a.is_active AS isActive,
+            a.first_login AS firstLogin,
+            a.last_login_time AS lastLoginTime,
+            a.create_time AS createTime,
+            a.update_time AS updateTime
+        FROM accounts a
+        WHERE a.account_id = #{accountId}
+          AND a.is_admin = true
+    </select>
+    <select id="selectEmpDetailAccountId" resultType="com.zb.backend.model.response.AccountDetailResponse">
+        SELECT a.account_id      as accountId,
+               a.is_admin        as isAdmin,
+               a.is_active       as isActive,
+               a.first_login     as firstLogin,
+               a.last_login_time as lastLoginTime,
+               a.create_time     as createTime,
+               a.update_time     as updateTime,
+               e.emp_id          as empId,
+               e.emp_name        as empName,
+               e.position        as position,
+               e.phone           as phone,
+               e.email           as email,
+               e.id_card         as idCard,
+               e.is_manager      as isManager,
+               d.dept_id         as deptId,
+               d.dept_name       as deptName,
+               d.manager_id      as managerId,
+               d.dept_address    as deptAddress,
+               d.dept_desc       as deptDesc
+        FROM accounts a
+                 INNER JOIN employees e ON a.account_id = e.emp_id
+                 INNER JOIN departments d ON e.dept_id = d.dept_id
+        WHERE a.account_id = #{accountId}
+          AND a.is_admin = false
     </select>
 </mapper>

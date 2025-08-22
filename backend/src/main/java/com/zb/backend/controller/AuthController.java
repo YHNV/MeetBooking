@@ -4,6 +4,7 @@ import com.zb.backend.annotation.CurrentAccount;
 import com.zb.backend.constants.enums.AuthEnum;
 import com.zb.backend.constants.enums.ErrorEnum;
 import com.zb.backend.constants.enums.ResultEnum;
+import com.zb.backend.model.JwtClaim;
 import com.zb.backend.model.Result;
 import com.zb.backend.model.request.LoginRequest;
 import com.zb.backend.model.request.RegisterRequest;
@@ -64,8 +65,8 @@ public class AuthController {
     // 退出登录
     @Operation(summary = "退出登录")
     @PostMapping("/logout")
-    public Result<Boolean> logout(@CurrentAccount Long accountId) {
-        ResultEnum resultEnum = authService.logout(accountId);
+    public Result<Boolean> logout(@CurrentAccount JwtClaim jwtClaim) {
+        ResultEnum resultEnum = authService.logout(jwtClaim.getAccountId());
         if (!resultEnum.getCode().equals(2001)) {
             return Result.error(resultEnum, false);
         }

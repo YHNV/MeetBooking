@@ -1,9 +1,13 @@
 package com.zb.backend.controller;
 
 import com.zb.backend.annotation.CurrentAccount;
+import com.zb.backend.constants.enums.AccountEnum;
 import com.zb.backend.constants.enums.ResultEnum;
+import com.zb.backend.entity.Account;
+import com.zb.backend.model.JwtClaim;
 import com.zb.backend.model.Result;
 import com.zb.backend.model.request.ChangePassword;
+import com.zb.backend.model.response.AccountDetailResponse;
 import com.zb.backend.service.AccountService;
 import com.zb.backend.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,16 +55,25 @@ public class AccountController {
 
     @Operation(summary = "修改密码")
     @PostMapping("/changePassword")
-    public Result<Boolean> changePassword(@Valid @RequestBody ChangePassword changePassword, @CurrentAccount Long accountId) {
-        System.out.println(this.getClass().getSimpleName() + " 修改密码：" + accountId);
-        ResultEnum resultEnum = accountService.changePassword(accountId, changePassword);
+    public Result<Boolean> changePassword(@Valid @RequestBody ChangePassword changePassword, @CurrentAccount JwtClaim jwtClaim) {
+        System.out.println(this.getClass().getSimpleName() + " 修改密码：" + jwtClaim.getAccountId());
+        ResultEnum resultEnum = accountService.changePassword(jwtClaim.getAccountId(), changePassword);
         if (!resultEnum.getCode().equals(2001)) {
             return Result.error(resultEnum, false);
         }
         // 修改密码成功，调用退出登录方法
-        ResultEnum logout = authService.logout(accountId);
+        ResultEnum logout = authService.logout(jwtClaim.getAccountId());
         return Result.success(resultEnum, true);
     }
 
+    @Operation(summary = "获取个人信息详情")
+    @PostMapping("/getAccountDetail")
+    public Result<AccountDetailResponse> getAccountDetail(@CurrentAccount JwtClaim jwtClaim) {
+        System.out.println(this.getClass().getSimpleName() + " 获取个人信息详情：" + jwtClaim.getAccountId());
+
+        AccountDetailResponse accountDetail = accountService.getAccountDetail(jwtClaim);
+
+        return Result.success(AccountEnum.SUC_DETAIL, accountDetail);
+    }
 
 }
