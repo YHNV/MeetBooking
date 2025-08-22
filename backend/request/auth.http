@@ -1,0 +1,44 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 登录
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "accountId": "102",
+  "password": "123456"
+}
+
+### 登录
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "accountId": "10001",
+  "password": "123456"
+}
+
+### 退出登录
+POST http://localhost:8080/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU1NzkxMzcwLCJleHAiOjE3NTU3OTg1NzB9.n2Vdrz5NT8neRei1kpOr5VtyMSh4GVxWjtgxJ4itqPCFsj5qYUoFicTnApW-bfYaZQLUr5paWJwhwZvCA_GICw
+
+
+### 注册
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU1NDk0MjQ4LCJleHAiOjE3NTU1MDE0NDh9.Tn0ZuOtVWOCT7I2jZZSfjhBlQ0XY1_3DERuTMxvbpt_2M_dxq9XobeneCvXk1mxYVrCEGCkYYtOUKoDc2hey7g
+
+{
+  "empName": "null",
+  "deptId": 10003,
+  "phone": "18888788436",
+  "idCard": "430420199808080737",
+  "password": "123456",
+  "position": "超神",
+  "email": "33@qq.com",
+  "isManager": false
+}
+
+

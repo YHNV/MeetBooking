@@ -1,0 +1,10 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 获取简单部门集合
+POST http://localhost:8080/dept/getSimpleDepartmentList
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU1ODc3MjM2LCJleHAiOjE3NTU4ODQ0MzZ9.TFZCezg8g2jzR2APXG-3f64tyUJbCWNNcpW1IhWsDeqzKLEhbrapaeGsP2We01ijEXS-woiUePDccYE9-pDp9A
+
+
+

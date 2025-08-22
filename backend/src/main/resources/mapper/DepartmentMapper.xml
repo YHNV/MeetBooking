@@ -24,4 +24,8 @@
         from DEPARTMENTS
         where DEPT_ID = #{deptId};
     </select>
+    <select id="selectSimpleDepartment" resultType="com.zb.backend.model.response.SimpleDepartmentResponse">
+        select DEPT_ID, DEPT_NAME
+        from DEPARTMENTS;
+    </select>
 </mapper>
