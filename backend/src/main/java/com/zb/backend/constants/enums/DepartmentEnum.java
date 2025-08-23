@@ -14,7 +14,7 @@ public enum DepartmentEnum implements ResultEnum {
 
     // 获取简单部门集合
     SUC_SIMPLE_LIST(2001, "获取成功"),
-    ERR_SIMPLE_LIST(4001, "获取成功"),
+    ERR_SIMPLE_LIST(4001, "获取失败"),
 
     // 分页查询部门信息
     SUC_QUERY_INFO(2001, "查询成功"),

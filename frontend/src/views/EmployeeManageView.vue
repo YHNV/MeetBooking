@@ -4,41 +4,30 @@
       <div class="filter-container">
         <el-row :gutter="20">
           <!-- 员工姓名筛选 -->
-          <el-col :span="6">
+          <el-col :span="5">
             <div class="filter-item">
               <label class="filter-label">员工姓名</label>
               <el-input v-model="filters.empName" placeholder="请输入员工姓名" clearable @keyup.enter="handleQuery" />
             </div>
           </el-col>
 
-          <!-- 职位筛选 -->
-          <!-- <el-col :span="6">
-            <div class="filter-item">
-              <label class="filter-label">职位</label>
-              <el-input v-model="filters.position" placeholder="请输入职位" clearable @keyup.enter="handleQuery" />
-            </div>
-          </el-col> -->
-
           <!-- 部门筛选 -->
-          <el-col :span="6">
+          <el-col :span="5">
             <div class="filter-item">
-              <label class="filter-label">部门名称</label>
-              <el-input v-model="filters.deptId" placeholder="请输入部门名称" clearable @keyup.enter="handleQuery" />
+              <label class="filter-label">部门</label>
+              <el-select v-model="filters.deptId" placeholder="请选择部门" clearable>
+                <el-option
+                  v-for="dept in departmentMap"
+                  :key="dept.deptId"
+                  :label="dept.deptName"
+                  :value="dept.deptId"
+                />
+              </el-select>
             </div>
           </el-col>
 
-          <!-- 手机号筛选 -->
-          <!-- <el-col :span="6">
-            <div class="filter-item">
-              <label class="filter-label">手机号</label>
-              <el-input v-model="filters.phone" placeholder="请输入手机号" clearable @keyup.enter="handleQuery" />
-            </div>
-          </el-col> -->
-        </el-row>
-
-        <el-row :gutter="20" class="mt-3">
           <!-- 是否在职 -->
-          <el-col :span="6">
+          <el-col :span="5">
             <div class="filter-item">
               <label class="filter-label">是否在职</label>
               <el-select v-model="filters.isActive" placeholder="请选择在职状态" clearable>
@@ -49,7 +38,7 @@
           </el-col>
 
           <!-- 是否为管理者 -->
-          <el-col :span="6">
+          <el-col :span="5">
             <div class="filter-item">
               <label class="filter-label">是否为管理者</label>
               <el-select v-model="filters.isManager" placeholder="请选择是否管理" clearable>
@@ -60,11 +49,13 @@
           </el-col>
 
           <!-- 操作按钮 -->
-          <el-col :span="12" class="filter-item">
-            <label class="filter-label">&nbsp;</label>
-            <div>
-              <el-button type="primary" @click="handleQuery"> 查询 </el-button>
-              <el-button @click="handleReset"> 重置 </el-button>
+          <el-col :span="4">
+            <div class="filter-item">
+              <label class="filter-label">&nbsp;</label>
+              <div>
+                <el-button type="primary" @click="handleQuery"> 查询 </el-button>
+                <el-button @click="handleReset"> 重置 </el-button>
+              </div>
             </div>
           </el-col>
         </el-row>
@@ -90,11 +81,11 @@
       </el-table>
 
       <!-- 分页控件 -->
-      <div class="pagination-container mt-4 flex justify-end">
+      <div class="pagination-container">
         <el-pagination
           v-model:current-page="pagination.pageNum"
           v-model:page-size="pagination.pageSize"
-          :page-sizes="[10, 20, 50, 100]"
+          :page-sizes="[10, 20, 50]"
           :total="pagination.total"
           layout="total, sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
@@ -114,6 +105,7 @@ const http = useApi()
 // 状态管理
 const loading = ref(false)
 const employeeList = ref([])
+const departmentMap = ref([])
 
 // 筛选条件
 const filters = reactive({
@@ -137,6 +129,7 @@ const pagination = reactive({
 // 页面加载时查询数据
 onMounted(() => {
   fetchEmployeeList()
+  fetchDepartmentMap()
 })
 
 // 查询员工列表
@@ -168,13 +161,31 @@ const fetchEmployeeList = async () => {
       pagination.total = response.data.total || 0
       pagination.pages = response.data.pages || 0
     } else {
-      ElMessage.error(response.msg || '查询失败')
+      ElMessage.error(response.msg || '员工信息查询失败')
     }
   } catch (error) {
     console.error('查询员工列表失败:', error)
     ElMessage.error('查询失败，请稍后重试')
   } finally {
     loading.value = false
+  }
+}
+
+// 获取部门信息
+const fetchDepartmentMap = async () => {
+  try {
+    // 获取部门映射信息
+    const response = await http.post('/dept/getSimpleDepartmentList')
+
+    if (response.code === 2001) {
+      departmentMap.value = response.data || []
+      // console.log(departmentMap.value)
+    } else {
+      ElMessage.error(response.msg || '部门映射查询失败')
+    }
+  } catch (error) {
+    console.error('获取部门映射信息失败:', error)
+    ElMessage.error('查询失败，请稍后重试')
   }
 }
 
@@ -188,7 +199,7 @@ const handleQuery = () => {
 const handleReset = () => {
   // 重置筛选条件
   Object.keys(filters).forEach((key) => {
-    filters[key] = key === 'deptId' ? 0 : null
+    filters[key] = null
   })
   // 重置分页
   pagination.pageNum = 1

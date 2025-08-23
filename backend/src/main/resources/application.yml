@@ -3,11 +3,11 @@ spring:
   datasource:
     driver-class-name: org.h2.Driver
     # url: jdbc:h2:file:./db/h2/sample;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER=TRUE
-    # url: jdbc:h2:mem:db
+    url: jdbc:h2:mem:db
     # url: jdbc:h2:tcp://localhost/mem:test
     # url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE;AUTO_SERVER_PORT=9092
     # 设置H2数据库模式为文件模式，并开启服务 文件存储位置为当前项目下创建db文件夹
-    url: jdbc:h2:file:./db/sample;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1
+    # url: jdbc:h2:file:./db/sample;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1
     username: hh
     password: hh123456
   sql:
