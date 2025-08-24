@@ -9,6 +9,7 @@ import Navbar1 from '@/components/Navbar1.vue'
 import Navbar from '@/components/Navbar.vue'
 import HomeView from '@/views/HomeView.vue'
 import EmployeeManageView from '@/views/EmployeeManageView.vue'
+import ProfileView from '@/views/ProfileView.vue'
 
 const routes = [
   {
@@ -18,7 +19,7 @@ const routes = [
       { path: 'rooms', component: TestView },
       { path: 'booking', component: Navbar },
       { path: 'notice', component: DarkAndLight },
-      { path: 'profile', component: EmployeeManageView },
+      { path: 'profile', component: ProfileView },
     ],
     meta: { requiresAuth: true },
   },

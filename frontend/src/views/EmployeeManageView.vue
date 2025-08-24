@@ -97,22 +97,25 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAccountStore } from '@/stores/account.js'
 import { useApi } from '@/composables/useApi.js'
 
 const http = useApi()
+const router = useRouter()
+const accountStore = useAccountStore()
 
 // 状态管理
 const loading = ref(false)
 const employeeList = ref([])
 const departmentMap = ref([])
 
+const isAdmin = computed(() => accountStore.accountInfo.isAdmin)
+
 // 筛选条件
 const filters = reactive({
   empName: '',
-  //   position: '',
-  //   deptName: '',
-  //   phone: '',
   isActive: null, // 使用null作为初始值，避免传递空字符串
   isManager: null,
   deptId: null,
@@ -128,8 +131,14 @@ const pagination = reactive({
 
 // 页面加载时查询数据
 onMounted(() => {
-  fetchEmployeeList()
-  fetchDepartmentMap()
+  if (!isAdmin.value) {
+    // 不是管理员，进行拦截
+    ElMessage.warning('您没有权限访问此页面')
+    router.replace('/') // 重定向到首页
+  } else {
+    fetchEmployeeList()
+    fetchDepartmentMap()
+  }
 })
 
 // 查询员工列表
@@ -144,9 +153,6 @@ const fetchEmployeeList = async () => {
       // 仅包含有值的筛选条件，避免传递null或空字符串
       // 当 filters.empName 有值的时候，empName 才等于 filters.empName
       ...(filters.empName && { empName: filters.empName }),
-      //   ...(filters.position && { position: filters.position }),
-      //   ...(filters.deptName && { deptName: filters.deptName }),
-      //   ...(filters.phone && { phone: filters.phone }),
       ...(filters.isActive !== null && { isActive: filters.isActive === 'true' }), // 转换为布尔值
       ...(filters.isManager !== null && { isManager: filters.isManager === 'true' }), // 转换为布尔值
       ...(filters.deptId && { deptId: filters.deptId }),
@@ -179,7 +185,6 @@ const fetchDepartmentMap = async () => {
 
     if (response.code === 2001) {
       departmentMap.value = response.data || []
-      // console.log(departmentMap.value)
     } else {
       ElMessage.error(response.msg || '部门映射查询失败')
     }
