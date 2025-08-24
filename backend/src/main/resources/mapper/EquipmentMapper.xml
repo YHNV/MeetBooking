@@ -20,4 +20,8 @@
             #{id}
         </foreach>
     </select>
+    <select id="selectSimpleEquipmentList" resultType="com.zb.backend.entity.Equipment">
+        select equipment_id, equipment_name, description
+        from EQUIPMENT;
+    </select>
 </mapper>

@@ -1,0 +1,10 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 获取简单设备集合
+POST http://localhost:8080/equip/getSimpleEquipmentList
+Authorization:Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDAxLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2MDQzNDM5LCJleHAiOjE3NTYwNTA2Mzl9.IwE9oWzMtkP98QC0o0yVHOqgbMnAKXBREWbGM8zN2jIWN7BdeLAHhZDF3PDMopHIus1FY2EmSddE3dj0kjDKpw
+
+
+
