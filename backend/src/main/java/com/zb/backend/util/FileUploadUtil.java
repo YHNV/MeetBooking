@@ -11,7 +11,7 @@ import java.util.UUID;
 public class FileUploadUtil {
 
     // 配置上传路径 - 根据实际部署环境调整
-    private static final String UPLOAD_DIR = "../frontend/public/uploads/images/meeting-rooms/";
+    private static final String UPLOAD_DIR = "/Users/yhcm/Documents/Code/Project/Resources/MeetBooking/images/";
 
     /**
      * 上传图片文件
@@ -49,7 +49,7 @@ public class FileUploadUtil {
         Files.copy(file.getInputStream(), filePath);
 
         // 返回前端可访问的相对路径
-        return "/uploads/images/meeting-rooms/" + uniqueFileName;
+        return "/resources/" + uniqueFileName;
     }
 
     /**

@@ -12,5 +12,8 @@ RUNSCRIPT FROM 'classpath:/db/data/03_employees.sql';
 -- 会议室数据
 RUNSCRIPT FROM 'classpath:/db/data/04_meeting_rooms.sql';
 
+-- 设备数据
+RUNSCRIPT FROM 'classpath:/db/data/05_equipment.sql';
+
 -- 会议室可用状态
 RUNSCRIPT FROM 'classpath:/db/data/room_availability.sql';
