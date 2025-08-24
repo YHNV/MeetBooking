@@ -1,0 +1,16 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 新增会议室
+POST http://localhost:8080/meetingRoom/addMeetingRoom
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MDA4MzAzLCJleHAiOjE3NTYwMTU1MDN9.xtyewzmzHTkSp6FZPjfdCjuTLG2UMi8_kZcge7Rce0EkjgxCvw0l2S5GZkdRYHB08nsdHYyQCPFT2g3MqeSooQ
+
+{
+  "roomName": "小型会议室98",
+  "capacity": "99",
+  "location": "天上云间1层"
+}
+
+

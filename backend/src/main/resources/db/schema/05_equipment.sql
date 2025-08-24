@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS equipment;
 -- 设备表，会议室用
 CREATE TABLE equipment
 (
-    equipment_id     BIGINT COMMENT '主键，设备类型 ID',
+    equipment_id     BIGINT DEFAULT NEXTVAL('equipment_seq') COMMENT '主键，设备类型 ID',
     equipment_name   VARCHAR(127) UNIQUE NOT NULL COMMENT '设备名称',
     description      VARCHAR(255) COMMENT '设备描述',
     create_time     TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',

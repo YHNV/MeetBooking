@@ -15,4 +15,13 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
+    <insert id="insertMeetingRoom">
+        insert into MEETING_ROOMS (ROOM_NAME, ROOM_TYPE, CAPACITY, LOCATION, ROOM_STATUS)
+        values (#{roomName}, #{roomType}, #{capacity}, #{location}, #{roomStatus});
+    </insert>
+    <select id="selectMeetingRoomByRoomName" resultType="java.lang.Boolean">
+        select count(*)
+        from MEETING_ROOMS
+        where ROOM_NAME = #{roomName};
+    </select>
 </mapper>
