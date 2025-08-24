@@ -54,15 +54,23 @@ public class FileUploadUtil {
 
     /**
      * 删除图片文件
-     * @param fileUrl 文件的URL路径
+     * @param fileUrl 文件的URL路径（格式如: /resources/xxx.jpg）
      * @return 是否成功删除
      */
     public static boolean deleteImage(String fileUrl) {
         try {
-            // 从URL中提取文件名
-            String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+            // 检查是否包含/resources/前缀
+            if (fileUrl == null || !fileUrl.startsWith("/resources/")) {
+                return false; // 路径格式不正确，返回删除失败
+            }
+
+            // 去掉前面的/resources/得到文件名
+            String fileName = fileUrl.substring("/resources/".length());
+
+            // 构建完整文件路径
             Path filePath = Paths.get(UPLOAD_DIR + fileName);
 
+            // 删除文件并返回结果
             return Files.deleteIfExists(filePath);
         } catch (IOException e) {
             return false;
@@ -73,6 +81,6 @@ public class FileUploadUtil {
      * 获取文件大小限制（可根据需要调整）
      */
     public static long getMaxFileSize() {
-        return 5 * 1024 * 1024; // 5MB
+        return 4 * 1024 * 1024; // 5MB
     }
 }

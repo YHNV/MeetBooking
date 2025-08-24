@@ -16,11 +16,11 @@
         <result property="updateTime" column="update_time"/>
     </resultMap>
     <insert id="insertMeetingRoom">
-        insert into MEETING_ROOMS (ROOM_NAME, ROOM_TYPE, CAPACITY, LOCATION, ROOM_STATUS)
-        values (#{roomName}, #{roomType}, #{capacity}, #{location}, #{roomStatus});
+        insert into MEETING_ROOMS (ROOM_NAME, ROOM_TYPE, CAPACITY, LOCATION, ROOM_STATUS, IMAGE_URL)
+        values (#{roomName}, #{roomType}, #{capacity}, #{location}, #{roomStatus}, #{imageUrl});
     </insert>
-    <select id="selectMeetingRoomByRoomName" resultType="java.lang.Boolean">
-        select count(*)
+    <select id="selectMeetingRoomByRoomName" resultType="com.zb.backend.entity.MeetingRoom">
+        select room_id, room_name, room_type, capacity, location, room_status, image_url, create_time, update_time
         from MEETING_ROOMS
         where ROOM_NAME = #{roomName};
     </select>

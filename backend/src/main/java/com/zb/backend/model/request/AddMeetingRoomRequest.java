@@ -4,6 +4,9 @@ import com.zb.backend.entity.enums.RoomStatus;
 import com.zb.backend.entity.enums.RoomType;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Data
 public class AddMeetingRoomRequest {
@@ -42,8 +45,9 @@ public class AddMeetingRoomRequest {
      */
     private RoomStatus roomStatus = RoomStatus.AVAILABLE;  // 默认值
 
-    /**
-     * 会议室展示图片文件（前端上传的文件）
-     */
-    // private MultipartFile imageFile;  // 注意：这里是文件对象，不是URL
+    // 图片路径（可为null，前端未上传时不传或传null）
+    private String imageUrl;
+
+    // 设备ID列表（可为空列表，表示不关联任何设备）
+    private List<Long> equipmentIds;
 }

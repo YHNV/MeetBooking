@@ -2,15 +2,33 @@
 GET https://examples.http-client.intellij.net/get
     ?generated-in=IntelliJ IDEA
 
+### 上传会议室图片
+POST http://localhost:8080/meetingRoom/uploadImage
+Content-Type: multipart/form-data; boundary=MyBoundary
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MDM5OTUzLCJleHAiOjE3NTYwNDcxNTN9.eRuel8NTsRI-TLkuuoYRT9iPGnlt7xw9TuGVqbe5hScF5yeKSwT9BQO7oSvLgCdt2LSn7ifp03p1X8Vwh5GqFA
+
+--MyBoundary
+Content-Disposition: form-data; name="imageFile"; filename="meeting-room.jpg"
+Content-Type: text/event-stream
+
+#< /Users/yhcm/Desktop/b_cd9547362b6816ff1ea04a7474885165.jpg
+< /Users/yhcm/Desktop/TXT.txt
+--MyBoundary--
+
+
 ### 新增会议室
 POST http://localhost:8080/meetingRoom/addMeetingRoom
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MDA4MzAzLCJleHAiOjE3NTYwMTU1MDN9.xtyewzmzHTkSp6FZPjfdCjuTLG2UMi8_kZcge7Rce0EkjgxCvw0l2S5GZkdRYHB08nsdHYyQCPFT2g3MqeSooQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MDM5OTUzLCJleHAiOjE3NTYwNDcxNTN9.eRuel8NTsRI-TLkuuoYRT9iPGnlt7xw9TuGVqbe5hScF5yeKSwT9BQO7oSvLgCdt2LSn7ifp03p1X8Vwh5GqFA
 
 {
-  "roomName": "小型会议室98",
-  "capacity": "99",
-  "location": "天上云间1层"
+  "roomName": "小型会议室111",
+  "roomType": "SMALL",
+  "capacity": 99,
+  "location": "天上云间1层",
+  "roomStatus": "MAINTENANCE",
+  "imageUrl": "/resources/2298f7bb-a3d1-43bf-9ca6-2f36a2e1466c.jpg",
+  "equipmentIds": [10001, 10003, 10005, 10007]
 }
 
 

@@ -8,4 +8,16 @@
         <result property="roomId" column="room_id"/>
         <result property="equipmentId" column="equipment_id"/>
     </resultMap>
+    <insert id="insertRoomEquipmentList">
+        insert into ROOM_EQUIPMENT (room_id, equipment_id)
+        values
+        <foreach collection="equipmentIds" item="equipmentId" separator=",">
+            (#{roomId}, #{equipmentId})
+        </foreach>
+    </insert>
+    <delete id="deleteByRoomId">
+        delete
+        from ROOM_EQUIPMENT
+        where ROOM_ID = #{roomId};
+    </delete>
 </mapper>
