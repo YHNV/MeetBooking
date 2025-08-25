@@ -1,7 +1,9 @@
 package com.zb.backend.service;
 
+import com.zb.backend.constants.enums.EquipmentEnum;
 import com.zb.backend.constants.enums.MeetingRoomEnum;
 import com.zb.backend.constants.enums.ResultEnum;
+import com.zb.backend.entity.Equipment;
 import com.zb.backend.entity.MeetingRoom;
 import com.zb.backend.mapper.MeetingRoomMapper;
 import com.zb.backend.model.PageResult;
@@ -145,6 +147,19 @@ public class MeetingRoomService {
 
         return new PageResult<>(total, queryRequest.getPageNum(), queryRequest.getPageSize(), meetingRoomList);
 
+    }
+
+    // 根据会议室id获取所添加的设备集合
+    public List<Equipment> getRoomEquipmentList(Long roomId) {
+        // 判断该会议室是否存在
+        MeetingRoom meetingRoom = meetingRoomMapper.selectMeetingRoomByRoomId(roomId);
+
+        if (meetingRoom == null) {
+            throw new RuntimeException(MeetingRoomEnum.ERR_EXISTS_ROOM.getMessage());
+        }
+
+        // 如果会议室存在，那个根据roomId，通过会议室设备关联表查询到设备ids，返回设备集合
+        return meetingRoomMapper.selectEquipmentListByRoomId(roomId);
     }
 
     // 删除会议室

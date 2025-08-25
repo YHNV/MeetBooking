@@ -23,8 +23,13 @@ public enum MeetingRoomEnum implements ResultEnum{
 
     // 删除会议室
     SUC_DELETE_ROOM(2001, "删除成功"),
-    ERR_EXISTS_ROOM(4001, "会议室不存在，无法删除"),
+    ERR_DELETE_EXISTS(4001, "会议室不存在，无法删除"),
     ERR_DELETE_ROOM(4002, "删除失败"),
+
+    // 获取会议室设备集合
+    SUC_EQUIP_ROOM(2001, "获取成功"),
+    ERR_EXISTS_ROOM(4001, "该会议室不存在"),
+    ERR_EQUIP_ROOM(4002, "获取失败"),
 
 
 

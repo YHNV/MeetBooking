@@ -1,6 +1,7 @@
 package com.zb.backend.controller;
 
 import com.zb.backend.constants.enums.*;
+import com.zb.backend.entity.Equipment;
 import com.zb.backend.entity.MeetingRoom;
 import com.zb.backend.model.PageResult;
 import com.zb.backend.model.Result;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/meetingRoom")
@@ -94,6 +96,14 @@ public class MeetingRoomController {
         PageResult<MeetingRoom> pageResult = meetingRoomService.queryMeetingRooms(queryRequest);
 
         return Result.success(MeetingRoomEnum.SUC_QUERY_INFO, pageResult);
+    }
+
+    @Operation(summary = "通过会议室id，获取当前会议室下的所有设备")
+    @PostMapping("/getRoomEquipmentList")
+    public Result<List<Equipment>> getRoomEquipmentList(@RequestBody Long roomId) {
+        List<Equipment> equipmentList = meetingRoomService.getRoomEquipmentList(roomId);
+
+        return Result.success(MeetingRoomEnum.SUC_EQUIP_ROOM, equipmentList);
     }
 
 

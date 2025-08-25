@@ -1,5 +1,6 @@
 package com.zb.backend.mapper;
 
+import com.zb.backend.entity.Equipment;
 import com.zb.backend.entity.MeetingRoom;
 import com.zb.backend.model.request.AddMeetingRoomRequest;
 import com.zb.backend.model.request.QueryMeetingRoomsRequest;
@@ -21,4 +22,10 @@ public interface MeetingRoomMapper {
 
     // 分页查询会议室信息
     List<MeetingRoom> selectMeetingRoomList(QueryMeetingRoomsRequest queryRequest);
+
+    // 根据id查询会议室
+    MeetingRoom selectMeetingRoomByRoomId(Long roomId);
+
+    // 通过会议室设备关联表查询到设备ids，返回设备集合
+    List<Equipment> selectEquipmentListByRoomId(Long roomId);
 }

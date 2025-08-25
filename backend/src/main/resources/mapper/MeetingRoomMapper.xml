@@ -102,5 +102,21 @@
         <!-- 分页 -->
         LIMIT ${(pageNum - 1) * pageSize}, #{pageSize}
     </select>
+    <select id="selectMeetingRoomByRoomId" resultType="com.zb.backend.entity.MeetingRoom">
+        select room_id, room_name, room_type, capacity, location, room_status, image_url, create_time, update_time
+        from MEETING_ROOMS
+        where ROOM_ID = #{roomId};
+    </select>
+    <select id="selectEquipmentListByRoomId" resultType="com.zb.backend.entity.Equipment">
+        SELECT
+            e.equipment_id,
+            e.equipment_name,
+            e.description,
+            e.create_time,
+            e.update_time
+        FROM equipment e
+                 INNER JOIN room_equipment re ON e.equipment_id = re.equipment_id
+        WHERE re.room_id = #{roomId}
+    </select>
 
 </mapper>

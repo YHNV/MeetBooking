@@ -32,6 +32,10 @@ spring:
       max-file-size: 5MB # 最大上传文件限制
       max-request-size: 10MB # 单次请求总限制
 
+  # 允许循环依赖
+  main:
+    allow-circular-references: true
+
 # MyBatis配置
 mybatis:
   mapper-locations: classpath:mapper/*.xml
