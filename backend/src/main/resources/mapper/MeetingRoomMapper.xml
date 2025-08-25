@@ -24,4 +24,83 @@
         from MEETING_ROOMS
         where ROOM_NAME = #{roomName};
     </select>
+    <select id="countMeetingRoomList" resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT mr.room_id)
+        FROM meeting_rooms mr
+        WHERE 1=1
+        <if test="roomName != null and roomName != ''">
+            AND mr.room_name LIKE CONCAT('%', #{roomName}, '%')
+        </if>
+        <if test="roomType != null and roomType != ''">
+            AND mr.room_type = #{roomType}
+        </if>
+        <if test="minCapacity != null">
+            AND mr.capacity &gt;= #{minCapacity}
+        </if>
+        <if test="maxCapacity != null">
+            AND mr.capacity &lt;= #{maxCapacity}
+        </if>
+        <if test="location != null and location != ''">
+            AND mr.location LIKE CONCAT('%', #{location}, '%')
+        </if>
+        <if test="roomStatus != null and roomStatus != ''">
+            AND mr.room_status = #{roomStatus}
+        </if>
+        <if test="equipmentIdList != null and equipmentIdList.size() &gt; 0">
+            <!-- 对每个设备ID添加AND EXISTS条件 -->
+            <foreach collection="equipmentIdList" item="eqId" separator="">
+                AND EXISTS (
+                SELECT 1 FROM room_equipment re
+                WHERE re.room_id = mr.room_id
+                AND re.equipment_id = #{eqId}
+                )
+            </foreach>
+        </if>
+    </select>
+    <select id="selectMeetingRoomList" resultType="com.zb.backend.entity.MeetingRoom">
+        SELECT
+        room_id,
+        room_name,
+        room_type,
+        capacity,
+        location,
+        room_status,
+        image_url,
+        create_time,
+        update_time
+        FROM meeting_rooms mr
+        WHERE 1=1
+        <if test="roomName != null and roomName != ''">
+            AND mr.room_name LIKE CONCAT('%', #{roomName}, '%')
+        </if>
+        <if test="roomType != null and roomType != ''">
+            AND mr.room_type = #{roomType}
+        </if>
+        <if test="minCapacity != null">
+            AND mr.capacity &gt;= #{minCapacity}
+        </if>
+        <if test="maxCapacity != null">
+            AND mr.capacity &lt;= #{maxCapacity}
+        </if>
+        <if test="location != null and location != ''">
+            AND mr.location LIKE CONCAT('%', #{location}, '%')
+        </if>
+        <if test="roomStatus != null and roomStatus != ''">
+            AND mr.room_status = #{roomStatus}
+        </if>
+        <if test="equipmentIdList != null and equipmentIdList.size() &gt; 0">
+            <!-- 对每个设备ID添加AND EXISTS条件 -->
+            <foreach collection="equipmentIdList" item="eqId" separator="">
+                AND EXISTS (
+                SELECT 1 FROM room_equipment re
+                WHERE re.room_id = mr.room_id
+                AND re.equipment_id = #{eqId}
+                )
+            </foreach>
+        </if>
+        ORDER BY mr.room_id
+        <!-- 分页 -->
+        LIMIT ${(pageNum - 1) * pageSize}, #{pageSize}
+    </select>
+
 </mapper>

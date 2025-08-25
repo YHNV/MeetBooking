@@ -1,12 +1,13 @@
 package com.zb.backend.model.request;
 
+import com.zb.backend.model.PageRequest;
 import lombok.Data;
 
 @Data
-public class QueryEmployeesRequest {
+public class QueryEmployeesRequest extends PageRequest {
     // 分页参数
-    private Integer pageNum = 1; // 默认第一页
-    private Integer pageSize = 10; // 默认查询10条
+    // private Integer pageNum = 1; // 默认第一页
+    // private Integer pageSize = 10; // 默认查询10条
     // 查询条件，为空默认查询所有
     private Long deptId; // 部门ID
     private Boolean isActive; // 是否启用

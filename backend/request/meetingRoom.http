@@ -5,14 +5,14 @@ GET https://examples.http-client.intellij.net/get
 ### 上传会议室图片
 POST http://localhost:8080/meetingRoom/uploadImage
 Content-Type: multipart/form-data; boundary=MyBoundary
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MDM5OTUzLCJleHAiOjE3NTYwNDcxNTN9.eRuel8NTsRI-TLkuuoYRT9iPGnlt7xw9TuGVqbe5hScF5yeKSwT9BQO7oSvLgCdt2LSn7ifp03p1X8Vwh5GqFA
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MTA1MTc2LCJleHAiOjE3NTYxMTIzNzZ9.cSTPvD2-Qc0ip2EFbMxcwFtXPMcoeaca1KJy34tMEsaoYsWC8aoDDt9Ym2jw2JxWubIuw9wHVIZOZt-Pm54mDw
 
 --MyBoundary
 Content-Disposition: form-data; name="imageFile"; filename="meeting-room.jpg"
-Content-Type: text/event-stream
+Content-Type: image/jpeg
 
-#< /Users/yhcm/Desktop/b_cd9547362b6816ff1ea04a7474885165.jpg
-< /Users/yhcm/Desktop/TXT.txt
+< /Users/yhcm/Desktop/b_cd9547362b6816ff1ea04a7474885165.jpg
+#< /Users/yhcm/Desktop/TXT.txt
 --MyBoundary--
 
 
@@ -31,4 +31,19 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwM
   "equipmentIds": [10001, 10003, 10005, 10007]
 }
 
+### 分页查询会议室
+POST http://localhost:8080/meetingRoom/queryMeetingRooms
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MTA1MTc2LCJleHAiOjE3NTYxMTIzNzZ9.cSTPvD2-Qc0ip2EFbMxcwFtXPMcoeaca1KJy34tMEsaoYsWC8aoDDt9Ym2jw2JxWubIuw9wHVIZOZt-Pm54mDw
 
+{
+  "pageNum": 1,
+  "pageSize": 30,
+  "roomName": "",
+  "roomType": "",
+  "minCapacity": null,
+  "maxCapacity": 20,
+  "location": "2",
+  "roomStatus": "",
+  "equipmentIdList": [10001]
+}

@@ -81,8 +81,8 @@
             d.dept_id,
             d.dept_name
         FROM employees e
-                 INNER JOIN accounts a ON e.emp_id = a.account_id
-                 INNER JOIN departments d ON e.dept_id = d.dept_id
+                INNER JOIN accounts a ON e.emp_id = a.account_id
+                INNER JOIN departments d ON e.dept_id = d.dept_id
         <where>
             <if test="deptId != null">
                 AND e.dept_id = #{deptId}

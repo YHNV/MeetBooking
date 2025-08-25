@@ -15,6 +15,17 @@ public enum MeetingRoomEnum implements ResultEnum{
     SUC_UPDATE_IMG(2001, "修改成功"),
     ERR_UPDATE_IMG(4001, "修改失败"),
 
+    // 分页查询会议室
+    SUC_QUERY_INFO(2001, "查询成功"),
+    ERR_NOT_EQUIP(4001, "存在无效设备ID"),
+    ERR_ILLEGAL_CAPACITY(4002, "非法容量参数"),
+    ERR_QUERY_INFO(4003, "查询失败"),
+
+    // 删除会议室
+    SUC_DELETE_ROOM(2001, "删除成功"),
+    ERR_EXISTS_ROOM(4001, "会议室不存在，无法删除"),
+    ERR_DELETE_ROOM(4002, "删除失败"),
+
 
 
 

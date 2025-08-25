@@ -1,10 +1,14 @@
 package com.zb.backend.controller;
 
-import com.zb.backend.constants.enums.AccountEnum;
-import com.zb.backend.constants.enums.ResultEnum;
-import com.zb.backend.constants.enums.UploadEnum;
+import com.zb.backend.constants.enums.*;
+import com.zb.backend.entity.MeetingRoom;
+import com.zb.backend.model.PageResult;
 import com.zb.backend.model.Result;
 import com.zb.backend.model.request.AddMeetingRoomRequest;
+import com.zb.backend.model.request.QueryEmployeesRequest;
+import com.zb.backend.model.request.QueryMeetingRoomsRequest;
+import com.zb.backend.model.response.QueryEmployeesResponse;
+import com.zb.backend.model.response.QueryMeetingRoomsResponse;
 import com.zb.backend.service.MeetingRoomService;
 import com.zb.backend.service.upload.FileUploadService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,6 +49,15 @@ public class MeetingRoomController {
     *
     *  */
 
+    /*
+    *
+    * 分页查询会议室信息
+    * 修改会议室信息 Admin
+    * 删除会议室 Admin
+    * TODO 删除会议室非常麻烦，先暂时不写，等写完预约之后才能写
+    *
+    *  */
+
     @Operation(summary = "上传会议室图片 Admin")
     @PostMapping("/uploadImage")
     public Result<String> uploadImage(@RequestParam("imageFile") MultipartFile imageFile) throws IOException {
@@ -62,6 +75,41 @@ public class MeetingRoomController {
         }
         return Result.success(resultEnum, true);
     }
+
+
+    /*
+    * 分页查询逻辑
+    * 本来想的是，通过查询条件+分页，获取所有会议室的信息，包括每条会议室数据包含的设备集合
+    * 但是这样数据库查不出来，一条联表查询，不能查出带集合的数据，只能查出一条一条的数据
+    * 所以我打算，先返回所有会议室的分页集合，当然也会根据设备ids去筛选，但是只做查询条件，不做返回
+    * 当前端点击查看会议室详情的时候，这个时候，再通过roomId去获取设备集合，就可以了
+    * 首先通过传来的设备ids，去会议室设备关联表查询，同时有这些设备的会议室ids，再拿着这些ids去满足其他条件的会议室再筛选，就可以了
+    * 当前接口返回类型为List<MeetingRoom>，会议室集合就行
+    *  */
+    @Operation(summary = "分页查询会议室信息")
+    @PostMapping("/queryMeetingRooms")
+    public Result<PageResult<MeetingRoom>> queryMeetingRooms(@Valid @RequestBody QueryMeetingRoomsRequest queryRequest) {
+        System.out.println(this.getClass().getSimpleName() + "：" + queryRequest);
+
+        PageResult<MeetingRoom> pageResult = meetingRoomService.queryMeetingRooms(queryRequest);
+
+        return Result.success(MeetingRoomEnum.SUC_QUERY_INFO, pageResult);
+    }
+
+
+
+
+
+    // @Operation(summary = "删除会议室")
+    // @PostMapping("/deleteMeetingRoom")
+    // public Result<Boolean> deleteMeetingRoom(@RequestBody Long roomId) {
+    //     System.out.println(this.getClass().getSimpleName() + " 要删除的会议室：" + roomId);
+    //     ResultEnum resultEnum = meetingRoomService.deleteMeetingRoom(roomId);
+    //     if (!resultEnum.getCode().equals(2001)) {
+    //         return Result.error(resultEnum, false);
+    //     }
+    //     return Result.success(resultEnum, true);
+    // }
 
 
 }

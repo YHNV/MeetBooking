@@ -24,4 +24,14 @@
         select equipment_id, equipment_name, description
         from EQUIPMENT;
     </select>
+    <select id="selectNonExistsEquipmentByEquipmentIds" resultType="java.lang.Long">
+        SELECT v.id
+        FROM (
+        VALUES
+        <foreach collection="list" item="id" separator=",">
+            (#{id})
+        </foreach>
+        ) AS v(id)
+        WHERE v.id NOT IN (SELECT equipment_id FROM equipment)
+    </select>
 </mapper>

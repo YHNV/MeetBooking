@@ -10,4 +10,7 @@ public interface EquipmentMapper {
 
     // 获取简单设备集合
     List<Equipment> selectSimpleEquipmentList();
+
+    // 根据设备id集合，返回不存在的设备id
+    List<Long> selectNonExistsEquipmentByEquipmentIds(List<Long> equipmentIdList);
 }

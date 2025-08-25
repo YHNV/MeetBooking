@@ -4,12 +4,18 @@ import com.zb.backend.constants.enums.MeetingRoomEnum;
 import com.zb.backend.constants.enums.ResultEnum;
 import com.zb.backend.entity.MeetingRoom;
 import com.zb.backend.mapper.MeetingRoomMapper;
+import com.zb.backend.model.PageResult;
 import com.zb.backend.model.request.AddMeetingRoomRequest;
+import com.zb.backend.model.request.QueryMeetingRoomsRequest;
+import com.zb.backend.model.response.QueryEmployeesResponse;
+import com.zb.backend.model.response.QueryMeetingRoomsResponse;
 import com.zb.backend.util.FileUploadUtil;
+import com.zb.backend.util.PaginationValidator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -94,15 +100,62 @@ public class MeetingRoomService {
                 throw new RuntimeException(MeetingRoomEnum.ERR_ROOM_EQUIP.getMessage());
             }
         }
-        
+
         return MeetingRoomEnum.SUC_ADD_ROOM;
 
     }
 
+    // 删除照片
     private void deleteImage(String imageUrl) {
         if (imageUrl != null && !imageUrl.isEmpty()) {
             boolean deleteImage = FileUploadUtil.deleteImage(imageUrl);
             System.out.println("插入失败，删除已上传照片：" + deleteImage);
         }
     }
+
+    // 分页查询会议室信息
+    public PageResult<MeetingRoom> queryMeetingRooms(@Valid QueryMeetingRoomsRequest queryRequest) {
+
+        // 判断容量参数是否合法
+        if (queryRequest.getMinCapacity() != null && queryRequest.getMaxCapacity() != null) {
+            if (queryRequest.getMinCapacity() > queryRequest.getMaxCapacity()) {
+                throw new RuntimeException(MeetingRoomEnum.ERR_ILLEGAL_CAPACITY.getMessage());
+            }
+        }
+
+        // 首先判断equipmentIdList中，是否存在不存在的id
+        List<Long> nonExistsIds = equipmentService.getNonExistsEquipmentByEquipmentIds(queryRequest.getEquipmentIdList());
+        if (nonExistsIds != null && !nonExistsIds.isEmpty()) {
+            // 存在不存在的设备id
+            System.out.println("该设备不存在：" + nonExistsIds);
+            throw new RuntimeException(MeetingRoomEnum.ERR_NOT_EQUIP.getMessage() + ":" + nonExistsIds);
+        }
+
+        // 查询总记录数
+        Integer total = meetingRoomMapper.countMeetingRoomList(queryRequest);
+
+        // 分页校验工具类
+        PageResult<MeetingRoom> pageResult = PaginationValidator.validatePagination(queryRequest, total);
+        if (pageResult != null) {
+            return pageResult;
+        }
+
+        // 记录数不为0，根据筛选条件查询
+        List<MeetingRoom> meetingRoomList = meetingRoomMapper.selectMeetingRoomList(queryRequest);
+
+        return new PageResult<>(total, queryRequest.getPageNum(), queryRequest.getPageSize(), meetingRoomList);
+
+    }
+
+    // 删除会议室
+    // public ResultEnum deleteMeetingRoom(Long roomId) {
+    //     // 首先需要判断该会议室是否存在，如果存在才执行删除
+    //     Boolean existsRoom = meetingRoomMapper.selectMeetingRoomByRoomId(roomId);
+    //
+    //     if (!existsRoom) {
+    //         // 会议室不存在，不执行删除
+    //     }
+    //
+    //     Boolean deleteRoom = meetingRoomMapper.deleteMeetingRoomByRoomId(roomId);
+    // }
 }

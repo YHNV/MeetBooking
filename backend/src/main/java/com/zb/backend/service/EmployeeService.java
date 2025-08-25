@@ -4,12 +4,14 @@ import com.zb.backend.constants.enums.AuthEnum;
 import com.zb.backend.constants.enums.EmployeeEnum;
 import com.zb.backend.constants.enums.ResultEnum;
 import com.zb.backend.entity.Employee;
+import com.zb.backend.entity.MeetingRoom;
 import com.zb.backend.mapper.EmployeeMapper;
 import com.zb.backend.model.PageResult;
 import com.zb.backend.model.request.QueryEmployeesRequest;
 import com.zb.backend.model.request.RegisterRequest;
 import com.zb.backend.model.request.UpdateEmployeeInfo;
 import com.zb.backend.model.response.QueryEmployeesResponse;
+import com.zb.backend.util.PaginationValidator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,33 +46,14 @@ public class EmployeeService {
 
     // 分页查询员工所有信息
     public PageResult<QueryEmployeesResponse> queryEmployees(QueryEmployeesRequest queryRequest) {
-        // 校验分页参数
-        // 当PageNum为空是，默认为1
-        if (queryRequest.getPageNum() == null || queryRequest.getPageNum() < 1) {
-            queryRequest.setPageNum(1);
-        }
-        // 当PageSize为空或超过50时，设置为10
-        if (queryRequest.getPageSize() == null || queryRequest.getPageSize() < 1 || queryRequest.getPageSize() > 50) {
-            // 防止 pageSize 过大
-            queryRequest.setPageSize(10);
-        }
 
         // 查询总记录数
         Integer total = employeeMapper.countEmployeeList(queryRequest);
 
-        // this.pages = (int) Math.ceil((double) total / pageSize);
-        // if (pageNum >= pages) {
-        //     this.pageNum = pages;
-        // }
-
-        // 如果当前页参数大于总页数，那么将其改为第一页
-        if (queryRequest.getPageNum() >= ((int) Math.ceil((double) total / queryRequest.getPageSize()))) {
-            queryRequest.setPageNum(1);
-        }
-
-        // 如果记录数为0，直接返回结果
-        if (total == 0) {
-            return new PageResult<>(0, queryRequest.getPageNum(), queryRequest.getPageSize(), List.of());
+        // 分页校验工具类
+        PageResult<QueryEmployeesResponse> pageResult = PaginationValidator.validatePagination(queryRequest, total);
+        if (pageResult != null) {
+            return pageResult;
         }
 
         // 记录数不为0，根据筛选条件查询

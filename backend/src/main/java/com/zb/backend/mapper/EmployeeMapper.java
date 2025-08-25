@@ -28,5 +28,6 @@ public interface EmployeeMapper {
     // 分页查询员工所有信息
     List<QueryEmployeesResponse> selectEmployeeList(QueryEmployeesRequest queryRequest);
 
+    // 更新员工信息
     Boolean updateEmployeeInfo(@Valid UpdateEmployeeInfo updateEmployeeInfo);
 }

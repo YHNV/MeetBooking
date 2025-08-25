@@ -14,7 +14,9 @@ public enum EmployeeEnum implements ResultEnum {
 
     // 分页查询员工信息
     SUC_QUERY_INFO(2001, "查询成功"),
-    ERR_QUERY_INFO(4001, "查询失败");
+    ERR_QUERY_INFO(4001, "查询失败"),
+
+    ERR_SERVER(5001, "服务器异常");
 
     private final Integer code;
     private final String message;
