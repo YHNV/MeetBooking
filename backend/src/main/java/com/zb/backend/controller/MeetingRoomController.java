@@ -8,6 +8,7 @@ import com.zb.backend.model.Result;
 import com.zb.backend.model.request.AddMeetingRoomRequest;
 import com.zb.backend.model.request.QueryEmployeesRequest;
 import com.zb.backend.model.request.QueryMeetingRoomsRequest;
+import com.zb.backend.model.request.UpdateMeetingRoomRequest;
 import com.zb.backend.model.response.QueryEmployeesResponse;
 import com.zb.backend.model.response.QueryMeetingRoomsResponse;
 import com.zb.backend.service.MeetingRoomService;
@@ -104,6 +105,17 @@ public class MeetingRoomController {
         List<Equipment> equipmentList = meetingRoomService.getRoomEquipmentList(roomId);
 
         return Result.success(MeetingRoomEnum.SUC_EQUIP_ROOM, equipmentList);
+    }
+
+    @Operation(summary = "修改会议室 Admin")
+    @PostMapping("/updateMeetingRoom")
+    public Result<Boolean> updateMeetingRoom(@Valid @RequestBody UpdateMeetingRoomRequest updateMeetingRoomRequest) {
+        System.out.println(this.getClass().getSimpleName() + " 修改会议室：" + updateMeetingRoomRequest);
+        ResultEnum resultEnum = meetingRoomService.updateMeetingRoom(updateMeetingRoomRequest);
+        if (!resultEnum.getCode().equals(2001)) {
+            return Result.error(resultEnum, false);
+        }
+        return Result.success(resultEnum, true);
     }
 
 

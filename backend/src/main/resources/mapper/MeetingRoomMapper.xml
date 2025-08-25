@@ -19,6 +19,16 @@
         insert into MEETING_ROOMS (ROOM_NAME, ROOM_TYPE, CAPACITY, LOCATION, ROOM_STATUS, IMAGE_URL)
         values (#{roomName}, #{roomType}, #{capacity}, #{location}, #{roomStatus}, #{imageUrl});
     </insert>
+    <update id="updateMeetingRoomByRoomId">
+        update MEETING_ROOMS
+        set ROOM_NAME = #{roomName},
+            ROOM_TYPE = #{roomType},
+            CAPACITY = #{capacity},
+            LOCATION = #{location},
+            ROOM_STATUS = #{roomStatus},
+            IMAGE_URL = #{imageUrl}
+            where ROOM_ID = #{roomId};
+    </update>
     <select id="selectMeetingRoomByRoomName" resultType="com.zb.backend.entity.MeetingRoom">
         select room_id, room_name, room_type, capacity, location, room_status, image_url, create_time, update_time
         from MEETING_ROOMS
@@ -107,16 +117,16 @@
         from MEETING_ROOMS
         where ROOM_ID = #{roomId};
     </select>
-    <select id="selectEquipmentListByRoomId" resultType="com.zb.backend.entity.Equipment">
-        SELECT
-            e.equipment_id,
-            e.equipment_name,
-            e.description,
-            e.create_time,
-            e.update_time
-        FROM equipment e
-                 INNER JOIN room_equipment re ON e.equipment_id = re.equipment_id
-        WHERE re.room_id = #{roomId}
-    </select>
+    <!-- <select id="selectEquipmentListByRoomId" resultType="com.zb.backend.entity.Equipment"> -->
+    <!--     SELECT -->
+    <!--         e.equipment_id, -->
+    <!--         e.equipment_name, -->
+    <!--         e.description, -->
+    <!--         e.create_time, -->
+    <!--         e.update_time -->
+    <!--     FROM equipment e -->
+    <!--              INNER JOIN room_equipment re ON e.equipment_id = re.equipment_id -->
+    <!--     WHERE re.room_id = #{roomId} -->
+    <!-- </select> -->
 
 </mapper>

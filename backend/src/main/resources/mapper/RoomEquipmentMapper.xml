@@ -20,4 +20,22 @@
         from ROOM_EQUIPMENT
         where ROOM_ID = #{roomId};
     </delete>
+    <select id="selectEquipmentIdsByRoomId" resultType="java.lang.Long">
+        SELECT
+            e.equipment_id
+        FROM equipment e
+                 INNER JOIN room_equipment re ON e.equipment_id = re.equipment_id
+        WHERE re.room_id = #{roomId}
+    </select>
+    <select id="selectEquipmentListByRoomId" resultType="com.zb.backend.entity.Equipment">
+        SELECT
+            e.equipment_id,
+            e.equipment_name,
+            e.description,
+            e.create_time,
+            e.update_time
+        FROM equipment e
+                 INNER JOIN room_equipment re ON e.equipment_id = re.equipment_id
+        WHERE re.room_id = #{roomId}
+    </select>
 </mapper>

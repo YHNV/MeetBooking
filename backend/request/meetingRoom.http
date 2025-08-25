@@ -5,13 +5,13 @@ GET https://examples.http-client.intellij.net/get
 ### 上传会议室图片
 POST http://localhost:8080/meetingRoom/uploadImage
 Content-Type: multipart/form-data; boundary=MyBoundary
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MTA1MTc2LCJleHAiOjE3NTYxMTIzNzZ9.cSTPvD2-Qc0ip2EFbMxcwFtXPMcoeaca1KJy34tMEsaoYsWC8aoDDt9Ym2jw2JxWubIuw9wHVIZOZt-Pm54mDw
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MTMzNzU3LCJleHAiOjE3NTYxNDA5NTd9.cxprAUGTjhzYyzfh0VHbtdhCXrx1ZeAzosgiS1Muo8iLTMTDklID4Ba14Y3Jv79TWq1sSN8uaL14jJG-PxgdAA
 
 --MyBoundary
 Content-Disposition: form-data; name="imageFile"; filename="meeting-room.jpg"
 Content-Type: image/jpeg
 
-< /Users/yhcm/Desktop/b_cd9547362b6816ff1ea04a7474885165.jpg
+< /Users/yhcm/Desktop/QQ20250220-143949.png
 #< /Users/yhcm/Desktop/TXT.txt
 --MyBoundary--
 
@@ -34,7 +34,7 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwM
 ### 分页查询会议室
 POST http://localhost:8080/meetingRoom/queryMeetingRooms
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MTA1MTc2LCJleHAiOjE3NTYxMTIzNzZ9.cSTPvD2-Qc0ip2EFbMxcwFtXPMcoeaca1KJy34tMEsaoYsWC8aoDDt9Ym2jw2JxWubIuw9wHVIZOZt-Pm54mDw
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MTMyMjE4LCJleHAiOjE3NTYxMzk0MTh9.P00uRiiBYG35JlLv-uWsXWs1pvVLtQOrrQiVWfp67i7_muXCFXFM3UzEXDgU10BeHI-89upYVUdRWAMflEJQNQ
 
 {
   "pageNum": 1,
@@ -42,10 +42,10 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwM
   "roomName": "",
   "roomType": "",
   "minCapacity": null,
-  "maxCapacity": 20,
+  "maxCapacity": null,
   "location": "2",
   "roomStatus": "",
-  "equipmentIdList": [10001]
+  "equipmentIdList": []
 }
 
 
@@ -53,6 +53,23 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwM
 ### 通过会议室id获取设备集合
 POST http://localhost:8080/meetingRoom/getRoomEquipmentList
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDAxLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2MTE0Mjc0LCJleHAiOjE3NTYxMjE0NzR9.Gd7v41pK5rYfHqWdHeGink_G-QTnVVhgL01_B-L5GSItwCGwz64hj9HzDRvp_-hrAc2fQSy0xB0gdM-WEQ4qnA
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MTMyNzM1LCJleHAiOjE3NTYxMzk5MzV9.WNQ5iIJurk35wmTQIVl8OL05dpXXvt7KsY5DFHAavRMwvsVyRtGckt5NQbWuGD8PGuh7Vqr9GIZyfcgf9MgnLg
 
-10014
+10002
+
+
+### 修改会议室
+POST http://localhost:8080/meetingRoom/updateMeetingRoom
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MTMzNzU3LCJleHAiOjE3NTYxNDA5NTd9.cxprAUGTjhzYyzfh0VHbtdhCXrx1ZeAzosgiS1Muo8iLTMTDklID4Ba14Y3Jv79TWq1sSN8uaL14jJG-PxgdAA
+
+{
+  "roomId": 10002,
+  "roomName": "小452会议12",
+  "roomType": "LARGE",
+  "capacity": 5,
+  "location": "D栋2层202",
+  "roomStatus": "DISABLED",
+  "imageUrl": "/resources/fb4998c6-5bcd-49cc-8da3-84f157ded15b.jpg",
+  "equipmentIds": [10004, 10007, 10003]
+}
