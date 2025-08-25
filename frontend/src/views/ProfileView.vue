@@ -1,11 +1,5 @@
 <template>
   <div class="personal-info-container">
-    <!-- 页面标题 -->
-    <!-- <div class="page-header">
-      <h1 class="page-title">个人信息</h1>
-      <p class="page-desc">查看您的个人资料信息</p>
-    </div> -->
-
     <!-- 个人信息卡片 -->
     <el-card class="info-card" shadow="hover">
       <div class="card-header">
@@ -86,13 +80,6 @@
             </el-descriptions-item>
           </el-descriptions>
 
-          <!-- <el-descriptions column="1" border class="status-item">
-            <el-descriptions-item label="是否首次登录">
-              <el-tag type="warning" v-if="formData.firstLogin">是</el-tag>
-              <el-tag type="info" v-else>否</el-tag>
-            </el-descriptions-item>
-          </el-descriptions> -->
-
           <el-descriptions column="2" border class="status-item" label-width="120px">
             <el-descriptions-item label="最后登录时间">
               <span class="login-time">{{ formatDate(formData.lastLoginTime) }}</span>
@@ -108,39 +95,41 @@
     </el-card>
 
     <!-- 修改密码弹窗布局 -->
-    <el-dialog title="修改密码" v-model="passwordDialogVisible" width="500px" :close-on-click-modal="false">
-      <el-form :model="passwordForm" class="password-form" label-width="100px">
-        <el-form-item label="当前密码">
-          <el-input
-            v-model="passwordForm.currentPassword"
-            type="password"
-            placeholder="请输入当前密码"
-            autocomplete="new-password"
-          />
+    <el-dialog
+      title="修改密码"
+      v-model="passwordDialogVisible"
+      width="500px"
+      :close-on-click-modal="false"
+      @keyup.enter="changePassword"
+    >
+      <el-form
+        :model="passwordForm"
+        class="password-form"
+        label-width="100px"
+        :rules="passwordRules"
+        ref="passwordFormRef"
+      >
+        <el-form-item label="当前密码" prop="oldPassword">
+          <el-input v-model="passwordForm.oldPassword" type="password" placeholder="请输入当前密码" show-password />
         </el-form-item>
 
-        <el-form-item label="新密码">
-          <el-input
-            v-model="passwordForm.newPassword"
-            type="password"
-            placeholder="请输入新密码"
-            autocomplete="new-password"
-          />
+        <el-form-item label="新密码" prop="newPassword">
+          <el-input v-model="passwordForm.newPassword" type="password" placeholder="请输入新密码" show-password />
         </el-form-item>
 
-        <el-form-item label="确认新密码">
+        <el-form-item label="确认新密码" prop="confirmPassword">
           <el-input
             v-model="passwordForm.confirmPassword"
             type="password"
             placeholder="请再次输入新密码"
-            autocomplete="new-password"
+            show-password
           />
         </el-form-item>
       </el-form>
 
       <template #footer>
         <el-button @click="passwordDialogVisible = false">取消</el-button>
-        <el-button type="primary">确认修改</el-button>
+        <el-button type="primary" @click="changePassword">确认修改</el-button>
       </template>
     </el-dialog>
   </div>
@@ -179,12 +168,41 @@ const formData = reactive({
   formattedBirthday: '',
 })
 
-// 密码修改相关（仅布局）
+// 密码修改相关
 const passwordDialogVisible = ref(false)
 const passwordForm = reactive({
-  currentPassword: '',
+  oldPassword: '',
   newPassword: '',
   confirmPassword: '',
+})
+
+const passwordFormRef = ref(null)
+
+// 密码校验规则
+const passwordRules = reactive({
+  oldPassword: [{ required: true, message: '请输入当前密码', trigger: 'blur' }],
+  newPassword: [
+    { required: true, message: '请输入新密码', trigger: 'blur' },
+    { min: 6, max: 20, message: '密码长度在6-20个字符之间', trigger: 'blur' },
+    {
+      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])[^\s]{6,20}$/,
+      message: '密码需包含大小写字母、数字和特殊字符',
+      trigger: 'blur',
+    },
+  ],
+  confirmPassword: [
+    { required: true, message: '请确认新密码', trigger: 'blur' },
+    {
+      validator: (rule, value, callback) => {
+        if (value !== passwordForm.newPassword) {
+          callback(new Error('两次输入的密码不一致'))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur',
+    },
+  ],
 })
 
 // 获取个人信息
@@ -192,7 +210,7 @@ const getAccountInfo = async () => {
   try {
     const response = await http.post('/account/getAccountDetail')
     if (response.code === 2001) {
-      console.log('个人信息：', response.data)
+      // console.log('个人信息：', response.data)
       Object.assign(formData, response.data)
     } else {
       ElMessage.error(response.msg || '个人信息查询失败')
@@ -203,6 +221,34 @@ const getAccountInfo = async () => {
   }
 }
 
+// 修改密码
+const changePassword = async () => {
+  // 先进行表单验证
+  passwordFormRef.value.validate(async (valid) => {
+    if (!valid) {
+      return false
+    }
+
+    try {
+      const response = await http.post('/account/changePassword', passwordForm)
+
+      if (response.data) {
+        console.log('修改密码成功')
+        ElMessage.success(response.msg)
+        // 重置表单
+        passwordFormRef.value.resetFields()
+      } else {
+        ElMessage.error(response.msg || '修改密码失败')
+      }
+
+      // 关闭弹窗
+      passwordDialogVisible.value = false
+    } catch (error) {
+      console.error('修改密码失败：', error)
+      ElMessage.error('修改失败，请稍后重试')
+    }
+  })
+}
 onMounted(() => {
   console.log('获取个人信息')
   getAccountInfo()
