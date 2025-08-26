@@ -1,0 +1,11 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 获取会议室可用状态
+POST http://localhost:8080/roomAvail/getRoomAvailability
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MTc2MzkwLCJleHAiOjE3NTYxODM1OTB9.-i62ErBP6Dy9HkgkjKGoF5GeB8dgYoOe_PlbeKKBd9y7PSYG1jOhsQTfp8oTGL4u8xuEOkS-2N-8CGhk6atO0A
+
+10002
+

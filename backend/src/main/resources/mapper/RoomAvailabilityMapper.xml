@@ -9,4 +9,9 @@
         <result property="scheduleDate" column="schedule_date"/>
         <result property="slotStatus" column="slot_status"/>
     </resultMap>
+    <select id="selectAvailabilityByRoomId" resultType="com.zb.backend.entity.RoomAvailability">
+        select room_id, schedule_date, slot_status
+        from ROOM_AVAILABILITY
+        where ROOM_ID = #{roomId};
+    </select>
 </mapper>

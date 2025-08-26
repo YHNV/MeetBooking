@@ -1,11 +1,10 @@
 package com.zb.backend.model.request;
 
-import com.zb.backend.validation.ValidPosition;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
-public class UpdateEmployeeInfo {
+public class UpdateEmployeeInfoRequest {
     @NotNull(message = "员工ID不能为空")
     private Long empId;
     @NotBlank(message = "员工姓名不能为空")

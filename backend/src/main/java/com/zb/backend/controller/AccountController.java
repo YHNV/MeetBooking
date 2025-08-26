@@ -3,10 +3,9 @@ package com.zb.backend.controller;
 import com.zb.backend.annotation.CurrentAccount;
 import com.zb.backend.constants.enums.AccountEnum;
 import com.zb.backend.constants.enums.ResultEnum;
-import com.zb.backend.entity.Account;
 import com.zb.backend.model.JwtClaim;
 import com.zb.backend.model.Result;
-import com.zb.backend.model.request.ChangePassword;
+import com.zb.backend.model.request.ChangePasswordRequest;
 import com.zb.backend.model.response.AccountDetailResponse;
 import com.zb.backend.service.AccountService;
 import com.zb.backend.service.AuthService;
@@ -55,9 +54,9 @@ public class AccountController {
 
     @Operation(summary = "修改密码")
     @PostMapping("/changePassword")
-    public Result<Boolean> changePassword(@Valid @RequestBody ChangePassword changePassword, @CurrentAccount JwtClaim jwtClaim) {
+    public Result<Boolean> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest, @CurrentAccount JwtClaim jwtClaim) {
         System.out.println(this.getClass().getSimpleName() + " 修改密码：" + jwtClaim.getAccountId());
-        ResultEnum resultEnum = accountService.changePassword(jwtClaim.getAccountId(), changePassword);
+        ResultEnum resultEnum = accountService.changePassword(jwtClaim.getAccountId(), changePasswordRequest);
         if (!resultEnum.getCode().equals(2001)) {
             return Result.error(resultEnum, false);
         }

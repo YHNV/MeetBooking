@@ -101,4 +101,9 @@
         <!-- 关键：使用 ${} 直接拼接，因为 MyBatis 对 LIMIT 子句中的 #{} 处理在不同数据库下可能有问题 -->
         LIMIT ${(pageNum - 1) * pageSize}, #{pageSize}
     </select>
+    <select id="selectSimpleDeptEmp" resultType="com.zb.backend.model.response.SimpleDeptEmpResponse">
+        select EMP_ID, EMP_NAME
+        from EMPLOYEES
+        where DEPT_ID = #{deptId};
+    </select>
 </mapper>

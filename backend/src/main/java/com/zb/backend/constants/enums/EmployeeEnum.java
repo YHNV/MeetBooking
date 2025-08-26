@@ -16,6 +16,11 @@ public enum EmployeeEnum implements ResultEnum {
     SUC_QUERY_INFO(2001, "查询成功"),
     ERR_QUERY_INFO(4001, "查询失败"),
 
+    // 获取同部门员工信息
+    SUC_GET_DEPT_EMP(2001, "获取成功"),
+    ERR_GET_DEPT_EMP(4001, "获取失败"),
+    ERR_DEPT_EMP_ADMIN(4002, "非法员工"),
+
     ERR_SERVER(5001, "服务器异常");
 
     private final Integer code;

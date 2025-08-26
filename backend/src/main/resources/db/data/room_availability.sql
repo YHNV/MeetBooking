@@ -5,8 +5,8 @@ FROM room_availability;
 -- 插入15天内（含今天）的可用状态数据（排除周六日）
 INSERT INTO room_availability (room_id, schedule_date)
 WITH RECURSIVE date_series(date, day_count) AS (
-    -- 起始行：今天，计数1
-    SELECT CURRENT_DATE AS date, 1 AS day_count
+    -- 起始行：明天，计数1
+    SELECT CURRENT_DATE + 1 AS date, 1 AS day_count
     UNION ALL
     -- 递归生成后续日期，直到15天
     SELECT DATEADD('DAY', 1, date), day_count + 1

@@ -201,6 +201,9 @@ public class MeetingRoomService {
             throw new RuntimeException(MeetingRoomEnum.ERR_UPDATE_NAME.getMessage());
         }
 
+        // TODO 会议室状态校验
+
+
         // 获取请求中的设备集合 新的
         List<Long> newEquipmentIds = updateMeetingRoomRequest.getEquipmentIds();
         System.out.println("更新会议室，新的设备集合：" + newEquipmentIds);
@@ -261,6 +264,11 @@ public class MeetingRoomService {
 
         return MeetingRoomEnum.SUC_UPDATE_ROOM;
 
+    }
+
+    // 通过会议室id获取会议室
+    public MeetingRoom getRoomByRoomId(Long roomId) {
+        return meetingRoomMapper.selectMeetingRoomByRoomId(roomId);
     }
 
     // 删除会议室

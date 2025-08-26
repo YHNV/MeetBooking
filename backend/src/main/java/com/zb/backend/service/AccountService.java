@@ -5,7 +5,7 @@ import com.zb.backend.constants.enums.ResultEnum;
 import com.zb.backend.entity.Account;
 import com.zb.backend.mapper.AccountMapper;
 import com.zb.backend.model.JwtClaim;
-import com.zb.backend.model.request.ChangePassword;
+import com.zb.backend.model.request.ChangePasswordRequest;
 import com.zb.backend.model.response.AccountDetailResponse;
 import com.zb.backend.model.response.LoginResponse;
 import com.zb.backend.util.IdCardUtil;
@@ -78,7 +78,7 @@ public class AccountService {
     }
 
     // 修改密码
-    public ResultEnum changePassword(Long accountId, @Valid ChangePassword changePassword) {
+    public ResultEnum changePassword(Long accountId, @Valid ChangePasswordRequest changePasswordRequest) {
         /*
         * 通过accountId获取账号信息，对比原密码，是否正确
         * 判断新密码和确认密码是否相同
@@ -88,18 +88,18 @@ public class AccountService {
 
         Account account = accountMapper.selectAccountByAccountId(accountId);
         // 判断旧密码是否和数据库中相同
-        if (!passwordEncoder.matches(changePassword.getOldPassword(), account.getPassword())) {
+        if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), account.getPassword())) {
             return AccountEnum.ERR_OLD_PASSWORD;
         }
 
         // 判断新密码和确认密码是否相同
-        if (!changePassword.getNewPassword().equals(changePassword.getConfirmPassword())) {
+        if (!changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
             return AccountEnum.ERR_MATCH_PASSWORD;
         }
 
         // 如果不存在上述错误，开始修改密码
         // 将新密码加密后传入Mapper
-        String newPassword = passwordEncoder.encode(changePassword.getNewPassword());
+        String newPassword = passwordEncoder.encode(changePasswordRequest.getNewPassword());
 
         Boolean change = accountMapper.updatePasswordByAccountId(accountId, newPassword);
 

@@ -3,8 +3,9 @@ package com.zb.backend.mapper;
 import com.zb.backend.entity.Employee;
 import com.zb.backend.model.request.QueryEmployeesRequest;
 import com.zb.backend.model.request.RegisterRequest;
-import com.zb.backend.model.request.UpdateEmployeeInfo;
+import com.zb.backend.model.request.UpdateEmployeeInfoRequest;
 import com.zb.backend.model.response.QueryEmployeesResponse;
+import com.zb.backend.model.response.SimpleDeptEmpResponse;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -29,5 +30,8 @@ public interface EmployeeMapper {
     List<QueryEmployeesResponse> selectEmployeeList(QueryEmployeesRequest queryRequest);
 
     // 更新员工信息
-    Boolean updateEmployeeInfo(@Valid UpdateEmployeeInfo updateEmployeeInfo);
+    Boolean updateEmployeeInfo(@Valid UpdateEmployeeInfoRequest updateEmployeeInfoRequest);
+
+    // 获取同部门员工信息
+    List<SimpleDeptEmpResponse> selectSimpleDeptEmp(Long deptId);
 }

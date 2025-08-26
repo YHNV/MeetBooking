@@ -1,11 +1,10 @@
 package com.zb.backend.model.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class ChangePassword {
+public class ChangePasswordRequest {
     // @NotNull(message = "accountId不能为空")
     // private Long accountId;
     @NotBlank(message = "旧密码不能为空")
