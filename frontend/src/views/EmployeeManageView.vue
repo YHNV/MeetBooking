@@ -71,14 +71,55 @@
         <el-table-column prop="email" label="邮箱" />
         <el-table-column prop="isActive" label="是否在职" width="120" :formatter="formatIsActive" />
         <el-table-column prop="isManager" label="是否管理" width="120" :formatter="formatIsManager" />
-        <el-table-column prop="createTime" label="入职时间" width="180" :formatter="formatDate" />
+        <el-table-column
+          prop="createTime"
+          label="入职时间"
+          width="180"
+          :formatter="(row) => formatDate(row.createTime)"
+        />
         <el-table-column label="操作" width="180">
           <template #default="scope">
-            <el-button size="small" type="primary" @click="handleView(scope.row)"> 查看 </el-button>
+            <el-button size="small" :type="scope.row.isActive ? 'danger' : 'info'" @click="handleToggle(scope.row)">
+              {{ scope.row.isActive ? '冻结' : '解冻' }}
+            </el-button>
             <el-button size="small" type="success" @click="handleEdit(scope.row)"> 编辑 </el-button>
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- 编辑员工信息 -->
+      <el-dialog title="编辑员工信息" v-model="editDialogVisible" width="500px" :before-close="handleDialogClose">
+        <el-form :model="editForm" ref="editFormRef" :rules="editRules" label-width="100px">
+          <el-form-item label="员工ID" prop="empId">
+            <el-input v-model="editForm.empId" disabled />
+          </el-form-item>
+          <el-form-item label="员工姓名" prop="empName">
+            <el-input v-model="editForm.empName" />
+          </el-form-item>
+          <el-form-item label="部门" prop="deptId">
+            <el-select v-model="editForm.deptId" placeholder="请选择部门">
+              <el-option v-for="dept in departmentMap" :key="dept.deptId" :label="dept.deptName" :value="dept.deptId" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="职位" prop="position">
+            <el-input v-model="editForm.position" />
+          </el-form-item>
+          <el-form-item label="手机号" prop="phone">
+            <el-input v-model="editForm.phone" />
+          </el-form-item>
+          <el-form-item label="邮箱" prop="email">
+            <el-input v-model="editForm.email" />
+          </el-form-item>
+          <el-form-item label="身份证号" prop="idCard">
+            <el-input v-model="editForm.idCard" />
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button @click="handleDialogClose">取消</el-button>
+          <el-button type="primary" @click="handleResetPassword" v-if="editForm.empId"> 重置密码 </el-button>
+          <el-button type="success" @click="handleSave">保存</el-button>
+        </template>
+      </el-dialog>
 
       <!-- 分页控件 -->
       <div class="pagination-container">
@@ -101,6 +142,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAccountStore } from '@/stores/account.js'
 import { useApi } from '@/composables/useApi.js'
+import { formatDate } from '@/utils/date.js'
 
 const http = useApi()
 const router = useRouter()
@@ -110,6 +152,33 @@ const accountStore = useAccountStore()
 const loading = ref(false)
 const employeeList = ref([])
 const departmentMap = ref([])
+
+// 编辑对话框状态
+const editDialogVisible = ref(false)
+const editFormRef = ref(null)
+
+// 编辑表单数据
+const editForm = reactive({
+  empId: '',
+  empName: '',
+  deptId: '',
+  position: '',
+  phone: '',
+  email: '',
+  idCard: '',
+})
+
+// 编辑表单验证规则
+const editRules = reactive({
+  empName: [{ required: true, message: '请输入员工姓名', trigger: 'blur' }],
+  deptId: [{ required: true, message: '请选择部门', trigger: 'change' }],
+  phone: [
+    { required: true, message: '请输入手机号', trigger: 'blur' },
+    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'blur' },
+  ],
+  email: [{ type: 'email', message: '请输入正确的邮箱格式', trigger: ['blur', 'change'] }],
+  idCard: [{ pattern: /(^\d{18}$)|(^\d{17}(\d|X|x)$)/, message: '请输入正确的身份证号', trigger: 'blur' }],
+})
 
 const isAdmin = computed(() => accountStore.accountInfo.isAdmin)
 
@@ -194,6 +263,24 @@ const fetchDepartmentMap = async () => {
   }
 }
 
+// 切换员工状态（冻结/解冻）
+const toggleAccountStatus = async (empId, currentStatus) => {
+  try {
+    // 切换用户状态
+    const response = await http.post('/account/toggleAccountStatus', empId)
+
+    if (response.code === 2001) {
+      ElMessage.success(`操作成功：${currentStatus ? '已冻结' : '已解冻'}`)
+      fetchEmployeeList() // 刷新列表
+    } else {
+      ElMessage.error(response.msg || '操作失败')
+    }
+  } catch (error) {
+    console.error('切换用户状态失败：', error)
+    ElMessage.error('切换失败，请稍后重试')
+  }
+}
+
 // 处理查询
 const handleQuery = () => {
   pagination.pageNum = 1 // 重置到第一页
@@ -235,25 +322,89 @@ const formatIsManager = (row) => {
   return row.isManager ? '是' : '否'
 }
 
-// 格式化日期
-const formatDate = (row) => {
-  if (!row.createTime) return ''
-  const date = new Date(row.createTime)
-  return date.toLocaleString()
-}
-
 // 查看员工详情
-const handleView = (row) => {
-  // 可以跳转到详情页或弹出详情对话框
-  console.log('查看员工:', row)
-  ElMessage.info(`查看员工 ${row.empName} 的详情`)
+const handleToggle = (row) => {
+  const actionText = row.isActive ? '冻结' : '解冻'
+  ElMessageBox.confirm(`确定要${actionText}员工【${row.empName}】吗？`, '确认操作', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(() => {
+      toggleAccountStatus(row.empId, row.isActive)
+    })
+    .catch(() => {
+      ElMessage.info('已取消操作')
+    })
 }
 
-// 编辑员工信息
+// 打开编辑对话框
 const handleEdit = (row) => {
-  // 可以跳转到编辑页或弹出编辑对话框
-  console.log('编辑员工:', row)
-  ElMessage.info(`编辑员工 ${row.empName} 的信息`)
+  // 复制行数据到编辑表单
+  Object.assign(editForm, {
+    empId: row.empId,
+    empName: row.empName,
+    deptId: row.deptId,
+    position: row.position,
+    phone: row.phone,
+    email: row.email,
+    idCard: row.idCard || '',
+  })
+  editDialogVisible.value = true
+}
+
+// 关闭对话框
+const handleDialogClose = () => {
+  editDialogVisible.value = false
+  editFormRef.value?.resetFields()
+}
+
+// 保存编辑内容
+const handleSave = async () => {
+  try {
+    // 表单验证
+    await editFormRef.value.validate()
+
+    // 调用API更新员工信息
+    const response = await http.post('/emp/updateEmployeeInfo', editForm)
+
+    if (response.code === 2001) {
+      ElMessage.success('员工信息更新成功')
+      editDialogVisible.value = false
+      fetchEmployeeList() // 刷新列表
+    } else {
+      ElMessage.error(response.msg || '更新失败')
+    }
+  } catch (error) {
+    if (error.name === 'Error') {
+      console.error('更新员工信息失败:', error)
+      ElMessage.error('更新失败，请稍后重试')
+    }
+  }
+}
+
+// 重置密码
+const handleResetPassword = async () => {
+  try {
+    ElMessageBox.confirm('确定要重置该员工的密码吗？重置后密码将变为初始密码', '确认重置', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }).then(async () => {
+      const response = await http.post('/account/resetPassword', { empId: editForm.empId })
+
+      if (response.code === 2001) {
+        ElMessage.success('密码重置成功')
+      } else {
+        ElMessage.error(response.msg || '密码重置失败')
+      }
+    })
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('重置密码失败:', error)
+      ElMessage.error('操作失败，请稍后重试')
+    }
+  }
 }
 </script>
 

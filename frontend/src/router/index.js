@@ -17,7 +17,7 @@ const routes = [
     component: HomeView,
     children: [
       { path: 'rooms', component: TestView },
-      { path: 'booking', component: Navbar },
+      { path: 'booking', component: EmployeeManageView },
       { path: 'notice', component: DarkAndLight },
       { path: 'profile', component: ProfileView },
     ],
