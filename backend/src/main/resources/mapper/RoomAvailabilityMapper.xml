@@ -14,4 +14,9 @@
         from ROOM_AVAILABILITY
         where ROOM_ID = #{roomId};
     </select>
+    <select id="selectRoomAvailDateByRoomId" resultType="java.time.LocalDate">
+        select SCHEDULE_DATE
+        from ROOM_AVAILABILITY
+        where ROOM_ID = #{roomId} and SLOT_STATUS != 65535;
+    </select>
 </mapper>

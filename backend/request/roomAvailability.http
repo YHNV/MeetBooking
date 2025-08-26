@@ -9,3 +9,10 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwM
 
 10002
 
+
+### 获取会议室可用日期
+POST http://localhost:8080/roomAvail/getRoomAvailDateList
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MjIwMTYxLCJleHAiOjE3NTYyMjczNjF9.bzdbqUrOFUDP2-KpbvGKsQVnbCWcoo7b1gvfLmlSf63fggytNa1OM_pn0iWxM13pn-LwfVITzTdO7sQocqNX0g
+
+10002

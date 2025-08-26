@@ -7,6 +7,7 @@ import com.zb.backend.mapper.RoomAvailabilityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -27,5 +28,16 @@ public class RoomAvailabilityService {
         List<RoomAvailability> availabilityList = roomAvailabilityMapper.selectAvailabilityByRoomId(roomId);
 
         return availabilityList;
+    }
+
+    // 获取当前会议室可用日期
+    public List<LocalDate> getRoomAvailDateList(Long roomId) {
+        // 首先查找会议室是否存在
+        MeetingRoom meetingRoom = meetingRoomService.getRoomByRoomId(roomId);
+        if (meetingRoom == null) {
+            throw new RuntimeException(RoomAvailabilityEnum.ERR_GET_NOT_EXISTS_ROOM.getMessage());
+        }
+
+        return roomAvailabilityMapper.selectRoomAvailDateByRoomId(roomId);
     }
 }

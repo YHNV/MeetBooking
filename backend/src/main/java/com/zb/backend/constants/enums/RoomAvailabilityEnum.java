@@ -8,7 +8,13 @@ public enum RoomAvailabilityEnum implements ResultEnum{
     // 获取会议室状态
     SUC_GET_AVAIL(2001, "获取成功"),
     ERR_GET_AVAIL(4001, "获取失败"),
+
+    // 会议室不存在
     ERR_GET_NOT_EXISTS_ROOM(4002, "会议室不存在"),
+
+    // 获取会议室可用日期集合
+    SUC_GET_AVAIL_DATE(2001, "获取成功"),
+    ERR_GET_AVAIL_DATE(4001, "获取失败"),
 
 
     // 统一报错

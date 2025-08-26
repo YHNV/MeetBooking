@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -30,10 +31,19 @@ public class RoomAvailabilityController {
     *
     *  */
 
-    @Operation(summary = "获取会议室可用状态")
+
+    @Operation(summary = "获取会议室可用状态 Obsolete")
     @PostMapping("/getRoomAvailability")
     public Result<List<RoomAvailability>> getRoomAvailability(@RequestBody Long roomId) {
         List<RoomAvailability> availabilityList = roomAvailabilityService.getRoomAvailability(roomId);
         return Result.success(RoomAvailabilityEnum.SUC_GET_AVAIL, availabilityList);
     }
+
+    @Operation(summary = "获取当前会议室可用日期")
+    @PostMapping("/getRoomAvailDateList")
+    public Result<List<LocalDate>> getRoomAvailDateList(@RequestBody Long roomId) {
+        List<LocalDate> dateList = roomAvailabilityService.getRoomAvailDateList(roomId);
+        return Result.success(RoomAvailabilityEnum.SUC_GET_AVAIL_DATE, dateList);
+    }
+
 }

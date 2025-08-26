@@ -10,6 +10,7 @@ CREATE TABLE reservations
     emp_name          VARCHAR(63)  NOT NULL COMMENT '申请人姓名',
     meeting_topic  VARCHAR(127) NOT NULL COMMENT '预约标题/会议主题',
     meeting_desc    Text COMMENT '会议详情',
+    reservation_date               DATE     NOT NULL COMMENT '预约日期',
     start_time         TIME    NOT NULL COMMENT '开始时间',
     end_time           TIME    NOT NULL COMMENT '结束时间',
     reservation_status ENUM (
