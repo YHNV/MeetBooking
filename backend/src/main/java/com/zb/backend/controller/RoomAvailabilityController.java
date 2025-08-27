@@ -4,8 +4,13 @@ import com.zb.backend.constants.enums.ReservationEnum;
 import com.zb.backend.constants.enums.RoomAvailabilityEnum;
 import com.zb.backend.entity.RoomAvailability;
 import com.zb.backend.model.Result;
+import com.zb.backend.model.TimeSlot;
+import com.zb.backend.model.request.GetRoomAvailTimeSlotListRequest;
+import com.zb.backend.model.response.GetRoomAvailDateListResponse;
+import com.zb.backend.model.response.GetRoomAvailTimeSlotListResponse;
 import com.zb.backend.service.ReservationService;
 import com.zb.backend.service.RoomAvailabilityService;
+import com.zb.backend.util.RoomTimeSlotUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,9 +46,25 @@ public class RoomAvailabilityController {
 
     @Operation(summary = "获取当前会议室可用日期")
     @PostMapping("/getRoomAvailDateList")
-    public Result<List<LocalDate>> getRoomAvailDateList(@RequestBody Long roomId) {
-        List<LocalDate> dateList = roomAvailabilityService.getRoomAvailDateList(roomId);
-        return Result.success(RoomAvailabilityEnum.SUC_GET_AVAIL_DATE, dateList);
+    public Result<GetRoomAvailDateListResponse> getRoomAvailDateList(@RequestBody Long roomId) {
+        GetRoomAvailDateListResponse roomAvailDateList = roomAvailabilityService.getRoomAvailDateList(roomId);
+        return Result.success(RoomAvailabilityEnum.SUC_GET_AVAIL_DATE, roomAvailDateList);
+    }
+
+    @Operation(summary = "获取所有预约时间段")
+    @PostMapping("/getAllTimeSlotList")
+    public Result<List<TimeSlot>> getAllTimeSlotList() {
+        List<TimeSlot> allTimeSlotList = RoomTimeSlotUtil.getAllTimeSlots();
+        return Result.success(RoomAvailabilityEnum.SUC_GET_ALL_TIME_SLOT, allTimeSlotList);
+    }
+
+
+    @Operation(summary = "获取当前会议室可预约时间段")
+    @PostMapping("/getRoomAvailTimeSlotList")
+    public Result<GetRoomAvailTimeSlotListResponse>  getRoomAvailTimeSlotList(@RequestBody GetRoomAvailTimeSlotListRequest request) {
+        System.out.println(this.getClass().getSimpleName() + "：获取会议室可预约时间段：" + request);
+        GetRoomAvailTimeSlotListResponse response = roomAvailabilityService.getRoomAvailTimeSlotList(request);
+        return Result.success(RoomAvailabilityEnum.SUC_GET_AVAIL_STATUS, response);
     }
 
 }

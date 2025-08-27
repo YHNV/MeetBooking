@@ -19,4 +19,9 @@
         from ROOM_AVAILABILITY
         where ROOM_ID = #{roomId} and SLOT_STATUS != 65535;
     </select>
+    <select id="selectRoomAvailStatus" resultType="com.zb.backend.entity.RoomAvailability">
+        select room_id, schedule_date, slot_status
+        from ROOM_AVAILABILITY
+        where ROOM_ID = #{roomId} and SCHEDULE_DATE = #{date};
+    </select>
 </mapper>

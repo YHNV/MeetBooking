@@ -4,6 +4,11 @@ import com.zb.backend.constants.enums.RoomAvailabilityEnum;
 import com.zb.backend.entity.MeetingRoom;
 import com.zb.backend.entity.RoomAvailability;
 import com.zb.backend.mapper.RoomAvailabilityMapper;
+import com.zb.backend.model.TimeSlot;
+import com.zb.backend.model.request.GetRoomAvailTimeSlotListRequest;
+import com.zb.backend.model.response.GetRoomAvailDateListResponse;
+import com.zb.backend.model.response.GetRoomAvailTimeSlotListResponse;
+import com.zb.backend.util.RoomTimeSlotUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,13 +36,37 @@ public class RoomAvailabilityService {
     }
 
     // 获取当前会议室可用日期
-    public List<LocalDate> getRoomAvailDateList(Long roomId) {
+    public GetRoomAvailDateListResponse getRoomAvailDateList(Long roomId) {
         // 首先查找会议室是否存在
         MeetingRoom meetingRoom = meetingRoomService.getRoomByRoomId(roomId);
         if (meetingRoom == null) {
             throw new RuntimeException(RoomAvailabilityEnum.ERR_GET_NOT_EXISTS_ROOM.getMessage());
         }
 
-        return roomAvailabilityMapper.selectRoomAvailDateByRoomId(roomId);
+        return new GetRoomAvailDateListResponse(roomId, roomAvailabilityMapper.selectRoomAvailDateByRoomId(roomId)) ;
+    }
+
+    // 获取会议室可预约时间段
+    public GetRoomAvailTimeSlotListResponse getRoomAvailTimeSlotList(GetRoomAvailTimeSlotListRequest request) {
+        // 首先查找会议室是否存在
+        MeetingRoom meetingRoom = meetingRoomService.getRoomByRoomId(request.getRoomId());
+        if (meetingRoom == null) {
+            throw new RuntimeException(RoomAvailabilityEnum.ERR_GET_NOT_EXISTS_ROOM.getMessage());
+        }
+        // 查询状态值
+        RoomAvailability roomAvail = roomAvailabilityMapper.selectRoomAvailStatus(request);
+        if (roomAvail == null) {
+            throw new RuntimeException(RoomAvailabilityEnum.ERR_GET_NOT_EXISTS_DATE.getMessage());
+        }
+        // 通过状态值，获取可用预约时间段
+        List<TimeSlot> timeSlotList = RoomTimeSlotUtil.parseStatusToTimeSlots(roomAvail.getSlotStatus());
+        // 封装进响应模型，并返回
+        return new GetRoomAvailTimeSlotListResponse(
+                request.getRoomId(),
+                request.getDate(),
+                roomAvail.getSlotStatus(),
+                timeSlotList
+        );
+
     }
 }
