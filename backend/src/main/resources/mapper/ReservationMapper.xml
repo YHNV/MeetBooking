@@ -11,6 +11,7 @@
         <result property="empName" column="emp_name"/>
         <result property="meetingTopic" column="meeting_topic"/>
         <result property="meetingDesc" column="meeting_desc"/>
+        <result property="reservationDate" column="reservation_date"/>
         <result property="startTime" column="start_time"/>
         <result property="endTime" column="end_time"/>
         <result property="reservationStatus" column="reservation_status"/>
@@ -20,4 +21,21 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
+    <insert id="insertReservation">
+        <!-- 使用H2数据库的序列生成主键 -->
+        <selectKey keyProperty="reservationId" resultType="java.lang.Long" order="BEFORE">
+            SELECT NEXTVAL('reservation_seq')
+        </selectKey>
+        insert into RESERVATIONS
+            (reservation_id, room_id, account_id, emp_name, meeting_topic, meeting_desc, reservation_date, start_time, end_time)
+        values
+            (#{reservationId}, #{reservationRequest.roomId}, #{accountId}, #{empName},
+            #{reservationRequest.meetingTopic}, #{reservationRequest.meetingDesc},
+            #{reservationRequest.reservationDate}, #{reservationRequest.startTime}, #{reservationRequest.endTime});
+    </insert>
+    <select id="selectReservation" resultType="com.zb.backend.entity.Reservation">
+        select *
+        from RESERVATIONS
+        where ROOM_ID = #{roomId} and ACCOUNT_ID = #{accountId} and RESERVATION_DATE = #{reservationDate} and START_TIME = #{startTime} and END_TIME = #{endTime};
+    </select>
 </mapper>

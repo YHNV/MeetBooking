@@ -23,13 +23,13 @@ public class AddMeetingRoomRequest {
      */
     @NotBlank(message = "会议室类型不能为空")
     @Pattern(regexp = "^(SMALL|LARGE)$", message = "会议室类型必须是SMALL或LARGE")
-    private RoomType roomType;  // 改为枚举类型
+    private String roomType = RoomType.SMALL.toString();  // 改为枚举类型
 
     /**
      * 会议室容量
      * 非空
      */
-    @NotBlank(message = "会议室容量不能为空")
+    @NotNull(message = "会议室容量不能为空")
     @Min(value = 1, message = "会议室容量不能小于1")
     private Integer capacity;
 
@@ -46,7 +46,7 @@ public class AddMeetingRoomRequest {
      */
     @NotBlank(message = "会议室状态不能为空")
     @Pattern(regexp = "^(AVAILABLE|DISABLED|MAINTENANCE)$", message = "会议室状态必须是AVAILABLE、DISABLED或MAINTENANCE")
-    private RoomStatus roomStatus = RoomStatus.AVAILABLE;  // 默认值
+    private String roomStatus = RoomStatus.AVAILABLE.toString();  // 默认值
 
     // 图片路径（可为null，前端未上传时不传或传null）
     private String imageUrl;

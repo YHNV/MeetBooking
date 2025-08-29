@@ -135,7 +135,7 @@ public class RoomTimeSlotUtil {
         System.out.println("\n" + "=".repeat(50) + "\n");
 
         // 测试用例1：状态值为14267（二进制0011011110111011），表示前两个时间段被占用
-        int status2 = 14267;
+        int status2 = 1023;
         System.out.println("状态值 " + status2 + " 对应的可用时间段:");
         List<TimeSlot> slots2 = parseStatusToTimeSlots(status2);
         slots2.forEach(System.out::println);

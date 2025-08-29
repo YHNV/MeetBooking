@@ -1,0 +1,19 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 会议室预约
+POST http://localhost:8080/res/reservation
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDA4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2NDM4MjM1LCJleHAiOjE3NTY0NDU0MzV9.nw6TFlu2xZBt31eqns3sBEpM9TzHD5QgijMUZrBAYhv2oCNewrEwQYCRUHDc7lny-TYoev4oAdLnuRyzImJ78Q
+
+{
+  "roomId": 10009,
+  "meetingTopic": "测试会议",
+  "meetingDesc": "测试会议详情",
+  "reservationDate": "2025-09-05",
+  "startTime": "09:00",
+  "endTime": "10:00",
+  "attendees": [10002, 10007, 10009],
+  "mentionAll": true
+}

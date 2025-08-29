@@ -13,9 +13,9 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwM
 ### 获取会议室可用日期
 POST http://localhost:8080/roomAvail/getRoomAvailDateList
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2Mjk4NzEwLCJleHAiOjE3NTYzMDU5MTB9.s_SUOGD2a-kimoUzKkUPfD5igrXJJeeQeDDoblyXLMK5G0_Rn7iPC0eS4omsUgCuaJx8hkrWJM1npRsVvjEaag
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDA4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2NDM4MjM1LCJleHAiOjE3NTY0NDU0MzV9.nw6TFlu2xZBt31eqns3sBEpM9TzHD5QgijMUZrBAYhv2oCNewrEwQYCRUHDc7lny-TYoev4oAdLnuRyzImJ78Q
 
-10008
+10011
 
 
 ### 获取所有预约时间段
@@ -26,9 +26,9 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwM
 ### 获取可用预约时间段
 POST http://localhost:8080/roomAvail/getRoomAvailTimeSlotList
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2Mjk4NzEwLCJleHAiOjE3NTYzMDU5MTB9.s_SUOGD2a-kimoUzKkUPfD5igrXJJeeQeDDoblyXLMK5G0_Rn7iPC0eS4omsUgCuaJx8hkrWJM1npRsVvjEaag
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDA4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2NDM4MjM1LCJleHAiOjE3NTY0NDU0MzV9.nw6TFlu2xZBt31eqns3sBEpM9TzHD5QgijMUZrBAYhv2oCNewrEwQYCRUHDc7lny-TYoev4oAdLnuRyzImJ78Q
 
 {
-  "roomId": 10008,
-  "date": "2025-08-28"
+  "roomId": 10011,
+  "date": "2025-09-04"
 }

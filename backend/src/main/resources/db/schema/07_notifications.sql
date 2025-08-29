@@ -10,7 +10,7 @@ CREATE TABLE notifications (
         'ADMIN', -- 管理员通知
         'APPROVAL', -- 审核通过通知
         'REJECTION' -- 审核拒绝通知
-        ) COMMENT '通知类型',
+        ) DEFAULT 'SYSTEM' COMMENT '通知类型',
     title VARCHAR(127) NOT NULL COMMENT '通知标题',
     content TEXT NOT NULL COMMENT '通知内容',
     related_id BIGINT COMMENT '关联业务ID，关联预约ID',
@@ -21,8 +21,8 @@ CREATE TABLE notifications (
     PRIMARY KEY (notification_id),
     -- 设置外键约束
     FOREIGN KEY (sender_id) REFERENCES ACCOUNTS(account_id),
-    FOREIGN KEY (receiver_id) REFERENCES ACCOUNTS(account_id),
-    FOREIGN KEY (related_id) REFERENCES RESERVATIONS(reservation_id)
+    FOREIGN KEY (receiver_id) REFERENCES ACCOUNTS(account_id)
+    -- FOREIGN KEY (related_id) REFERENCES RESERVATIONS(reservation_id)
 );
 
 COMMENT ON TABLE notifications IS '通知表';

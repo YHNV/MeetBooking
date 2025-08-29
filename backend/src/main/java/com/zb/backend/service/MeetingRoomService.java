@@ -6,6 +6,7 @@ import com.zb.backend.constants.enums.ResultEnum;
 import com.zb.backend.entity.Equipment;
 import com.zb.backend.entity.MeetingRoom;
 import com.zb.backend.mapper.MeetingRoomMapper;
+import com.zb.backend.mapper.RoomAvailabilityMapper;
 import com.zb.backend.model.PageResult;
 import com.zb.backend.model.request.AddMeetingRoomRequest;
 import com.zb.backend.model.request.QueryMeetingRoomsRequest;
@@ -30,6 +31,8 @@ public class MeetingRoomService {
     private final MeetingRoomMapper meetingRoomMapper;
     private final RoomEquipmentService roomEquipmentService;
     private final EquipmentService equipmentService;
+    private final RoomAvailabilityMapper roomAvailabilityMapper;
+    // private final RoomAvailabilityService roomAvailabilityService;
 
     // 新增会议室
     @Transactional(rollbackFor = Exception.class)
@@ -56,6 +59,7 @@ public class MeetingRoomService {
 
         // 通过name去查询会议室，得到对象
         MeetingRoom meetingRoom = meetingRoomMapper.selectMeetingRoomByRoomName(addMeetingRoomRequest.getRoomName());
+        Long roomId = meetingRoom.getRoomId();
 
         List<Long> equipmentIds = addMeetingRoomRequest.getEquipmentIds();
 
@@ -94,7 +98,7 @@ public class MeetingRoomService {
             }
 
             // 创建新的设备关联，批量插入
-            Integer insertNum = roomEquipmentService.addRoomEquipmentList(meetingRoom.getRoomId(), equipmentIds);
+            Integer insertNum = roomEquipmentService.addRoomEquipmentList(roomId, equipmentIds);
 
             System.out.println("新增会议室，插入设备管理数量：" + insertNum);
 
@@ -103,6 +107,15 @@ public class MeetingRoomService {
                 deleteImage(addMeetingRoomRequest.getImageUrl());
                 throw new RuntimeException(MeetingRoomEnum.ERR_ROOM_EQUIP.getMessage());
             }
+        }
+
+        // 新增会议室后，自动创建该会议室的预约状态
+        // roomId
+        // Boolean insertAvail = roomAvailabilityService.addRoomAvail(roomId);
+        Boolean insertAvail = roomAvailabilityMapper.insertRoomAvailByRoomId(roomId);
+        if (!insertAvail) {
+            deleteImage(addMeetingRoomRequest.getImageUrl());
+            throw new RuntimeException(MeetingRoomEnum.ERR_ADD_AVAIL.getMessage());
         }
 
         return MeetingRoomEnum.SUC_ADD_ROOM;
@@ -193,16 +206,17 @@ public class MeetingRoomService {
         Boolean isDeleteUrl = !(Objects.equals(oldUrl, newUrl));
 
         // 判断新旧名字是否相同，如果不相同，需要判断名字是否重复
-        MeetingRoom existsRoom = meetingRoomMapper.selectMeetingRoomByRoomName(updateMeetingRoomRequest.getRoomName());
+        if (!meetingRoom.getRoomName().equals(updateMeetingRoomRequest.getRoomName())) {
+            MeetingRoom existsRoom = meetingRoomMapper.selectMeetingRoomByRoomName(updateMeetingRoomRequest.getRoomName());
 
-        if (existsRoom != null) {
-            // 插入失败，同时删除已上传的图片
-            if (isDeleteUrl) deleteImage(newUrl);
-            throw new RuntimeException(MeetingRoomEnum.ERR_UPDATE_NAME.getMessage());
+            if (existsRoom != null) {
+                // 插入失败，同时删除已上传的图片
+                if (isDeleteUrl) deleteImage(newUrl);
+                throw new RuntimeException(MeetingRoomEnum.ERR_UPDATE_NAME.getMessage());
+            }
         }
 
-        // TODO 会议室状态校验
-
+        // TODO 修改会议室状态校验
 
         // 获取请求中的设备集合 新的
         List<Long> newEquipmentIds = updateMeetingRoomRequest.getEquipmentIds();

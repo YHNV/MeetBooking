@@ -19,16 +19,16 @@ Content-Type: image/jpeg
 ### 新增会议室
 POST http://localhost:8080/meetingRoom/addMeetingRoom
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MTEyODc3LCJleHAiOjE3NTYxMjAwNzd9.M7EuyBM5dkf4YuzlAqQajxptvutVT0cJFaZQ324hxKYugxTXfZVCxOsdHJ1KOEyVW_xry3RUNhMO6treRj3oSA
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDA4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2NDM4MjM1LCJleHAiOjE3NTY0NDU0MzV9.nw6TFlu2xZBt31eqns3sBEpM9TzHD5QgijMUZrBAYhv2oCNewrEwQYCRUHDc7lny-TYoev4oAdLnuRyzImJ78Q
 
 {
-  "roomName": "小型会议室111",
+  "roomName": "小型会议室11",
   "roomType": "SMALL",
   "capacity": 99,
   "location": "天上云间1层",
-  "roomStatus": "MAINTENANCE",
+  "roomStatus": "AVAILABLE",
   "imageUrl": "/resources/2298f7bb-a3d1-43bf-9ca6-2f36a2e1466c.jpg",
-  "equipmentIds": [10001, 10003, 10005, 10007]
+  "equipmentIds": [10001, 10002, 10005, 10007]
 }
 
 ### 分页查询会议室
@@ -61,11 +61,11 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwM
 ### 修改会议室
 POST http://localhost:8080/meetingRoom/updateMeetingRoom
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2MTMzNzU3LCJleHAiOjE3NTYxNDA5NTd9.cxprAUGTjhzYyzfh0VHbtdhCXrx1ZeAzosgiS1Muo8iLTMTDklID4Ba14Y3Jv79TWq1sSN8uaL14jJG-PxgdAA
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2Mzk2NzczLCJleHAiOjE3NTY0MDM5NzN9.yJAzCuf8wppk4vdLk6KDGMTI5iBB-jJkgl8-PHHmAf8M1rFHw9qsJhbwNX0LmZsOMI9lTTxjMIIpHB9Crw5l4w
 
 {
-  "roomId": 10002,
-  "roomName": "小452会议12",
+  "roomId": 10014,
+  "roomName": "小型会议室1",
   "roomType": "LARGE",
   "capacity": 5,
   "location": "D栋2层202",

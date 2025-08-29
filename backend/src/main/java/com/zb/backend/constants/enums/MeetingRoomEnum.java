@@ -11,6 +11,7 @@ public enum MeetingRoomEnum implements ResultEnum{
     ERR_DELETE_EQUIP(4003, "删除设备关联失败"),
     ERR_ROOM_EQUIP(4004, "会议室设备关联添加出错"),
     ERR_ADD_NOT_EQUIP(4005, "存在无效设备ID"),
+    ERR_ADD_AVAIL(4006, "添加会议室状态出错"),
 
     // 修改会议室图片
     // SUC_UPDATE_IMG(2001, "修改成功"),

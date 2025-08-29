@@ -16,7 +16,7 @@ POST http://localhost:8080/auth/login
 Content-Type: application/json
 
 {
-  "accountId": "10001",
+  "accountId": "10008",
   "password": "123456"
 }
 

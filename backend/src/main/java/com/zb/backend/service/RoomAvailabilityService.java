@@ -54,7 +54,7 @@ public class RoomAvailabilityService {
             throw new RuntimeException(RoomAvailabilityEnum.ERR_GET_NOT_EXISTS_ROOM.getMessage());
         }
         // 查询状态值
-        RoomAvailability roomAvail = roomAvailabilityMapper.selectRoomAvailStatus(request);
+        RoomAvailability roomAvail = roomAvailabilityMapper.selectRoomAvailStatus(request.getRoomId(), request.getDate());
         if (roomAvail == null) {
             throw new RuntimeException(RoomAvailabilityEnum.ERR_GET_NOT_EXISTS_DATE.getMessage());
         }
@@ -67,6 +67,20 @@ public class RoomAvailabilityService {
                 roomAvail.getSlotStatus(),
                 timeSlotList
         );
+    }
 
+    // 根据roomId和date获取int状态值
+    public RoomAvailability selectRoomAvailStatus(Long roomId, LocalDate reservationDate) {
+        return roomAvailabilityMapper.selectRoomAvailStatus(roomId, reservationDate);
+    }
+
+    // 修改预约时段状态值
+    public Boolean updateStatusByIdAndDate(Long roomId, LocalDate reservationDate, Integer newStatus) {
+        return roomAvailabilityMapper.updateStatusByIdAndDate(roomId, reservationDate, newStatus);
+    }
+
+    // 给新增的会议室添加预约状态
+    public Boolean addRoomAvail(Long roomId) {
+        return roomAvailabilityMapper.insertRoomAvailByRoomId(roomId);
     }
 }

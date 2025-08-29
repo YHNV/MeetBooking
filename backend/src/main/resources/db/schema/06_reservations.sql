@@ -17,8 +17,9 @@ CREATE TABLE reservations
         'PENDING', -- 待审核
         'APPROVED', -- 已通过
         'REJECTED', -- 已拒绝
-        'CANCELLED' -- 已取消
-        ) DEFAULT 'PENDING' COMMENT '预约状态：待审核/已通过/已拒绝/已取消',
+        'CANCELLED', -- 已取消
+        'EXPIRED' -- 已过期
+        ) DEFAULT 'PENDING' COMMENT '预约状态：待审核/已通过/已拒绝/已取消/已过期',
     approval_account_id   BIGINT COMMENT '审核人ID',
     approval_time      TIMESTAMP COMMENT '审核时间',
     reject_reason    TEXT COMMENT '拒绝原因',

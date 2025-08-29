@@ -10,4 +10,8 @@
         <result property="accountId" column="account_id"/>
         <result property="empName" column="emp_name"/>
     </resultMap>
+    <insert id="insertAttendee">
+        insert into RESERVATION_ATTENDEES (reservation_id, account_id, emp_name)
+        values (#{reservationId}, #{accountId}, #{empName});
+    </insert>
 </mapper>

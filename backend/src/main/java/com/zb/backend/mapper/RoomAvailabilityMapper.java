@@ -14,5 +14,11 @@ public interface RoomAvailabilityMapper {
     List<LocalDate> selectRoomAvailDateByRoomId(Long roomId);
 
     // 获取会议室可预约时间段
-    RoomAvailability selectRoomAvailStatus(GetRoomAvailTimeSlotListRequest request);
+    RoomAvailability selectRoomAvailStatus(Long roomId, LocalDate date);
+
+    // 根据id和date查询会议室预约状态
+    Boolean updateStatusByIdAndDate(Long roomId, LocalDate scheduleDate, Integer slotStatus);
+
+    // 给新增会议室添加预约状态
+    Boolean insertRoomAvailByRoomId(Long roomId);
 }

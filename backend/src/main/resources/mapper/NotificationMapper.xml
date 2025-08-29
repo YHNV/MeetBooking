@@ -16,4 +16,8 @@
         <result property="createTime" column="create_time"/>
         <result property="readTime" column="read_time"/>
     </resultMap>
+    <insert id="insertNotification">
+        insert into NOTIFICATIONS (SENDER_ID, RECEIVER_ID, TITLE, CONTENT, RELATED_ID)
+        values (#{senderId}, #{receiverId}, #{title}, #{content}, #{relatedId});
+    </insert>
 </mapper>

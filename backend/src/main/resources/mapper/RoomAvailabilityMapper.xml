@@ -9,6 +9,30 @@
         <result property="scheduleDate" column="schedule_date"/>
         <result property="slotStatus" column="slot_status"/>
     </resultMap>
+    <insert id="insertRoomAvailByRoomId">
+        INSERT INTO room_availability (room_id, schedule_date)
+        WITH RECURSIVE date_series(date, day_count) AS (
+        -- 起始行：明天，计数1
+        SELECT CURRENT_DATE + 1 AS date, 1 AS day_count
+        UNION ALL
+        -- 递归生成后续日期，直到15天
+        SELECT DATEADD('DAY', 1, date), day_count + 1
+        FROM date_series
+        WHERE day_count &lt; 15
+        )
+        -- 仅为当前传入的会议室ID生成数据
+        SELECT mr.room_id,
+               ds.date AS schedule_date
+        FROM meeting_rooms mr
+                 CROSS JOIN date_series ds
+        -- 过滤条件：仅保留周一至周五
+        WHERE mr.ROOM_ID = #{roomId} and DAY_OF_WEEK(ds.date) BETWEEN 2 AND 6
+    </insert>
+    <update id="updateStatusByIdAndDate">
+        update ROOM_AVAILABILITY
+        set SLOT_STATUS = #{slotStatus}
+        where ROOM_ID = #{roomId} and SCHEDULE_DATE = #{scheduleDate};
+    </update>
     <select id="selectAvailabilityByRoomId" resultType="com.zb.backend.entity.RoomAvailability">
         select room_id, schedule_date, slot_status
         from ROOM_AVAILABILITY
