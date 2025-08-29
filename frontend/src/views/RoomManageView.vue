@@ -125,10 +125,10 @@
           width="200"
           :formatter="(row) => formatDate(row.createTime)"
         />
-        <el-table-column label="操作" width="250">
+        <el-table-column label="操作" width="180">
           <template #default="scope">
             <el-button size="small" @click="handleViewEquipment(scope.row)"> 查看设备 </el-button>
-            <el-button size="small" type="primary" @click="handleUploadImage(scope.row)"> 上传图片 </el-button>
+            <!-- <el-button size="small" type="primary" @click="handleUploadImage(scope.row)"> 上传图片 </el-button> -->
             <el-button size="small" type="success" @click="handleEdit(scope.row)"> 编辑 </el-button>
           </template>
         </el-table-column>
@@ -180,6 +180,31 @@
               />
             </el-select>
           </el-form-item>
+          <el-form-item label="上传图片">
+            <el-upload
+              class="upload-demo"
+              drag
+              action=""
+              :http-request="handleAddImageUpload"
+              :on-success="handleAddUploadSuccess"
+              :before-upload="beforeUpload"
+              list-type="picture"
+              :limit="1"
+              :on-exceed="handleExceed"
+              :file-list="fileList"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="64" height="64">
+                <path
+                  fill="currentColor"
+                  d="M544 864V672h128L512 480 352 672h128v192H320v-1.6c-5.376.32-10.496 1.6-16 1.6A240 240 0 0 1 64 624c0-123.136 93.12-223.488 212.608-237.248A239.808 239.808 0 0 1 512 192a239.872 239.872 0 0 1 235.456 194.752c119.488 13.76 212.48 114.112 212.48 237.248a240 240 0 0 1-240 240c-5.376 0-10.56-1.28-16-1.6v1.6z"
+                ></path>
+              </svg>
+              <div class="el-upload__text">点击或拖拽文件到此处上传</div>
+              <template #tip>
+                <div class="el-upload__tip text-muted">支持jpg、jpeg、png格式，文件大小不超过5MB</div>
+              </template>
+            </el-upload>
+          </el-form-item>
           <el-form-item label="当前图片">
             <el-image
               v-if="editForm.imageUrl"
@@ -218,8 +243,9 @@
           :http-request="handleImageUpload"
           :on-success="handleUploadSuccess"
           :before-upload="beforeUpload"
-          :file-list="fileList"
           list-type="picture"
+          limit="1"
+          :on-exceed="handleExceed"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="64" height="64">
             <path
@@ -465,8 +491,12 @@ const handleViewEquipment = async (row) => {
 // 上传图片
 const handleUploadImage = (row) => {
   currentRoomId.value = row.roomId
-  fileList.value = []
+  // fileList.value = []
   uploadImageDialogVisible.value = true
+}
+
+const handleExceed = (files) => {
+  ElMessage.warning(`只能上传1张图片`)
 }
 
 // 图片上传前校验
@@ -509,10 +539,49 @@ const handleImageUpload = async (params) => {
 }
 
 // 上传成功处理
-const handleUploadSuccess = (response) => {
+const handleUploadSuccess = () => {
   ElMessage.success('图片上传成功')
   uploadImageDialogVisible.value = false
   fetchMeetingRoomList()
+}
+
+// 图片上传相关变量
+const tempImageUrl = ref('') // 临时存储新增时上传的图片URL
+
+// 新增时处理图片上传
+const handleAddImageUpload = async (params) => {
+  try {
+    const formData = new FormData()
+    formData.append('imageFile', params.file)
+    // 新增时还没有roomId，这里只上传图片获取URL
+
+    const response = await http.post('/meetingRoom/uploadImage', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+
+    if (response.code === 2001) {
+      tempImageUrl.value = response.data // 保存返回的图片URL
+      params.onSuccess(response)
+    } else {
+      params.onError(response)
+    }
+  } catch (error) {
+    params.onError(error)
+  }
+}
+
+// 新增时上传成功处理
+const handleAddUploadSuccess = (response) => {
+  // 避免2次调用
+  if (!response || !response.data) return
+
+  ElMessage.success('图片上传成功')
+  // console.log(response)
+  editForm.imageUrl = response.data // 将图片URL赋值给表单
+
+  // fileList.value = [{url: response.data}]
 }
 
 // 新增会议室
@@ -528,7 +597,9 @@ const handleAdd = () => {
     imageUrl: '',
     equipmentIds: [],
   })
+  tempImageUrl.value = ''
   editDialogVisible.value = true
+  fileList.value = []
 }
 
 // 编辑会议室
@@ -551,12 +622,18 @@ const handleEdit = (row) => {
     }
     editDialogVisible.value = true
   })
+
+  // 重置图片列表
+  fileList.value = []
 }
 
 // 关闭对话框
 const handleDialogClose = () => {
   editDialogVisible.value = false
   editFormRef.value?.resetFields()
+
+  // 重置图片列表
+  fileList.value = []
 }
 
 // 保存会议室信息

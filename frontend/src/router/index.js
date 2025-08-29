@@ -10,13 +10,14 @@ import Navbar from '@/components/Navbar.vue'
 import HomeView from '@/views/HomeView.vue'
 import EmployeeManageView from '@/views/EmployeeManageView.vue'
 import ProfileView from '@/views/ProfileView.vue'
+import RoomManageView from '@/views/RoomManageView.vue'
 
 const routes = [
   {
     path: '/',
     component: HomeView,
     children: [
-      { path: 'rooms', component: TestView },
+      { path: 'rooms', component: RoomManageView },
       { path: 'booking', component: EmployeeManageView },
       { path: 'notice', component: DarkAndLight },
       { path: 'profile', component: ProfileView },
