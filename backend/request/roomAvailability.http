@@ -26,9 +26,9 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwM
 ### 获取可用预约时间段
 POST http://localhost:8080/roomAvail/getRoomAvailTimeSlotList
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDA4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2NDM4MjM1LCJleHAiOjE3NTY0NDU0MzV9.nw6TFlu2xZBt31eqns3sBEpM9TzHD5QgijMUZrBAYhv2oCNewrEwQYCRUHDc7lny-TYoev4oAdLnuRyzImJ78Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDAzLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2NTI0OTY3LCJleHAiOjE3NTY1MzIxNjd9.d3bWRdSAVNOgeOSPj9cAktZCkyw-mBv4eBwmp0UU72GtgGpmhSI5g6DyaTp2G8TVq_k3ysMG78X4twaQrrRVTQ
 
 {
-  "roomId": 10011,
-  "date": "2025-09-04"
+  "roomId": 10003,
+  "date": "2025-09-05"
 }

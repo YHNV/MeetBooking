@@ -5,9 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ReservationEnum implements ResultEnum{
 
-    // 获取会议室状态
-    // SUC_GET_AVAIL(2001, "获取成功"),
-    // ERR_GET_AVAIL(2001, "获取成功"),
+    // 预约会议室
     SUC_RESERVATION(2001, "预约成功"),
     ERR_RESERVATION(4001, "预约失败"),
     ERR_RES_ADMIN(4002, "非法预约"),
@@ -21,6 +19,14 @@ public enum ReservationEnum implements ResultEnum{
     ERR_RES_TIME_CONFLICT(4010, "预约时间段冲突"),
     ERR_UPDATE_STATUS(4011, "更新预约状态异常"),
     ERR_NOTIFICATION(4012, "通知提醒异常"),
+    ERR_EXISTS_EMP(4013, "存在无效人员："),
+    ERR_DEPT_EMP(4014, "部门不存在该员工："),
+
+    // 查询预约
+    SUC_QUERY_RES(2001, "查询成功"),
+    ERR_QUERY_RES(4001, "查询失败"),
+    // ERR_(4001, "查询失败"),
+
 
 
 

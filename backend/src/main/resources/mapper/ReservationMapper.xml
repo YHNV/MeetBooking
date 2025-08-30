@@ -38,4 +38,52 @@
         from RESERVATIONS
         where ROOM_ID = #{roomId} and ACCOUNT_ID = #{accountId} and RESERVATION_DATE = #{reservationDate} and START_TIME = #{startTime} and END_TIME = #{endTime};
     </select>
+    <select id="countReservationList" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM reservations
+        <where>
+            <if test="accountId != null">
+                AND account_id = #{accountId}
+            </if>
+            <if test="reservationDate != null">
+                AND reservation_date = #{reservationDate}
+            </if>
+            <if test="reservationStatus != null and reservationStatus != ''">
+                AND reservation_status = #{reservationStatus}
+            </if>
+        </where>
+    </select>
+    <select id="selectReservationList" resultType="com.zb.backend.entity.Reservation">
+        SELECT
+        reservation_id,
+        room_id,
+        account_id,
+        emp_name,
+        meeting_topic,
+        meeting_desc,
+        reservation_date,
+        start_time,
+        end_time,
+        reservation_status,
+        approval_account_id,
+        approval_time,
+        reject_reason,
+        create_time,
+        update_time
+        FROM reservations
+        <where>
+            <if test="accountId != null">
+                AND account_id = #{accountId}
+            </if>
+            <if test="reservationDate != null">
+                AND reservation_date = #{reservationDate}
+            </if>
+            <if test="reservationStatus != null and reservationStatus != ''">
+                AND reservation_status = #{reservationStatus}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        <!-- 分页处理：计算偏移量 -->
+        LIMIT ${(pageNum - 1) * pageSize}, #{pageSize}
+    </select>
 </mapper>

@@ -2,11 +2,16 @@ package com.zb.backend.controller;
 
 import com.zb.backend.annotation.CurrentAccount;
 import com.zb.backend.constants.enums.DepartmentEnum;
+import com.zb.backend.constants.enums.MeetingRoomEnum;
 import com.zb.backend.constants.enums.ReservationEnum;
 import com.zb.backend.constants.enums.ResultEnum;
+import com.zb.backend.entity.MeetingRoom;
+import com.zb.backend.entity.Reservation;
 import com.zb.backend.entity.RoomAvailability;
 import com.zb.backend.model.JwtClaim;
+import com.zb.backend.model.PageResult;
 import com.zb.backend.model.Result;
+import com.zb.backend.model.request.QueryReservationRequest;
 import com.zb.backend.model.request.ReservationRequest;
 import com.zb.backend.model.response.SimpleDepartmentResponse;
 import com.zb.backend.service.DepartmentService;
@@ -63,5 +68,24 @@ public class ReservationController {
         ResultEnum resultEnum = reservationService.reservation(reservationRequest, jwtClaim);
         if (!resultEnum.getCode().equals(2001)) return Result.error(resultEnum, false);
         return Result.success(resultEnum, true);
+    }
+
+    /*
+    * 查询会议室
+    * 判断isAdmin
+    * 管理员可以查全部
+    * 员工只能查自己的id
+    * 可以根据日期和预约状态进行筛选
+    * 只查预约表内容，点击详情后再查看有哪些关联人员
+    *  */
+
+    @Operation(summary = "分页查询预约信息")
+    @PostMapping("/queryReservations")
+    public Result<PageResult<Reservation>> queryReservations(
+            @Valid @RequestBody QueryReservationRequest request,
+            @CurrentAccount JwtClaim jwtClaim) {
+        System.out.println(this.getClass().getSimpleName() + "：" + request);
+        PageResult<Reservation> pageResult = reservationService.queryReservations(request, jwtClaim);
+        return Result.success(ReservationEnum.SUC_QUERY_RES, pageResult);
     }
 }

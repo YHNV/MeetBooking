@@ -5,15 +5,28 @@ GET https://examples.http-client.intellij.net/get
 ### 会议室预约
 POST http://localhost:8080/res/reservation
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDA4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2NDM4MjM1LCJleHAiOjE3NTY0NDU0MzV9.nw6TFlu2xZBt31eqns3sBEpM9TzHD5QgijMUZrBAYhv2oCNewrEwQYCRUHDc7lny-TYoev4oAdLnuRyzImJ78Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDA4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2NTM0ODIzLCJleHAiOjE3NTY1NDIwMjN9.LbYqxP0hYYFhT93y8JdUx2_lYx9RuROk5Y2Ser6pn5hHwGM8Xo_dBQfIkMefyurN9HqE6ABfvQoudJ8xMs-2OA
 
 {
-  "roomId": 10009,
+  "roomId": 10011,
   "meetingTopic": "测试会议",
   "meetingDesc": "测试会议详情",
-  "reservationDate": "2025-09-05",
+  "reservationDate": "2025-09-03",
   "startTime": "09:00",
-  "endTime": "10:00",
-  "attendees": [10002, 10007, 10009],
-  "mentionAll": true
+  "endTime": "12:00",
+  "attendees": [10045],
+  "mentionAll": false
+}
+
+### 查询预约信息集合
+POST http://localhost:8080/res/queryReservations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2NTI1NzQ5LCJleHAiOjE3NTY1MzI5NDl9.P2TNIgM__Jqe6qNPSgzhHfZx84IfKNQt_Ppns9B_ZWWHSX0Ds74azrXtxug5ti3klpP24MHb1wFM5YjvyrWhCw
+
+{
+  "pageNum": null,
+  "pageSize": null,
+  "accountId": 10001,
+  "reservationDate": "2025-09-02",
+  "reservationStatus": "PENDING"
 }

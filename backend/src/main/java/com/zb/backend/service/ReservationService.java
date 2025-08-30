@@ -11,9 +11,12 @@ import com.zb.backend.entity.enums.RoomStatus;
 import com.zb.backend.entity.enums.RoomType;
 import com.zb.backend.mapper.ReservationMapper;
 import com.zb.backend.model.JwtClaim;
+import com.zb.backend.model.PageResult;
 import com.zb.backend.model.TimeSlot;
+import com.zb.backend.model.request.QueryReservationRequest;
 import com.zb.backend.model.request.ReservationRequest;
 import com.zb.backend.model.response.SimpleDeptEmpResponse;
+import com.zb.backend.util.PaginationValidator;
 import com.zb.backend.util.RoomTimeSlotUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -103,6 +106,9 @@ public class ReservationService {
             System.out.println("当前进行操作的员工id：" + attendeeId);
             // 首先根据id，查询员工姓名
             Employee attendeeEmp = employeeService.getEmployeeByEmpId(attendeeId);
+            // 这里需要进行两个判断：判断id是否存在，判断是否同部门人员
+            if (attendeeEmp == null) throw new RuntimeException(ReservationEnum.ERR_EXISTS_EMP.getMessage() + attendeeId);
+            if (!emp.getDeptId().equals(attendeeEmp.getDeptId())) throw new RuntimeException(ReservationEnum.ERR_DEPT_EMP.getMessage() + attendeeId);
             // 会议室参与表需要传入的字段：预约ID、账号ID、员工姓名
             // 批量插入会议室参与
             Boolean insertAttendee = reservationAttendeeService.addAttendee(reservationId, attendeeId, attendeeEmp.getEmpName());
@@ -118,6 +124,32 @@ public class ReservationService {
         if (!insertNotify) throw new RuntimeException(ReservationEnum.ERR_NOTIFICATION.getMessage());
 
         return ReservationEnum.SUC_RESERVATION;
+
+    }
+
+    // 分页查询预约信息
+    public PageResult<Reservation> queryReservations(@Valid QueryReservationRequest request, JwtClaim jwtClaim) {
+        // 通过isAdmin判断是否为管理员，不是按照用户id查询，否则查全部
+        Boolean isAdmin = jwtClaim.getIsAdmin();
+        Long accountId = jwtClaim.getAccountId();
+        if (isAdmin) accountId = null;
+        request.setAccountId(accountId);
+
+        // 首先查询总行数，在执行分页参数校验，最后查询数据，并返回
+
+        // 查询总记录数
+        Integer total = reservationMapper.countReservationList(request);
+
+        // 分页校验工具类
+        PageResult<Reservation> pageResult = PaginationValidator.validatePagination(request, total);
+        if (pageResult != null) {
+            return pageResult;
+        }
+
+        // 记录数不为0，根据筛选条件查询
+        List<Reservation> reservationList = reservationMapper.selectReservationList(request);
+
+        return new PageResult<>(total, request.getPageNum(), request.getPageSize(), reservationList);
 
     }
 }
