@@ -3,10 +3,9 @@ package com.zb.backend.service;
 import com.zb.backend.constants.enums.ReservationEnum;
 import com.zb.backend.constants.enums.ResultEnum;
 import com.zb.backend.constants.enums.RoomAvailabilityEnum;
-import com.zb.backend.entity.Employee;
-import com.zb.backend.entity.MeetingRoom;
-import com.zb.backend.entity.Reservation;
-import com.zb.backend.entity.RoomAvailability;
+import com.zb.backend.entity.*;
+import com.zb.backend.entity.enums.NotificationType;
+import com.zb.backend.entity.enums.ReservationStatus;
 import com.zb.backend.entity.enums.RoomStatus;
 import com.zb.backend.entity.enums.RoomType;
 import com.zb.backend.mapper.ReservationMapper;
@@ -15,8 +14,10 @@ import com.zb.backend.model.PageResult;
 import com.zb.backend.model.TimeSlot;
 import com.zb.backend.model.request.QueryReservationRequest;
 import com.zb.backend.model.request.ReservationRequest;
+import com.zb.backend.model.request.UpdateReservationRequest;
 import com.zb.backend.model.response.SimpleDeptEmpResponse;
 import com.zb.backend.util.PaginationValidator;
+import com.zb.backend.util.RollBackAvailStatusUtil;
 import com.zb.backend.util.RoomTimeSlotUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,9 @@ public class ReservationService {
     private final RoomAvailabilityService roomAvailabilityService;
     private final ReservationAttendeeService reservationAttendeeService;
     private final NotificationService notificationService;
+    private final RollBackAvailStatusUtil rollBackAvailStatusUtil;
 
+    // 预约会议室
     @Transactional(rollbackFor = Exception.class)
     public ResultEnum reservation(@Valid ReservationRequest reservationRequest, JwtClaim jwtClaim) {
         // 判断是否为管理员
@@ -151,5 +154,151 @@ public class ReservationService {
 
         return new PageResult<>(total, request.getPageNum(), request.getPageSize(), reservationList);
 
+    }
+
+    // 修改会议室状态
+    @Transactional(rollbackFor = Exception.class)
+    public ResultEnum updateReservation(@Valid UpdateReservationRequest request, JwtClaim jwtClaim) {
+        // 获取预约id
+        Long reservationId = request.getReservationId();
+        // 判断预约记录是否存在
+        Reservation reservation = reservationMapper.selectReservationById(reservationId);
+        if (reservation == null) throw new RuntimeException(ReservationEnum.ERR_EXISTS_RES.getMessage());
+
+        // 获取旧预约信息
+        String  oldStatus = reservation.getReservationStatus().toString();
+        LocalDate  reservationDate = reservation.getReservationDate();
+        String startTime = reservation.getStartTime().toString();
+        String endTime = reservation.getEndTime().toString();
+        Long resAccId = reservation.getAccountId();
+        // String empName = reservation.getEmpName();
+        Long roomId = reservation.getRoomId();
+
+        // 获取isAdmin和accountId
+        Boolean isAdmin = jwtClaim.getIsAdmin();
+        Long accountId = jwtClaim.getAccountId();
+
+        // 当为员工时，判断是否为自己的预约
+        if (!isAdmin && !accountId.equals(resAccId)) throw new RuntimeException(ReservationEnum.ERR_ACC_RES.getMessage());
+
+        // 获取状态
+        String resStatus = request.getReservationStatus();
+        // 只有 待审核 已通过 两种状态能修改
+        if (!"PENDING".equals(oldStatus) &&
+                !"APPROVED".equals(oldStatus)) throw new RuntimeException(ReservationEnum.ERR_STATUS_UPDATE.getMessage());
+
+        // 现在只剩下两个状态需要判断了，管理员只能在 待审核 状态下进行修改，员工可以在这两种情况下 取消
+        if (isAdmin && "APPROVED".equals(oldStatus)) throw new RuntimeException(ReservationEnum.ERR_STATUS_UPDATE.getMessage());
+        // 员工无需判断，当前两种状态都能取消
+        // 接下来判断请求状态，管理员能 通过 拒绝 ，员工只能 取消
+        if (isAdmin && "CANCELLED".equals(resStatus)) throw new RuntimeException(ReservationEnum.ERR_ADMIN_CANCELLED.getMessage());
+        if (!isAdmin && !"CANCELLED".equals(resStatus)) throw new RuntimeException(ReservationEnum.ERR_EMP_CANCELLED.getMessage());
+
+        // 账号类型操作判断完成，接下来根据账号类型，来进行后续操作
+        // 当为管理员操作时
+        if (isAdmin) {
+            // 如果执行的是 通过 操作
+            if ("APPROVED".equals(resStatus)) {
+                // 通过 逻辑：将预约状态改为通过，设置拒绝原因为空，设置审核人id为管理员
+                request.setRejectReason(null);
+                request.setApprovalAccountId(accountId);
+                Boolean updateRes = reservationMapper.updateReservation(request);
+                if (!updateRes) throw new RuntimeException(ReservationEnum.ERR_UPDATE_RES.getMessage());
+                // 修改成功，给关联该预约的员工发送审核通知
+                // 根据预约id获取员工集合
+                List<ReservationAttendee> attendees = reservationAttendeeService.getAttendeeByResId(reservationId);
+
+                // 通知需要传入的字段：发送者ID，接收者ID，标题，内容，关联预约ID
+                String title = "审核通知";
+                String content = reservation.toApprovedInvitationString();
+                String notificationType = NotificationType.APPROVAL.toString();
+
+                for (ReservationAttendee attendee : attendees) {
+                    System.out.println("当前进行操作的员工id：" + attendee.getAccountId());
+                    // 给关联的所有员工发送通知
+                    Boolean insertNotify = notificationService.addNotification(accountId, attendee.getAccountId(), notificationType, title, content, reservationId);
+                    if (!insertNotify) throw new RuntimeException(ReservationEnum.ERR_INSERT_NOTIFY.getMessage());
+                }
+
+
+            }
+
+            // 如果执行的是 拒绝 操作
+            if ("REJECTED".equals(resStatus)) {
+                // 判断拒绝原因是否为空
+                if (request.getRejectReason() == null) throw new RuntimeException(ReservationEnum.ERR_NULL_REASON.getMessage());
+                // 首先要回退预约，然后修改预约表，并设置拒绝信息，最后再给预约人发通知
+                // 回退预约，根据开始时间和结束时间，调用工具类，获取状态值，然后按位取反，再与数据库中的状态值做 与 运算，得到新值，并插入
+                // 通过工具类获取状态值
+                // Integer cancelledRawStatus = RoomTimeSlotUtil.convertTimeSlotToStatus(new TimeSlot(startTime, endTime));
+                // Integer cancelledStatus = ~cancelledRawStatus;
+                // System.out.println("取消预约原状态：" + cancelledRawStatus + "-取反后：" + cancelledStatus);
+                // // 通过预约id获取旧的状态值
+                // RoomAvailability roomAvailability = roomAvailabilityService.selectRoomAvailStatus(roomId, reservationDate);
+                // Integer oldAvailStatus = roomAvailability.getSlotStatus();
+                // // 两个状态值按位 与 得到新的状态值
+                // Integer newAvailStatus = cancelledStatus & oldAvailStatus;
+                // System.out.println("旧的状态值：" + oldAvailStatus + " 按位与得到的新的状态值" + newAvailStatus);
+                // // 将新的状态值插入状态表中
+                // Boolean updateAvailStatus = roomAvailabilityService.updateStatusByIdAndDate(roomId, reservationDate, newAvailStatus);
+                // if (!updateAvailStatus) throw new RuntimeException("更新状态值异常");
+                // // 修改预约状态
+                // request.setApprovalAccountId(accountId);
+                // Boolean updateRes = reservationMapper.updateReservation(request);
+                // if (!updateRes) throw new RuntimeException("修改失败");
+                // // 给预约人发通知
+                // // 通知需要传入的字段：发送者ID，接收者ID，标题，内容，关联预约ID
+                // String title = "拒绝通知";
+                // String content = "您选择的会议室" + roomId + "，日期：" + reservationDate + "，时间段[" + startTime + "—" + endTime + "]，已被拒绝，处理人：" + accountId;
+                // String notificationType = NotificationType.REJECTION.toString();
+                // // 给预约人发送预约成功通知
+                // Boolean insertNotify = notificationService.addNotification(accountId, resAccId, notificationType, title, content, reservationId);
+                // if (!insertNotify) throw new RuntimeException(ReservationEnum.ERR_NOTIFICATION.getMessage());
+
+                request.setApprovalAccountId(accountId);
+                Boolean updateRes = reservationMapper.updateReservation(request);
+                if (!updateRes) throw new RuntimeException(ReservationEnum.ERR_UPDATE_RES.getMessage());
+
+                String title = "拒绝通知";
+                String content = "拒绝";
+                String notificationType = NotificationType.REJECTION.toString();
+                Boolean isSuc = rollBackAvailStatusUtil.RollBackAvailStatus(reservation, accountId, request, accountId, title, content, notificationType);
+
+                if (!isSuc) throw new RuntimeException(ReservationEnum.ERR_UPDATE_RES.getMessage());
+            }
+        }
+
+        // 如果当前状态为 已审核 员工执行 取消 操作，额外需要给参会人员发通知
+
+
+        if (!isAdmin && "CANCELLED".equals(resStatus)) {
+            // 如果用户执行 取消 操作
+            // 首先要回退预约，然后修改预约表，并设置拒绝信息，最后再给预约人发通知
+            // 回退预约，根据开始时间和结束时间，调用工具类，获取状态值，然后按位取反，再与数据库中的状态值做 与 运算，得到新值，并插入
+            // 通过工具类获取状态值
+
+            // 将请求体内的拒绝原因和处理人id设为null
+
+
+            // 直接调用回退方法，传值并发消息
+
+            // 修改预约状态，将请求体内的拒绝原因设为null
+            request.setRejectReason(null);
+            request.setApprovalAccountId(101L);
+            Boolean updateRes = reservationMapper.updateReservation(request);
+            if (!updateRes) throw new RuntimeException(ReservationEnum.ERR_UPDATE_RES.getMessage());
+
+            String title = "取消通知";
+            String content = "取消";
+            String notificationType = NotificationType.SYSTEM.toString();
+            Boolean isSuc = rollBackAvailStatusUtil.RollBackAvailStatus(reservation, 101L, request, 101L, title, content, notificationType);
+
+            if (!isSuc) throw new RuntimeException(ReservationEnum.ERR_UPDATE_RES.getMessage());
+
+        }
+
+
+
+        return ReservationEnum.SUC_UPDATE_RES;
     }
 }

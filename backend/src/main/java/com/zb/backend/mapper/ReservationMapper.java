@@ -3,6 +3,7 @@ package com.zb.backend.mapper;
 import com.zb.backend.entity.Reservation;
 import com.zb.backend.model.request.QueryReservationRequest;
 import com.zb.backend.model.request.ReservationRequest;
+import com.zb.backend.model.request.UpdateReservationRequest;
 import jakarta.validation.Valid;
 import org.apache.ibatis.annotations.Param;
 
@@ -22,4 +23,10 @@ public interface ReservationMapper {
 
     // 查询预约信息
     List<Reservation> selectReservationList(@Valid QueryReservationRequest request);
+
+    // 根据预约id查询预约记录
+    Reservation selectReservationById(Long reservationId);
+
+    // 修改预约状态
+    Boolean updateReservation(@Valid UpdateReservationRequest request);
 }

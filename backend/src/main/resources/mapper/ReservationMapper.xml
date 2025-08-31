@@ -33,6 +33,18 @@
             #{reservationRequest.meetingTopic}, #{reservationRequest.meetingDesc},
             #{reservationRequest.reservationDate}, #{reservationRequest.startTime}, #{reservationRequest.endTime});
     </insert>
+    <update id="updateReservation">
+        UPDATE reservations
+        SET
+        reservation_status = #{reservationStatus},
+        approval_account_id = #{approvalAccountId},
+        approval_time = CURRENT_TIMESTAMP()
+        <if test="rejectReason != null and rejectReason != ''">
+            , reject_reason = #{rejectReason}
+        </if>
+        WHERE
+        reservation_id = #{reservationId}
+    </update>
     <select id="selectReservation" resultType="com.zb.backend.entity.Reservation">
         select *
         from RESERVATIONS
@@ -85,5 +97,10 @@
         ORDER BY create_time DESC
         <!-- 分页处理：计算偏移量 -->
         LIMIT ${(pageNum - 1) * pageSize}, #{pageSize}
+    </select>
+    <select id="selectReservationById" resultType="com.zb.backend.entity.Reservation">
+        select reservation_id, room_id, account_id, emp_name, meeting_topic, meeting_desc, reservation_date, start_time, end_time, reservation_status, approval_account_id, approval_time, reject_reason, create_time, update_time
+        from RESERVATIONS
+        where RESERVATION_ID = #{reservationId};
     </select>
 </mapper>

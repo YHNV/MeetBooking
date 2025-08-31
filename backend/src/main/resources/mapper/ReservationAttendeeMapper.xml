@@ -14,4 +14,9 @@
         insert into RESERVATION_ATTENDEES (reservation_id, account_id, emp_name)
         values (#{reservationId}, #{accountId}, #{empName});
     </insert>
+    <select id="selectAttendeeList" resultType="com.zb.backend.entity.ReservationAttendee">
+        select ACCOUNT_ID, EMP_NAME
+        from RESERVATION_ATTENDEES
+        where RESERVATION_ID = #{reservationId};
+    </select>
 </mapper>

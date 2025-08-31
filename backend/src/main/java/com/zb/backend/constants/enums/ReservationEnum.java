@@ -25,7 +25,17 @@ public enum ReservationEnum implements ResultEnum{
     // 查询预约
     SUC_QUERY_RES(2001, "查询成功"),
     ERR_QUERY_RES(4001, "查询失败"),
-    // ERR_(4001, "查询失败"),
+
+    // 修改预约状态
+    SUC_UPDATE_RES(2001, "修改成功"),
+    ERR_UPDATE_RES(4001, "修改失败"),
+    ERR_EXISTS_RES(4002, "预约记录不存在"),
+    ERR_STATUS_UPDATE(4003, "当前状态无法修改"),
+    ERR_ACC_RES(4004, "账号预约未同步"),
+    ERR_ADMIN_CANCELLED(4005, "管理员无法取消预约"),
+    ERR_EMP_CANCELLED(4006, "员工只能取消预约"),
+    ERR_INSERT_NOTIFY(4007, "通知插入异常"),
+    ERR_NULL_REASON(4008, "拒绝原因不能为空"),
 
 
 

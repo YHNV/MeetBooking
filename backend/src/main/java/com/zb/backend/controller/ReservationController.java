@@ -13,6 +13,7 @@ import com.zb.backend.model.PageResult;
 import com.zb.backend.model.Result;
 import com.zb.backend.model.request.QueryReservationRequest;
 import com.zb.backend.model.request.ReservationRequest;
+import com.zb.backend.model.request.UpdateReservationRequest;
 import com.zb.backend.model.response.SimpleDepartmentResponse;
 import com.zb.backend.service.DepartmentService;
 import com.zb.backend.service.ReservationService;
@@ -87,5 +88,36 @@ public class ReservationController {
         System.out.println(this.getClass().getSimpleName() + "：" + request);
         PageResult<Reservation> pageResult = reservationService.queryReservations(request, jwtClaim);
         return Result.success(ReservationEnum.SUC_QUERY_RES, pageResult);
+    }
+
+    /*
+    *
+    * 修改预约状态逻辑
+    * 在默认 待审核 状态下
+    * 员工可以进行取消操作，管理员可以进行：同意、拒绝
+    *
+    * 员工 取消 只可在 待审核 和 已通过 这两种状态下进行
+    * 管理员 只可在 待审核 状态下 才能进行修改操作 1
+    *
+    * 当员工 取消 和 管理员 拒绝 的情况下，回退会议室可用时间段
+    * 并给预约人发送通知：预约取消/被拒绝，原因：
+    *
+    * 当管理员修改状态为 已通过 时，给参与人员发送一条提醒
+    * 管理员操作需要更新审核时间，不更新了，没用，直接看最后更新时间
+    *
+    * 需要开启事务
+    *
+    *  */
+
+    @Operation(summary = "修改预约状态")
+    @PostMapping("/updateReservation")
+    public Result<Boolean> updateReservation(
+            @Valid @RequestBody UpdateReservationRequest request,
+            @CurrentAccount JwtClaim jwtClaim
+    ) {
+        System.out.println(this.getClass().getSimpleName() + " 修改会议室：" + request);
+        ResultEnum resultEnum = reservationService.updateReservation(request, jwtClaim);
+        if (!resultEnum.getCode().equals(2001)) return Result.error(resultEnum, false);
+        return Result.success(resultEnum, true);
     }
 }
