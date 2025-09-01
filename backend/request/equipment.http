@@ -2,9 +2,34 @@
 GET https://examples.http-client.intellij.net/get
     ?generated-in=IntelliJ IDEA
 
-### 获取简单设备集合
+### 获取设备集合
 POST http://localhost:8080/equip/getSimpleEquipmentList
-Authorization:Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDAxLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2MDQzNDM5LCJleHAiOjE3NTYwNTA2Mzl9.IwE9oWzMtkP98QC0o0yVHOqgbMnAKXBREWbGM8zN2jIWN7BdeLAHhZDF3PDMopHIus1FY2EmSddE3dj0kjDKpw
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2NzEwOTM5LCJleHAiOjE3NTY3MTgxMzl9.Hz6wGDJkHIr72izkCooJM4ccsC6biHLPdUe9oBxWkKPYmnOpYWF1G3aI1vQYIMjcQKp-0sVIly9hRGyJvv1UJQ
 
+### 新增设备
+POST http://localhost:8080/equip/addEquipment
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2NzEwOTM5LCJleHAiOjE3NTY3MTgxMzl9.Hz6wGDJkHIr72izkCooJM4ccsC6biHLPdUe9oBxWkKPYmnOpYWF1G3aI1vQYIMjcQKp-0sVIly9hRGyJvv1UJQ
 
+{
+  "equipmentName": "PC",
+  "description": "这是一个伟大的设备"
+}
 
+### 修改设备
+POST http://localhost:8080/equip/updateEquipment
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2NzIwNzc2LCJleHAiOjE3NTY3Mjc5NzZ9.16aAk7G596q0WyA02Uw_H6dU9TECLfYydW0nKNT_MGq7dCWlHo5RqKzda-g-Kscwuc3OF2BgoQf-Ho_SE1SiVw
+
+{
+  "equipmentId": 10008,
+  "equipmentName": "Mac",
+  "description": "这是一个比较伟大的设备"
+}
+
+### 删除设备
+POST http://localhost:8080/equip/deleteEquipment
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2NzIwNzc2LCJleHAiOjE3NTY3Mjc5NzZ9.16aAk7G596q0WyA02Uw_H6dU9TECLfYydW0nKNT_MGq7dCWlHo5RqKzda-g-Kscwuc3OF2BgoQf-Ho_SE1SiVw
+
+10008

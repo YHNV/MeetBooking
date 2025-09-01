@@ -32,4 +32,9 @@ public class RoomEquipmentService {
     public List<Equipment> selectEquipmentListByRoomId(Long roomId) {
         return roomEquipmentMapper.selectEquipmentListByRoomId(roomId);
     }
+
+    // 通过设备id删除关联
+    public Integer deleteByEquipId(Long equipmentId) {
+        return roomEquipmentMapper.deleteByEquipId(equipmentId);
+    }
 }

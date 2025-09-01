@@ -20,6 +20,11 @@
         from ROOM_EQUIPMENT
         where ROOM_ID = #{roomId};
     </delete>
+    <delete id="deleteByEquipId">
+        delete
+        from ROOM_EQUIPMENT
+        where EQUIPMENT_ID = #{equipmentId};
+    </delete>
     <select id="selectEquipmentIdsByRoomId" resultType="java.lang.Long">
         SELECT
             e.equipment_id

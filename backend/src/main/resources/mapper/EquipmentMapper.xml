@@ -11,6 +11,20 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
+    <insert id="insertEquip">
+        insert into EQUIPMENT (equipment_name, description)
+        values (#{equipmentName}, #{description});
+    </insert>
+    <update id="updateEquip">
+        update EQUIPMENT
+        set EQUIPMENT_NAME = #{equipmentName}, DESCRIPTION = #{description}
+        where EQUIPMENT_ID = #{equipmentId};
+    </update>
+    <delete id="deleteById">
+        delete
+        from EQUIPMENT
+        where EQUIPMENT_ID = #{equipmentId};
+    </delete>
     <!-- 批量查询存在的设备ID -->
     <select id="selectExistsByIds" resultType="java.lang.Long">
         SELECT equipment_id
@@ -21,7 +35,7 @@
         </foreach>
     </select>
     <select id="selectSimpleEquipmentList" resultType="com.zb.backend.entity.Equipment">
-        select equipment_id, equipment_name, description
+        select equipment_id, equipment_name, description, create_time, update_time
         from EQUIPMENT;
     </select>
     <select id="selectNonExistsEquipmentByEquipmentIds" resultType="java.lang.Long">
@@ -33,5 +47,15 @@
         </foreach>
         ) AS v(id)
         WHERE v.id NOT IN (SELECT equipment_id FROM equipment)
+    </select>
+    <select id="selectEquipByName" resultType="com.zb.backend.entity.Equipment">
+        select equipment_id, equipment_name, description, create_time, update_time
+        from EQUIPMENT
+        where EQUIPMENT_NAME = #{equipmentName};
+    </select>
+    <select id="selectEquipById" resultType="com.zb.backend.entity.Equipment">
+        select equipment_id, equipment_name, description, create_time, update_time
+        from EQUIPMENT
+        where EQUIPMENT_ID = #{equipmentId};
     </select>
 </mapper>

@@ -17,4 +17,7 @@ public interface RoomEquipmentMapper {
 
     // 通过会议室id，查找设备集合
     List<Equipment> selectEquipmentListByRoomId(Long roomId);
+
+    // 根据设备id删除关联
+    Integer deleteByEquipId(Long equipmentId);
 }
