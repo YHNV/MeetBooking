@@ -1,0 +1,36 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 获取全部通知
+POST http://localhost:8080/notify/getNotifications
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDA4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2NjU5NTYxLCJleHAiOjE3NTY2NjY3NjF9.Vb6RO6mu21ml511tLfqWbDWj3e0SCbeo1qzk9AUfvkXL9FqwgFBqjW91dQniDHfpLNWggsm7Ga_yvm6lKqYMAQ
+
+{
+  "pageSize": null,
+  "pageNum": null
+}
+
+### 获取全部通知
+POST http://localhost:8080/notify/getNotifications
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2NjU4ODc2LCJleHAiOjE3NTY2NjYwNzZ9.feaonNlWX2DzTy0Mt0JKUX5EUOfoR28l9MX25Sf14qgaainifaO2e8dVrjQ1Y3P_Ch86NSWSkSo05HR4b2OvEw
+
+{
+  "pageSize": null,
+  "pageNum": 50
+}
+
+
+### 获取未读消息
+POST http://localhost:8080/notify/getNotReadNum
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDA4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2NjU5NTYxLCJleHAiOjE3NTY2NjY3NjF9.Vb6RO6mu21ml511tLfqWbDWj3e0SCbeo1qzk9AUfvkXL9FqwgFBqjW91dQniDHfpLNWggsm7Ga_yvm6lKqYMAQ
+
+
+### 全部已读
+POST http://localhost:8080/notify/readAllNotifications
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDA4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2NjU5NTYxLCJleHAiOjE3NTY2NjY3NjF9.Vb6RO6mu21ml511tLfqWbDWj3e0SCbeo1qzk9AUfvkXL9FqwgFBqjW91dQniDHfpLNWggsm7Ga_yvm6lKqYMAQ
+

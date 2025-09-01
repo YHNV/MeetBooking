@@ -5,17 +5,17 @@ GET https://examples.http-client.intellij.net/get
 ### 会议室预约
 POST http://localhost:8080/res/reservation
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDA4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2NjMxMDEwLCJleHAiOjE3NTY2MzgyMTB9.GxeVUPgyvhQF01_XQln8D3Rl7yf2SPFVL0z2SgCtocmPM1DZ33MHY9wqjq9RQfXpKzMUHy2Ha5K7ueMTGfYR5Q
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDA4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2NjU5NTYxLCJleHAiOjE3NTY2NjY3NjF9.Vb6RO6mu21ml511tLfqWbDWj3e0SCbeo1qzk9AUfvkXL9FqwgFBqjW91dQniDHfpLNWggsm7Ga_yvm6lKqYMAQ
 
 {
   "roomId": 10007,
   "meetingTopic": "测试会议",
   "meetingDesc": "测试会议详情",
   "reservationDate": "2025-09-03",
-  "startTime": "12:30",
-  "endTime": "17:00",
-  "attendees": [10045],
-  "mentionAll": true
+  "startTime": "09:30",
+  "endTime": "12:00",
+  "attendees": [],
+  "mentionAll": false
 }
 
 ### 查询预约信息集合
@@ -46,11 +46,11 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwM
 ### 修改预约状态
 POST http://localhost:8080/res/updateReservation
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2NjMxMDc3LCJleHAiOjE3NTY2MzgyNzd9.mmj5Z2cbqRU7zlMMyDyHJl0lQFKH0Epy8evfGeFbTjmUE1UnDZVXvhzcrW0WYwF-a6cZ2VaMM6YxZXt3pk5yxw
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2NjU4MzM4LCJleHAiOjE3NTY2NjU1Mzh9.8I0kNCihokTr4bywN_GWhTqLdiiYj7eDCRPZEUMPaTSe0gZaAnstyApy1xSGKJATdv6D7dZtaSGj3mHZ1jjEog
 
 {
-  "reservationId": 10003,
-  "reservationStatus": "REJECTED",
+  "reservationId": 10001,
+  "reservationStatus": "APPROVED",
   "rejectReason": "我拒绝同意，不要问为什么",
   "approvalAccountId": 123
 }

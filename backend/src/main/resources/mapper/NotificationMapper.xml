@@ -20,4 +20,33 @@
         insert into NOTIFICATIONS (SENDER_ID, RECEIVER_ID, TITLE, CONTENT, RELATED_ID)
         values (#{senderId}, #{receiverId}, #{title}, #{content}, #{relatedId});
     </insert>
+    <update id="updateAllReadByAccId">
+        update NOTIFICATIONS
+        set IS_READ = true
+        where RECEIVER_ID = #{accountId};
+    </update>
+    <select id="countNotifyList" resultType="java.lang.Integer">
+        select count(*)
+        from NOTIFICATIONS
+        where 1=1
+        <if test="accountId != null">
+            AND RECEIVER_ID = #{accountId}
+        </if>
+    </select>
+    <select id="selectNotifyList" resultType="com.zb.backend.entity.Notification">
+        select notification_id, sender_id, receiver_id, notification_type, title, content, related_id, is_read, create_time, read_time
+        from NOTIFICATIONS
+        where 1=1
+        <if test="accountId != null">
+            AND RECEIVER_ID = #{accountId}
+        </if>
+        ORDER BY CREATE_TIME DESC
+        <!-- 关键：使用 ${} 直接拼接，因为 MyBatis 对 LIMIT 子句中的 #{} 处理在不同数据库下可能有问题 -->
+        LIMIT ${(pageRequest.pageNum - 1) * pageRequest.pageSize}, #{pageRequest.pageSize}
+    </select>
+    <select id="countNotRedNum" resultType="java.lang.Integer">
+        select count(*)
+        from NOTIFICATIONS
+        where RECEIVER_ID = #{accountId} and IS_READ = false;
+    </select>
 </mapper>

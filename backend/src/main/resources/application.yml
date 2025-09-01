@@ -15,10 +15,11 @@ spring:
       schema-locations: classpath:db/schema.sql
       # 初始化插入表数据文件
       data-locations: classpath:db/data.sql
+
       # 设置总是执行初始化语句
-      enabled: true
-      mode: always
-      platform: h2
+      # enabled: true
+      # mode: always
+      # platform: h2
   h2:
     console:
       enabled: true
