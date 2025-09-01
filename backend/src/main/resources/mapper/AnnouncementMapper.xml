@@ -13,4 +13,38 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
+    <insert id="insertAnn">
+        insert into ANNOUNCEMENTS (sender_id, title, content)
+        values (#{senderId}, #{title}, #{content});
+    </insert>
+    <update id="updateAnn">
+        update ANNOUNCEMENTS
+        set TITLE = #{title}, CONTENT = #{content}
+        where ANNOUNCEMENT_ID = #{announcementId};
+    </update>
+    <delete id="deleteAnn">
+        delete
+        from ANNOUNCEMENTS
+        where ANNOUNCEMENT_ID = #{announcementId};
+    </delete>
+    <select id="countAnn" resultType="java.lang.Integer">
+        select count(*)
+        from ANNOUNCEMENTS;
+    </select>
+    <select id="selectAnnList" resultType="com.zb.backend.entity.Announcement">
+        select announcement_id, sender_id, title, content, is_active, create_time, update_time
+        from ANNOUNCEMENTS
+        where 1=1
+        <if test="pageNum == null">
+
+        </if>
+        ORDER BY CREATE_TIME DESC
+        <!-- 关键：使用 ${} 直接拼接，因为 MyBatis 对 LIMIT 子句中的 #{} 处理在不同数据库下可能有问题 -->
+        LIMIT ${(pageNum - 1) * pageSize}, #{pageSize}
+    </select>
+    <select id="selectById" resultType="com.zb.backend.entity.Announcement">
+        select *
+        from ANNOUNCEMENTS
+        where ANNOUNCEMENT_ID = #{announcementId};
+    </select>
 </mapper>

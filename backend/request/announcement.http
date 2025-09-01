@@ -1,0 +1,45 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+### 新增公告
+POST http://localhost:8080/ann/addAnnouncement
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2NzQxNjc0LCJleHAiOjE3NTY3NDg4NzR9.yBS9K7iXtYN9jrOXlU3xWFAKklQPFt_v_jniYRjEC22eYSpMCrsfKVDG-Qqq8_udfGLnPNwm81WYODZjvNq4BA
+
+{
+  "title": "这是我的第二个公告",
+  "content": "这是第二个公告的内容"
+}
+
+### 分页查询公告
+POST http://localhost:8080/ann/getAnnouncement
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2NzQxNjc0LCJleHAiOjE3NTY3NDg4NzR9.yBS9K7iXtYN9jrOXlU3xWFAKklQPFt_v_jniYRjEC22eYSpMCrsfKVDG-Qqq8_udfGLnPNwm81WYODZjvNq4BA
+
+{
+  "pageNum": 9,
+  "pageSize": 10
+}
+
+### 修改公告
+POST http://localhost:8080/ann/updateAnnouncement
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2NzQxNjc0LCJleHAiOjE3NTY3NDg4NzR9.yBS9K7iXtYN9jrOXlU3xWFAKklQPFt_v_jniYRjEC22eYSpMCrsfKVDG-Qqq8_udfGLnPNwm81WYODZjvNq4BA
+
+{
+  "announcementId": 10002,
+  "title": "这是我的第一个公告，真的真的",
+  "content": "这是第一个公告的内容，假的假的"
+}
+
+
+### 删除公告
+POST http://localhost:8080/ann/deleteAnnouncement
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2NzQxNjc0LCJleHAiOjE3NTY3NDg4NzR9.yBS9K7iXtYN9jrOXlU3xWFAKklQPFt_v_jniYRjEC22eYSpMCrsfKVDG-Qqq8_udfGLnPNwm81WYODZjvNq4BA
+
+10001
+
+
+
