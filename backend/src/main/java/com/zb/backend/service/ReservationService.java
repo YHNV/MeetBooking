@@ -299,4 +299,14 @@ public class ReservationService {
 
         return ReservationEnum.SUC_UPDATE_RES;
     }
+
+    // 通过日期查询未过期预约
+    public List<Reservation> getNotExpiredByDate(LocalDate reservationDate) {
+        return reservationMapper.selectNotExpiredByDate(reservationDate);
+    }
+
+    // 修改预约状态为过期
+    public Boolean updateExpiredById(Long reservationId) {
+        return reservationMapper.updateExpiredById(reservationId);
+    }
 }

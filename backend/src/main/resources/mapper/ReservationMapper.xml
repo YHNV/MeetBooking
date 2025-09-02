@@ -45,6 +45,11 @@
         WHERE
         reservation_id = #{reservationId}
     </update>
+    <update id="updateExpiredById">
+        update RESERVATIONS
+        set RESERVATION_STATUS = 'EXPIRED', APPROVAL_ACCOUNT_ID = 101
+        where RESERVATION_ID = #{reservationId};
+    </update>
     <select id="selectReservation" resultType="com.zb.backend.entity.Reservation">
         select *
         from RESERVATIONS
@@ -108,5 +113,31 @@
         from RESERVATIONS
         where ROOM_ID = #{roomId}
         and RESERVATION_STATUS in ('PENDING', 'APPROVED');
+    </select>
+    <select id="selectNotExpiredByDate" resultType="com.zb.backend.entity.Reservation">
+        SELECT
+        reservation_id,
+        room_id,
+        account_id,
+        emp_name,
+        meeting_topic,
+        meeting_desc,
+        reservation_date,
+        start_time,
+        end_time,
+        reservation_status,
+        approval_account_id,
+        approval_time,
+        reject_reason,
+        create_time,
+        update_time
+        FROM reservations
+        WHERE
+        -- 预约日期 小于等于 当前日期（包含当天）
+        reservation_date &lt;= #{currentDate}
+        -- 预约状态不等于过期
+        AND reservation_status != 'EXPIRED'
+        -- 可选：按预约日期和开始时间排序
+        ORDER BY RESERVATION_ID
     </select>
 </mapper>

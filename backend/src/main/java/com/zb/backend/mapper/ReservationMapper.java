@@ -32,4 +32,10 @@ public interface ReservationMapper {
 
     // 用会议室id查找可用预约id
     List<Reservation> selectAbleRerByRoomId(Long roomId);
+
+    // 通过日期查询未过期的预约
+    List<Reservation> selectNotExpiredByDate(LocalDate reservationDate);
+
+    // 修改预约状态为过期
+    Boolean updateExpiredById(Long reservationId);
 }
