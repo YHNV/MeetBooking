@@ -5,7 +5,7 @@ GET https://examples.http-client.intellij.net/get
 ### 获取全部通知
 POST http://localhost:8080/notify/getNotifications
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDA4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2NjU5NTYxLCJleHAiOjE3NTY2NjY3NjF9.Vb6RO6mu21ml511tLfqWbDWj3e0SCbeo1qzk9AUfvkXL9FqwgFBqjW91dQniDHfpLNWggsm7Ga_yvm6lKqYMAQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDA4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2ODE1MDMxLCJleHAiOjE3NTY4MjIyMzF9.1MvLmygUK018YvQE4e6Py4Wz_FyLBpncvhR-48KXBTI271ntJ2CbVmC7I21iYPJbXkg5hvv_EsGo0l9g2lKCKw
 
 {
   "pageSize": null,

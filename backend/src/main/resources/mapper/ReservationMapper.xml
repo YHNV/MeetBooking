@@ -48,7 +48,7 @@
     <select id="selectReservation" resultType="com.zb.backend.entity.Reservation">
         select *
         from RESERVATIONS
-        where ROOM_ID = #{roomId} and ACCOUNT_ID = #{accountId} and RESERVATION_DATE = #{reservationDate} and START_TIME = #{startTime} and END_TIME = #{endTime};
+        where ROOM_ID = #{roomId} and ACCOUNT_ID = #{accountId} and RESERVATION_DATE = #{reservationDate} and START_TIME = #{startTime} and END_TIME = #{endTime} and RESERVATION_STATUS = 'PENDING';
     </select>
     <select id="countReservationList" resultType="java.lang.Integer">
         SELECT COUNT(*)
@@ -102,5 +102,11 @@
         select reservation_id, room_id, account_id, emp_name, meeting_topic, meeting_desc, reservation_date, start_time, end_time, reservation_status, approval_account_id, approval_time, reject_reason, create_time, update_time
         from RESERVATIONS
         where RESERVATION_ID = #{reservationId};
+    </select>
+    <select id="selectAbleRerByRoomId" resultType="com.zb.backend.entity.Reservation">
+        select reservation_id, room_id, account_id, emp_name, meeting_topic, meeting_desc, reservation_date, start_time, end_time, reservation_status, approval_account_id, approval_time, reject_reason, create_time, update_time
+        from RESERVATIONS
+        where ROOM_ID = #{roomId}
+        and RESERVATION_STATUS in ('PENDING', 'APPROVED');
     </select>
 </mapper>

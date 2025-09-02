@@ -29,4 +29,7 @@ public interface ReservationMapper {
 
     // 修改预约状态
     Boolean updateReservation(@Valid UpdateReservationRequest request);
+
+    // 用会议室id查找可用预约id
+    List<Reservation> selectAbleRerByRoomId(Long roomId);
 }

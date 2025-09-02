@@ -1,8 +1,10 @@
 package com.zb.backend.controller;
 
+import com.zb.backend.annotation.CurrentAccount;
 import com.zb.backend.constants.enums.*;
 import com.zb.backend.entity.Equipment;
 import com.zb.backend.entity.MeetingRoom;
+import com.zb.backend.model.JwtClaim;
 import com.zb.backend.model.PageResult;
 import com.zb.backend.model.Result;
 import com.zb.backend.model.request.AddMeetingRoomRequest;
@@ -70,9 +72,11 @@ public class MeetingRoomController {
 
     @Operation(summary = "新增会议室（带图片和设备） Admin")
     @PostMapping("/addMeetingRoom")
-    public Result<Boolean> addMeetingRoom(@Valid @RequestBody AddMeetingRoomRequest addMeetingRoomRequest) {
+    public Result<Boolean> addMeetingRoom(
+            @Valid @RequestBody AddMeetingRoomRequest addMeetingRoomRequest,
+            @CurrentAccount JwtClaim jwtClaim) {
         System.out.println(this.getClass().getSimpleName() + " 新增会议室：" + addMeetingRoomRequest);
-        ResultEnum resultEnum = meetingRoomService.addMeetingRoom(addMeetingRoomRequest);
+        ResultEnum resultEnum = meetingRoomService.addMeetingRoom(addMeetingRoomRequest, jwtClaim);
         if (!resultEnum.getCode().equals(2001)) {
             return Result.error(resultEnum, false);
         }
@@ -109,9 +113,11 @@ public class MeetingRoomController {
 
     @Operation(summary = "修改会议室 Admin")
     @PostMapping("/updateMeetingRoom")
-    public Result<Boolean> updateMeetingRoom(@Valid @RequestBody UpdateMeetingRoomRequest updateMeetingRoomRequest) {
+    public Result<Boolean> updateMeetingRoom(
+            @Valid @RequestBody UpdateMeetingRoomRequest updateMeetingRoomRequest,
+            @CurrentAccount JwtClaim jwtClaim) {
         System.out.println(this.getClass().getSimpleName() + " 修改会议室：" + updateMeetingRoomRequest);
-        ResultEnum resultEnum = meetingRoomService.updateMeetingRoom(updateMeetingRoomRequest);
+        ResultEnum resultEnum = meetingRoomService.updateMeetingRoom(updateMeetingRoomRequest, jwtClaim);
         if (!resultEnum.getCode().equals(2001)) {
             return Result.error(resultEnum, false);
         }

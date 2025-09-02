@@ -1,25 +1,27 @@
 package com.zb.backend.service;
 
-import com.zb.backend.constants.enums.EquipmentEnum;
 import com.zb.backend.constants.enums.MeetingRoomEnum;
+import com.zb.backend.constants.enums.ReservationEnum;
 import com.zb.backend.constants.enums.ResultEnum;
 import com.zb.backend.entity.Equipment;
 import com.zb.backend.entity.MeetingRoom;
+import com.zb.backend.entity.Reservation;
+import com.zb.backend.entity.enums.NotificationType;
+import com.zb.backend.entity.enums.ReservationStatus;
+import com.zb.backend.mapper.AnnouncementMapper;
 import com.zb.backend.mapper.MeetingRoomMapper;
+import com.zb.backend.mapper.ReservationMapper;
 import com.zb.backend.mapper.RoomAvailabilityMapper;
+import com.zb.backend.model.JwtClaim;
 import com.zb.backend.model.PageResult;
-import com.zb.backend.model.request.AddMeetingRoomRequest;
-import com.zb.backend.model.request.QueryMeetingRoomsRequest;
-import com.zb.backend.model.request.UpdateMeetingRoomRequest;
-import com.zb.backend.model.response.QueryEmployeesResponse;
-import com.zb.backend.model.response.QueryMeetingRoomsResponse;
+import com.zb.backend.model.request.*;
 import com.zb.backend.util.FileUploadUtil;
 import com.zb.backend.util.PaginationValidator;
+import com.zb.backend.util.RollBackAvailStatusUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,11 +34,15 @@ public class MeetingRoomService {
     private final RoomEquipmentService roomEquipmentService;
     private final EquipmentService equipmentService;
     private final RoomAvailabilityMapper roomAvailabilityMapper;
+    private final AnnouncementMapper announcementMapper;
+    private final AnnouncementService announcementService;
+    private final ReservationMapper reservationMapper;
+    private final RollBackAvailStatusUtil rollBackAvailStatusUtil;
     // private final RoomAvailabilityService roomAvailabilityService;
 
     // 新增会议室
     @Transactional(rollbackFor = Exception.class)
-    public ResultEnum addMeetingRoom(@Valid AddMeetingRoomRequest addMeetingRoomRequest) {
+    public ResultEnum addMeetingRoom(@Valid AddMeetingRoomRequest addMeetingRoomRequest, JwtClaim jwtClaim) {
         // 首先根据会议室名字查询，会议室是否存在
         MeetingRoom existsRoom = meetingRoomMapper.selectMeetingRoomByRoomName(addMeetingRoomRequest.getRoomName());
 
@@ -107,6 +113,7 @@ public class MeetingRoomService {
                 deleteImage(addMeetingRoomRequest.getImageUrl());
                 throw new RuntimeException(MeetingRoomEnum.ERR_ROOM_EQUIP.getMessage());
             }
+
         }
 
         // 新增会议室后，自动创建该会议室的预约状态
@@ -117,6 +124,14 @@ public class MeetingRoomService {
             deleteImage(addMeetingRoomRequest.getImageUrl());
             throw new RuntimeException(MeetingRoomEnum.ERR_ADD_AVAIL.getMessage());
         }
+
+        // 创建会议室成功后，自动发布公告
+        Long senderId = jwtClaim.getAccountId();
+        String title = roomId + "号会议室新增通知";
+        String content = meetingRoom.toDisplayString();
+
+        ResultEnum resultEnum = announcementService.addAnnouncement(new AddAnnouncementRequest(senderId, title, content), jwtClaim);
+        if (!resultEnum.getCode().equals(2001)) throw new RuntimeException(resultEnum.getMessage());
 
         return MeetingRoomEnum.SUC_ADD_ROOM;
 
@@ -190,7 +205,7 @@ public class MeetingRoomService {
 
     // 修改会议室
     @Transactional(rollbackFor = Exception.class)
-    public ResultEnum updateMeetingRoom(@Valid UpdateMeetingRoomRequest updateMeetingRoomRequest) {
+    public ResultEnum updateMeetingRoom(@Valid UpdateMeetingRoomRequest updateMeetingRoomRequest, JwtClaim jwtClaim) {
         // 首先通过id查询会议室对象数据
         MeetingRoom meetingRoom = meetingRoomMapper.selectMeetingRoomByRoomId(updateMeetingRoomRequest.getRoomId());
 
@@ -217,6 +232,49 @@ public class MeetingRoomService {
         }
 
         // TODO 修改会议室状态校验
+        Long accountId = jwtClaim.getAccountId();
+        // 判断会议室状态
+        String oldStatus = meetingRoom.getRoomStatus().toString();
+        String newStatus = updateMeetingRoomRequest.getRoomStatus();
+        // 当原本是 启用 状态下，修改成 维护 或 停用 的时候，查询这个会议室的预约记录
+        // 非 取消 拒绝 的，当状态为 待审核，给预约人发通知，当状态为 已通过，给所有参会人员发消息，并发布公告
+        if (oldStatus.equals("AVAILABLE") && !newStatus.equals("AVAILABLE")) {
+            // 通过会议室id查询当前可用预约记录
+            List<Reservation> ableResList = reservationMapper.selectAbleRerByRoomId(meetingRoom.getRoomId());
+            // 把这些预约记录全部回滚，并发通知说会议室维护，并修改预约状态为取消
+
+            UpdateReservationRequest resRequest = new UpdateReservationRequest(null, "CANCELLED");
+            for (Reservation reservation : ableResList) {
+                String title = "会议室 维护/不可用 取消预约通知";
+                String content = "取消";
+                String notificationType = NotificationType.SYSTEM.toString();
+                resRequest.setReservationId(reservation.getReservationId());
+                resRequest.setApprovalAccountId(accountId);
+                Boolean isSuc = rollBackAvailStatusUtil.RollBackAvailStatus(reservation, accountId, resRequest, accountId, title, content, notificationType);
+                if (!isSuc) throw new RuntimeException(ReservationEnum.ERR_UPDATE_RES.getMessage());
+                // 把预约状态改为取消
+                Boolean updateRes = reservationMapper.updateReservation(resRequest);
+                if (!updateRes) throw new RuntimeException(ReservationEnum.ERR_UPDATE_RES.getMessage());
+            }
+
+            // 创建一条修改公告
+            Long senderId = jwtClaim.getAccountId();
+            String title = meetingRoom.getRoomId() + "号会议室维护/禁用通知";
+            // String content = meetingRoom.getRoomId() + "";
+
+            ResultEnum resultEnum = announcementService.addAnnouncement(new AddAnnouncementRequest(senderId, title, title), jwtClaim);
+            if (!resultEnum.getCode().equals(2001)) throw new RuntimeException(resultEnum.getMessage());
+
+        } else if (!oldStatus.equals("AVAILABLE") && newStatus.equals("AVAILABLE")) {
+            // 创建一条公告
+            Long senderId = jwtClaim.getAccountId();
+            String title = meetingRoom.getRoomId() + "号会议室启用通知";
+            // String content = meetingRoom.getRoomId() + "";
+
+            ResultEnum resultEnum = announcementService.addAnnouncement(new AddAnnouncementRequest(senderId, title, title), jwtClaim);
+            if (!resultEnum.getCode().equals(2001)) throw new RuntimeException(resultEnum.getMessage());
+        }
+
 
         // 获取请求中的设备集合 新的
         List<Long> newEquipmentIds = updateMeetingRoomRequest.getEquipmentIds();

@@ -81,18 +81,19 @@ public class RollBackAvailStatusUtil {
                 if (!insertNotify) throw new RuntimeException("通知异常提醒");
             }
             return true;
-        }
-        
-        // 给预约人发通知
-        // 通知需要传入的字段：发送者ID，接收者ID，标题，内容，关联预约ID
-        // String title = "拒绝通知";
-        String rawContent = "您选择的会议室" + roomId + "，日期：" + reservationDate + "，时间段[" + startTime + "—" + endTime + "]，已被" + content + "，处理人：" + senderId;
-        // String notificationType = NotificationType.REJECTION.toString();
-        // 给预约人发送预约成功通知
-        Boolean insertNotify = notificationMapper.insertNotification(senderId, resAccId, notificationType, title, rawContent, request.getReservationId());
-        if (!insertNotify) throw new RuntimeException("通知异常提醒");
+        } else {
+            // 给预约人发通知
+            // 通知需要传入的字段：发送者ID，接收者ID，标题，内容，关联预约ID
+            // String title = "拒绝通知";
+            String rawContent = "您选择的会议室" + roomId + "，日期：" + reservationDate + "，时间段[" + startTime + "—" + endTime + "]，已被" + content + "，处理人：" + senderId;
+            // String notificationType = NotificationType.REJECTION.toString();
+            // 给预约人发送预约成功通知
+            Boolean insertNotify = notificationMapper.insertNotification(senderId, resAccId, notificationType, title, rawContent, request.getReservationId());
+            if (!insertNotify) throw new RuntimeException("通知异常提醒");
 
-        return true;
+            return true;
+        }
+
     }
 
 }

@@ -26,6 +26,11 @@ public class UpdateReservationRequest {
     private String rejectReason;
     // 审核员id，不填，为空
     private Long approvalAccountId;
+
+    public UpdateReservationRequest(Long reservationId, String reservationStatus) {
+        this.reservationId = reservationId;
+        this.reservationStatus = reservationStatus;
+    }
 }
 
 

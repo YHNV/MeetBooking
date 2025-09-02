@@ -156,7 +156,7 @@ public class ReservationService {
 
     }
 
-    // 修改会议室状态
+    // 修改预约状态
     @Transactional(rollbackFor = Exception.class)
     public ResultEnum updateReservation(@Valid UpdateReservationRequest request, JwtClaim jwtClaim) {
         // 获取预约id
@@ -278,8 +278,6 @@ public class ReservationService {
             // 通过工具类获取状态值
 
             // 将请求体内的拒绝原因和处理人id设为null
-
-
             // 直接调用回退方法，传值并发消息
 
             // 修改预约状态，将请求体内的拒绝原因设为null
