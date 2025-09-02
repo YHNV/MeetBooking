@@ -84,14 +84,8 @@
             <div class="filter-item">
               <label class="filter-label">&nbsp;</label>
               <div class="button-group">
-                <el-button type="primary" @click="handleQuery">
-                  <!-- <el-icon><search /></el-icon> -->
-                  查询
-                </el-button>
-                <el-button @click="handleReset">
-                  <!-- <el-icon><refresh /></el-icon> -->
-                  重置
-                </el-button>
+                <el-button type="primary" @click="handleQuery"> 查询 </el-button>
+                <el-button @click="handleReset"> 重置 </el-button>
               </div>
             </div>
           </el-col>
@@ -108,6 +102,17 @@
             :equipment-list="getEquipmentList(room.roomId)"
             @card-click="handleCardClick"
           />
+          <!-- 预约按钮 -->
+          <div class="reserve-btn-container">
+            <el-button
+              type="primary"
+              size="small"
+              @click="handleReserveClick(room)"
+              :disabled="room.roomStatus !== 'AVAILABLE'"
+            >
+              预约
+            </el-button>
+          </div>
         </el-col>
       </el-row>
 
@@ -170,18 +175,78 @@
 
       <template #footer>
         <el-button @click="dialogVisible = false">关闭</el-button>
-        <!-- 预约按钮暂时隐藏，等待后续开发 -->
-        <!-- <el-button type="primary" @click="handleReservation">预约</el-button> -->
+      </template>
+    </el-dialog>
+
+    <!-- 预约弹窗 -->
+    <el-dialog title="预约会议室" v-model="reserveDialogVisible" width="500px" :before-close="handleReserveDialogClose">
+      <div v-if="selectedRoom" class="reserve-form">
+        <el-form ref="reserveFormRef" :model="reserveForm" label-width="100px" :rules="bookRules">
+          <el-form-item label="会议室" prop="roomId">
+            <el-input v-model="selectedRoom.roomName" disabled />
+          </el-form-item>
+
+          <el-form-item label="预约日期" prop="reservationDate">
+            <el-select v-model="reserveForm.reservationDate" placeholder="请选择预约日期" @change="handleDateChange">
+              <el-option v-for="date in availableDates" :key="date" :label="formatDate(date)" :value="date" />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="开始时间" prop="startTime">
+            <el-select v-model="reserveForm.startTime" placeholder="请选择开始时间" @change="handleStartTimeChange">
+              <el-option
+                v-for="slot in availableTimeSlots"
+                :key="slot.startTime"
+                :label="slot.startTime"
+                :value="slot.startTime"
+                :disabled="isSlotDisabled(slot.startTime)"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="结束时间" prop="endTime">
+            <el-select v-model="reserveForm.endTime" placeholder="请选择结束时间" :disabled="!reserveForm.startTime">
+              <el-option
+                v-for="slot in availableTimeSlots"
+                :key="slot.endTime"
+                :label="slot.endTime"
+                :value="slot.endTime"
+                :disabled="isEndTimeDisabled(slot.endTime)"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="会议主题" prop="meetingTopic">
+            <el-input v-model="reserveForm.meetingTopic" placeholder="请输入会议主题" maxlength="127" />
+          </el-form-item>
+
+          <el-form-item label="会议描述" prop="meetingDesc">
+            <el-input
+              v-model="reserveForm.meetingDesc"
+              placeholder="请输入会议描述"
+              type="textarea"
+              :rows="3"
+              maxlength="2000"
+            />
+          </el-form-item>
+
+          <el-form-item label="提及所有人" prop="mentionAll">
+            <el-switch v-model="reserveForm.mentionAll" />
+          </el-form-item>
+        </el-form>
+      </div>
+
+      <template #footer>
+        <el-button @click="handleReserveDialogClose()">取消</el-button>
+        <el-button type="primary" @click="submitReservation">确认预约</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useApi } from '@/composables/useApi.js'
-import { formatDate } from '@/utils/date.js'
-//   import { Search, Refresh } from '@element-plus/icons-vue'
 import MeetingRoomCard from '@/components/MeetingRoomCard.vue'
 
 const http = useApi()
@@ -216,11 +281,52 @@ const pagination = reactive({
   pages: 0,
 })
 
+const reserveFormRef = ref(null)
+
+// 预约相关状态
+const reserveDialogVisible = ref(false)
+const selectedRoom = ref(null)
+const availableDates = ref([])
+const availableTimeSlots = ref([])
+const reserveForm = reactive({
+  roomId: null,
+  reservationDate: '',
+  startTime: '',
+  endTime: '',
+  meetingTopic: '',
+  meetingDesc: '',
+  attendees: [],
+  mentionAll: false,
+})
+
 // 页面加载时查询数据
 onMounted(() => {
   fetchMeetingRoomList()
   fetchEquipmentList()
 })
+
+const bookRules = reactive({
+  reservationDate: [{ required: true, message: '请选择预约日期', trigger: 'change' }],
+  startTime: [{ required: true, message: '请选择开始时间', trigger: 'change' }],
+  endTime: [{ required: true, message: '请选择结束时间', trigger: 'change' }],
+  meetingTopic: [
+    { required: true, message: '请输入会议主题', trigger: 'blur' },
+    { max: 127, message: '会议主题不能超过127个字符', trigger: 'blur' },
+  ],
+  meetingDesc: [{ max: 2000, message: '会议描述不能超过2000个字符', trigger: 'blur' }],
+})
+
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  // 只保留日期部分并格式化
+  return new Date(dateString)
+    .toLocaleDateString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    })
+    .replace(/\//g, '-')
+}
 
 // 查询会议室列表
 const fetchMeetingRoomList = async () => {
@@ -336,6 +442,133 @@ const handleCardClick = async (room) => {
   dialogVisible.value = true
 }
 
+// 处理预约按钮点击
+const handleReserveClick = async (room) => {
+  if (room.roomStatus !== 'AVAILABLE') {
+    ElMessage.warning('只有可用状态的会议室可以预约')
+    return
+  }
+
+  selectedRoom.value = room
+  reserveForm.roomId = room.roomId
+  reserveDialogVisible.value = true
+
+  // 获取可用日期
+  await fetchAvailableDates(room.roomId)
+}
+
+// 获取可用日期列表
+const fetchAvailableDates = async (roomId) => {
+  try {
+    const response = await http.post('/roomAvail/getRoomAvailDateList', roomId)
+    if (response.code === 2001) {
+      availableDates.value = response.data.dates || []
+    } else {
+      ElMessage.error(response.msg || '获取可用日期失败')
+    }
+  } catch (error) {
+    console.error('获取可用日期失败:', error)
+    ElMessage.error('获取可用日期失败，请稍后重试')
+  }
+}
+
+// 表单重置函数
+const resetReservationForm = () => {
+  reserveForm.roomId = null
+  reserveForm.reservationDate = ''
+  reserveForm.startTime = ''
+  reserveForm.endTime = ''
+  reserveForm.meetingTopic = ''
+  reserveForm.meetingDesc = ''
+  reserveForm.attendees = []
+  reserveForm.mentionAll = false
+  availableDates.value = []
+  availableTimeSlots.value = []
+  selectedRoom.value = null
+}
+
+// 处理日期变更
+const handleDateChange = async (date) => {
+  if (!date || !reserveForm.roomId) return
+
+  reserveForm.startTime = ''
+  reserveForm.endTime = ''
+  availableTimeSlots.value = []
+
+  try {
+    const response = await http.post('/roomAvail/getRoomAvailTimeSlotList', {
+      roomId: reserveForm.roomId,
+      date: date,
+    })
+    if (response.code === 2001) {
+      availableTimeSlots.value = response.data.timeSlotList || []
+    } else {
+      ElMessage.error(response.msg || '获取可用时间段失败')
+    }
+  } catch (error) {
+    console.error('获取可用时间段失败:', error)
+    ElMessage.error('获取可用时间段失败，请稍后重试')
+  }
+}
+
+// 处理开始时间变更
+const handleStartTimeChange = () => {
+  reserveForm.endTime = ''
+}
+
+// 判断时间段是否禁用
+const isSlotDisabled = (startTime) => {
+  if (!reserveForm.endTime) return false
+  return compareTime(startTime, reserveForm.endTime) >= 0
+}
+
+// 判断结束时间是否禁用
+const isEndTimeDisabled = (endTime) => {
+  if (!reserveForm.startTime) return true
+  return compareTime(endTime, reserveForm.startTime) <= 0
+}
+
+// 时间比较工具函数
+const compareTime = (time1, time2) => {
+  const t1 = new Date(`2000-01-01 ${time1}`).getTime()
+  const t2 = new Date(`2000-01-01 ${time2}`).getTime()
+  return t1 - t2
+}
+
+// 提交预约
+const submitReservation = async () => {
+  try {
+    // 获取当前用户的jwtClaim，实际应用中需要从登录状态获取
+    // const jwtClaim = JSON.parse(localStorage.getItem('jwtClaim'))
+
+    // const response = await http.post('/res/reservation', reserveForm, {
+    //   params: { jwtClaim: JSON.stringify(jwtClaim) }
+    // })
+
+    // 先进行表单验证
+    await reserveFormRef.value.validate()
+
+    const response = await http.post('/res/reservation', reserveForm)
+
+    if (response.code === 2001) {
+      ElMessage.success('预约成功')
+      reserveDialogVisible.value = false
+      // 可以刷新列表或做其他后续处理
+    } else {
+      ElMessage.error(response.msg || '预约失败')
+    }
+  } catch (error) {
+    console.error('提交预约失败:', error)
+    ElMessage.error('预约失败，请稍后重试')
+  }
+}
+
+// 关闭预约弹窗时重置表单
+const handleReserveDialogClose = () => {
+  resetReservationForm()
+  reserveDialogVisible.value = false
+}
+
 // 状态格式化工具函数
 const getStatusText = (status) => {
   switch (status) {
@@ -394,6 +627,8 @@ const defaultImage = 'https://picsum.photos/seed/meetingroom/600/300'
   font-size: 14px;
   white-space: nowrap;
   line-height: 32px;
+
+  color: #606266;
 }
 
 .button-group {
@@ -407,11 +642,15 @@ const defaultImage = 'https://picsum.photos/seed/meetingroom/600/300'
 }
 
 .card-col {
-  margin-bottom: 20px;
+  margin-bottom: 48px;
+  display: flex;
+  flex-direction: column;
 }
 
 .pagination-container {
+  margin: 20px 0;
   margin-top: 20px;
+  /* border-top: 1px solid #f0f0f0; */
   text-align: right;
 }
 
@@ -420,7 +659,7 @@ const defaultImage = 'https://picsum.photos/seed/meetingroom/600/300'
 }
 
 .empty-state {
-  margin: 50px 0;
+  margin: 80px 0;
   text-align: center;
 }
 
@@ -440,5 +679,17 @@ const defaultImage = 'https://picsum.photos/seed/meetingroom/600/300'
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
+}
+
+/* 预约按钮样式 */
+.reserve-btn-container {
+  text-align: center;
+  margin-top: 10px;
+  flex-shrink: 0;
+}
+
+/* 预约表单样式 */
+.reserve-form {
+  margin-top: 10px;
 }
 </style>

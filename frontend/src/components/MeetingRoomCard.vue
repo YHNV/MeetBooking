@@ -9,10 +9,7 @@
 
     <div class="card-body">
       <div class="room-image">
-        <el-image
-          :src="roomInfo.imageUrl || defaultImage"
-          fit="cover"
-        />
+        <el-image :src="roomInfo.imageUrl || defaultImage" fit="cover" />
       </div>
 
       <div class="room-details">
