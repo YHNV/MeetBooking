@@ -1,4 +1,4 @@
-# MeetBooking - 会议室预订系统
+# MeetBooking - 会议室预约系统
 
 ## 🌟 快速开始
 
@@ -22,7 +22,7 @@ cd MeetBooking
 
 ## 🚀 启动
 
-### 项目配置
+### **项目配置**
 
 1. 修改后端文件上传路径：
 
@@ -37,7 +37,7 @@ cd MeetBooking
 1. 下载并安装 Nginx: [官方下载页面](https://nginx.org/en/download.html)
    或者使用对应的*包管理器*
 
-2. 修改资源路径
+2. 配置文件资源目录
 
    编辑 `/MeetBooking/nginx.conf`，将 `# 映射到你的本地图片文件夹` 下的路径，改为自己的资源目录
 
@@ -56,6 +56,10 @@ cd MeetBooking
 H2 相关配置在 `/MeetBooking/backend/src/main/resources/application.yml` 开头
 
 **默认是内存模式**，如果需要改为持久化，请参照下面的示例，改为对应的本地路径
+
+内存模式示例：`url: jdbc:h2:mem:db`
+
+文件模式（持久化）示例：`url: jdbc:h2:file:./db/sample;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1`
 
 ## 📁 项目结构
 
