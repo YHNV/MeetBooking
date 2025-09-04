@@ -30,6 +30,18 @@
             ID_CARD = #{idCard}
         where EMP_ID = #{empId};
     </update>
+    <update id="updateEmpDept">
+        UPDATE employees
+        SET
+        <if test="deptId != null">dept_id = #{deptId},</if>
+        position = #{position},
+        is_manager =
+        <choose>
+            <when test="deptId != null">TRUE</when>
+            <otherwise>FALSE</otherwise>
+        </choose>
+        WHERE emp_id = #{empId}
+    </update>
     <select id="existsByPhone" resultType="java.lang.Boolean">
         select count(*) > 0
         from EMPLOYEES
@@ -105,5 +117,9 @@
         select EMP_ID, EMP_NAME
         from EMPLOYEES
         where DEPT_ID = #{deptId};
+    </select>
+    <select id="selectAllSimpleEmp" resultType="com.zb.backend.model.response.SimpleDeptEmpResponse">
+        select EMP_ID, EMP_NAME
+        from EMPLOYEES;
     </select>
 </mapper>

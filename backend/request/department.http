@@ -6,5 +6,33 @@ GET https://examples.http-client.intellij.net/get
 POST http://localhost:8080/dept/getSimpleDepartmentList
 Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU1ODc3MjM2LCJleHAiOjE3NTU4ODQ0MzZ9.TFZCezg8g2jzR2APXG-3f64tyUJbCWNNcpW1IhWsDeqzKLEhbrapaeGsP2We01ijEXS-woiUePDccYE9-pDp9A
 
+### 获取部门全部信息
+POST http://localhost:8080/dept/getAllDeptList
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMDA4LCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNzU2OTg4ODAyLCJleHAiOjE3NTY5OTYwMDJ9.lgeHPUc36lxozaU-w-Iiu4NxKHHVtHd9WCWicvvzwZo2O6-_7iuh5KyaIz1XeS5AI26LboOtcxRAnvOibxkeTQ
+
+### 新增部门
+POST http://localhost:8080/dept/addDept
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2OTU1MDY0LCJleHAiOjE3NTY5NjIyNjR9.PeFhQAxpqFCf-eUoiQPdGK0RK288DoEM6y2hmXJaZl1VJdXdJFwQSNpyzdnIWfD30pW0uvxpPuZJktVyIPza9A
+
+{
+  "deptName": "向上部",
+  "managerId": 10001,
+  "deptAddress": "天天园区1号楼2层1号房",
+  "deptDesc": "天天向上"
+}
+
+### 修改部门
+POST http://localhost:8080/dept/updateDept
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50SWQiOjEwMiwiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNzU2OTg5MDM2LCJleHAiOjE3NTY5OTYyMzZ9.lnILblmycDie2XJQkxlujPmsPFi6iD99FF05l_KHbTnj1YKeDdqd0LLExugZJ825WJcWAMOw7xl9apZRBtIhew
+
+{
+  "deptId": 10010,
+  "deptName": "天启部",
+  "managerId": 10005,
+  "deptAddress": "null",
+  "deptDesc": "null"
+}
 
 

@@ -114,4 +114,9 @@ public class EmployeeService {
         Employee employee = employeeMapper.selectEmployeeByEmpId(jwtClaim.getAccountId());
         return employeeMapper.selectSimpleDeptEmp(employee.getDeptId());
     }
+
+    // 获取全部员工简单信息
+    public List<SimpleDeptEmpResponse> getAllSimpleEmp() {
+        return employeeMapper.selectAllSimpleEmp();
+    }
 }

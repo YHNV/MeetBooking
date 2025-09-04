@@ -60,4 +60,12 @@ public class EmployeeController {
         return Result.success(EmployeeEnum.SUC_GET_DEPT_EMP, simpleDeptEmpResponseList);
     }
 
+    // 获取全部员工简单信息
+    @Operation(summary = "获取全部员工简单信息 Admin")
+    @PostMapping("/getAllSimpleEmp")
+    public Result<List<SimpleDeptEmpResponse>> getAllSimpleEmp() {
+        List<SimpleDeptEmpResponse> allEmpList = employeeService.getAllSimpleEmp();
+        return Result.success(EmployeeEnum.SUC_GET_ALL_SIMPLE, allEmpList);
+    }
+
 }

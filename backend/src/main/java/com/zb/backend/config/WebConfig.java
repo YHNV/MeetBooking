@@ -40,7 +40,24 @@ public class WebConfig implements WebMvcConfigurer {
         // 管理员拦截器
         registry.addInterceptor(adminInterceptor)
                 .addPathPatterns(
-                        "/auth/register"
+                        "/auth/register",
+                        "/meetingRoom/uploadImage",
+                        "/meetingRoom/updateMeetingRoom",
+                        "/meetingRoom/addMeetingRoom",
+                        "/equip/updateEquipment",
+                        "/equip/deleteEquipment",
+                        "/equip/deleteEquipment",
+                        "/emp/updateEmployeeInfo",
+                        "/emp/queryEmployees",
+                        "/emp/getAllSimpleEmp",
+                        "/ann/updateAnnouncement",
+                        "/ann/deleteAnnouncement",
+                        "/ann/addAnnouncement",
+                        "/account/toggleAccountStatus",
+                        "/account/resetPassword",
+                        "/dept/getAllDeptList",
+                        "/dept/updateDept",
+                        "/dept/addDept"
                 );
 
         WebMvcConfigurer.super.addInterceptors(registry);

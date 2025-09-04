@@ -14,6 +14,23 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
+    <insert id="insertDept">
+        insert into DEPARTMENTS (dept_name, manager_id, dept_address, dept_desc)
+        values (#{deptName}, #{managerId}, #{deptAddress}, #{deptAddress});
+    </insert>
+    <update id="updateDept">
+        update DEPARTMENTS
+        set DEPT_NAME = #{deptName},
+            MANAGER_ID = #{managerId},
+            DEPT_ADDRESS = #{deptAddress},
+            DEPT_DESC = #{deptDesc}
+        where DEPT_ID = #{deptId};
+    </update>
+    <update id="updateManagerIdByDeptId">
+        update DEPARTMENTS
+        set MANAGER_ID = null
+        where DEPT_ID = #{deptId};
+    </update>
     <select id="selectDepartmentByDeptId" resultType="com.zb.backend.entity.Department">
         select dept_id, dept_name, manager_id, dept_address, dept_desc, is_active, create_time, update_time
         from DEPARTMENTS
@@ -27,5 +44,27 @@
     <select id="selectSimpleDepartment" resultType="com.zb.backend.model.response.SimpleDepartmentResponse">
         select DEPT_ID, DEPT_NAME
         from DEPARTMENTS;
+    </select>
+    <select id="selectAllDept" resultType="com.zb.backend.model.response.GetAllDepartmentResponse">
+        SELECT
+            d.dept_id AS deptId,
+            d.dept_name AS deptName,
+            d.manager_id AS managerId,
+            e.emp_name AS empName,
+            d.dept_address AS deptAddress,
+            d.dept_desc AS deptDesc,
+            d.create_time AS createTime,
+            d.update_time AS updateTime
+        FROM
+            departments d
+                LEFT JOIN
+            employees e ON d.manager_id = e.emp_id
+        ORDER BY
+            d.dept_id ASC
+    </select>
+    <select id="selectByName" resultType="com.zb.backend.entity.Department">
+        select dept_id, dept_name, manager_id, dept_address, dept_desc, is_active, create_time, update_time
+        from DEPARTMENTS
+        where DEPT_NAME = #{deptName};
     </select>
 </mapper>

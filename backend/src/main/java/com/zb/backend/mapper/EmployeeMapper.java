@@ -34,4 +34,10 @@ public interface EmployeeMapper {
 
     // 获取同部门员工信息
     List<SimpleDeptEmpResponse> selectSimpleDeptEmp(Long deptId);
+
+    // 获取全部员工简单信息
+    List<SimpleDeptEmpResponse> selectAllSimpleEmp();
+
+    // 修改员工部门信息，以及职位
+    Boolean updateEmpDept(Long empId, Long deptId, String position);
 }
