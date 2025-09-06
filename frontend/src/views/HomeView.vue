@@ -104,18 +104,42 @@
     </el-container>
 
     <!-- 消息通知侧边弹窗 -->
-    <!-- 消息通知面板 -->
     <transition name="slide-fade">
       <div v-if="showNotificationPanel" class="notification-panel">
-        <!-- 这里放你的消息通知内容 -->
         <div class="notification-header">
           <h3>消息通知</h3>
-          <el-button circle size="small" @click="showNotificationPanel = false">
-            <Close />
-          </el-button>
+          <div class="header-actions">
+            <el-button size="small" text @click="markAllAsRead" :disabled="loading.value"> 全部已读 </el-button>
+            <el-button circle size="small" @click="showNotificationPanel = false">
+              <Close />
+            </el-button>
+          </div>
         </div>
-        <div class="notification-content">
+        <div class="notification-content" @scroll="handleScroll">
           <!-- 消息列表内容 -->
+          <el-skeleton v-if="loading.value" :count="5" style="width: 100%"></el-skeleton>
+
+          <div v-else-if="notifications.length === 0" class="no-notifications">
+            <p>暂无通知消息</p>
+          </div>
+
+          <div v-else class="notification-list">
+            <div
+              v-for="notify in notifications"
+              :key="notify.notificationId"
+              class="notification-item"
+              :class="{ unread: !notify.isRead }"
+            >
+              <div class="notify-title">
+                {{ notify.title }}
+                <span v-if="!notify.isRead" class="unread-dot"></span>
+              </div>
+              <div class="notify-content">{{ notify.content }}</div>
+              <div class="notify-time">
+                {{ formatDate(notify.createTime) }}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </transition>
@@ -128,7 +152,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import Bell from '@/components/svg/Bell.vue'
 import Avatar from '@/components/svg/Avatar.vue'
 import Logout from '@/components/svg/Logout.vue'
@@ -273,7 +297,132 @@ watch(
 onMounted(() => {
   // accountStore.init()
   // console.log(accountStore.accountInfo)
+  startPolling()
 })
+
+onUnmounted(() => {
+  stopPolling()
+})
+
+// 当消息面板显示时加载通知列表
+watch(
+  () => showNotificationPanel.value,
+  (newVal) => {
+    if (newVal) {
+      currentPage.value = 1
+      fetchNotifications()
+    }
+  },
+)
+
+// 消息相关变量
+const notifications = ref([]) // 存储通知列表
+const totalNotifications = ref(0) // 总通知数
+const currentPage = ref(1) // 当前页码
+const pageSize = ref(10) // 每页条数
+const loading = ref(false) // 加载状态
+const pollTimer = ref(null) // 轮询计时器
+
+// 获取未读消息数量
+const fetchUnreadCount = async () => {
+  try {
+    const response = await http.post('/notify/getNotReadNum')
+    if (response.code === 2001) {
+      msgCount.value = response.data
+    }
+  } catch (error) {
+    console.error('获取未读消息数量失败:', error)
+  }
+}
+
+// 获取通知列表
+const fetchNotifications = async (append = false) => {
+  if (!append) {
+    // 不是追加模式时清空现有数据
+    notifications.value = []
+    hasMore.value = true
+  }
+  
+  loading.value = true
+  try {
+    const response = await http.post('/notify/getNotifications', {
+      pageNum: currentPage.value,
+      pageSize: pageSize.value,
+    })
+    if (response.code === 2001) {
+      // 根据模式决定是替换还是追加数据
+      if (append) {
+        notifications.value = [...notifications.value, ...response.data.list]
+      } else {
+        notifications.value = response.data.list
+      }
+      totalNotifications.value = response.data.total
+      
+      // 判断是否还有更多数据
+      hasMore.value = notifications.value.length < totalNotifications.value
+    }
+  } catch (error) {
+    console.error('获取通知列表失败:', error)
+    ElMessage.error('获取通知失败')
+  } finally {
+    loading.value = false
+  }
+}
+
+// 标记所有通知为已读
+const markAllAsRead = async () => {
+  try {
+    const response = await http.post('/notify/readAllNotifications')
+    if (response.code === 2001 && response.data) {
+      ElMessage.success('所有通知已标记为已读')
+      // 更新本地通知状态
+      notifications.value.forEach((notify) => {
+        notify.isRead = true
+      })
+      msgCount.value = 0
+    }
+  } catch (error) {
+    console.error('标记所有通知为已读失败:', error)
+    ElMessage.error('操作失败')
+  }
+}
+
+// 初始化轮询
+const startPolling = () => {
+  // 先立即执行一次
+  fetchUnreadCount()
+
+  // 每分钟轮询一次
+  pollTimer.value = setInterval(() => {
+    fetchUnreadCount()
+  }, 60000)
+}
+
+// 停止轮询
+const stopPolling = () => {
+  if (pollTimer.value) {
+    clearInterval(pollTimer.value)
+    pollTimer.value = null
+  }
+}
+
+// 是否还有更多数据的标记
+const hasMore = ref(true)
+
+// 滚动处理方法
+const handleScroll = (e) => {
+  const container = e.target
+  // 判断是否滚动到了底部（留出20px的缓冲）
+  if (
+    container.scrollTop + container.clientHeight >= container.scrollHeight - 20 &&
+    !loading.value &&
+    hasMore.value
+  ) {
+    // 加载下一页
+    currentPage.value++
+    fetchNotifications(true)
+  }
+}
 </script>
 
 <style scoped>
@@ -444,10 +593,10 @@ onMounted(() => {
 /* 消息通知面板样式 */
 .notification-panel {
   position: fixed;
-  top: 64px; /* 与导航栏高度一致 */
+  top: 72px; /* 与导航栏高度一致 */
   right: 0;
   width: 400px;
-  height: calc(100vh - 64px); /* 减去导航栏高度 */
+  height: calc(100vh - 80px); /* 减去导航栏高度 */
   background-color: white;
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
   z-index: 2001;
@@ -472,10 +621,10 @@ onMounted(() => {
 /* 遮罩层样式 */
 .notification-overlay {
   position: fixed;
-  top: 64px; /* 从导航栏下方开始 */
+  top: 0;
   left: 0;
   width: 100%;
-  height: calc(100vh - 64px); /* 减去导航栏高度 */
+  height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 2000;
 }
@@ -685,5 +834,89 @@ onMounted(() => {
 .user-name {
   display: flex;
   align-items: center;
+}
+
+/* 消息组件相关样式 */
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notification-content {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notification-item {
+  padding: 12px;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.notification-item:hover {
+  background-color: #f0f0f0;
+}
+
+.notification-item.unread {
+  background-color: #f0f7ff;
+  border-left: 3px solid #1890ff;
+}
+
+.notify-title {
+  font-weight: 500;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #1890ff;
+}
+
+.notify-content {
+  color: #666;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.notify-time {
+  color: #999;
+  font-size: 12px;
+  text-align: right;
+}
+
+.no-notifications {
+  text-align: center;
+  padding: 40px 0;
+  color: #999;
+}
+
+.notification-pagination {
+  padding: 16px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: center;
 }
 </style>
