@@ -20,7 +20,7 @@
           <el-col :span="6">
             <div class="filter-item">
               <label class="filter-label">会议室类型</label>
-              <el-select v-model="filters.roomType" placeholder="请选择类型" clearable>
+              <el-select v-model="filters.roomType" placeholder="请选择类型" clearable @change="handleQuery">
                 <el-option label="小型会议室" value="SMALL" />
                 <el-option label="大型会议室" value="LARGE" />
               </el-select>
@@ -47,7 +47,7 @@
           <el-col :span="6">
             <div class="filter-item">
               <label class="filter-label">状态</label>
-              <el-select v-model="filters.roomStatus" placeholder="请选择状态" clearable>
+              <el-select v-model="filters.roomStatus" placeholder="请选择状态" clearable @change="handleQuery">
                 <el-option label="可用" value="AVAILABLE" />
                 <el-option label="禁用" value="DISABLED" />
                 <el-option label="维护中" value="MAINTENANCE" />
@@ -230,8 +230,22 @@
             />
           </el-form-item>
 
+          <el-form-item label="参会人员" prop="attendees" :disabled="reserveForm.mentionAll">
+            <el-select
+              v-model="reserveForm.attendees"
+              placeholder="请选择参会人员"
+              multiple
+              filterable
+              collapse-tags
+              collapse-tags-tooltip
+            >
+              <el-option v-for="emp in deptEmployees" :key="emp.empId" :label="emp.empName" :value="emp.empId" />
+            </el-select>
+            <div class="form-hint">只能选择本部门员工</div>
+          </el-form-item>
+
           <el-form-item label="提及所有人" prop="mentionAll">
-            <el-switch v-model="reserveForm.mentionAll" />
+            <el-switch v-model="reserveForm.mentionAll" :disabled="!accountInfo?.isManager" />
           </el-form-item>
         </el-form>
       </div>
@@ -245,11 +259,13 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useApi } from '@/composables/useApi.js'
+import { useAccountStore } from '@/stores/account.js'
 import MeetingRoomCard from '@/components/MeetingRoomCard.vue'
 
 const http = useApi()
+const accountStore = useAccountStore()
 
 // 状态管理
 const loading = ref(false)
@@ -261,6 +277,11 @@ const roomEquipmentMap = ref(new Map()) // 存储会议室ID到设备列表的�
 const dialogVisible = ref(false)
 const currentRoom = ref(null)
 const currentRoomEquipments = ref([])
+
+// 员工信息相关
+const accountInfo = computed(() => accountStore.accountInfo)
+const deptEmployees = ref([])
+const accountId = accountInfo.value.accountId
 
 // 筛选条件
 const filters = reactive({
@@ -303,6 +324,7 @@ const reserveForm = reactive({
 onMounted(() => {
   fetchMeetingRoomList()
   fetchEquipmentList()
+  fetchDeptEmployees()
 })
 
 const bookRules = reactive({
@@ -326,6 +348,23 @@ const formatDate = (dateString) => {
       day: '2-digit',
     })
     .replace(/\//g, '-')
+}
+
+// 获取同部门员工列表
+const fetchDeptEmployees = async () => {
+  try {
+    const response = await http.post('/emp/getSimpleDeptEmp')
+    if (response.code === 2001) {
+      deptEmployees.value = (response.data || []).filter (
+        emp => emp.empId !== accountId
+      )
+    } else {
+      ElMessage.error(response.msg || '获取部门员工列表失败')
+    }
+  } catch (error) {
+    console.error('获取部门员工列表失败:', error)
+    ElMessage.error('获取部门员工列表失败，请稍后重试')
+  }
 }
 
 // 查询会议室列表
@@ -449,6 +488,12 @@ const handleReserveClick = async (room) => {
     return
   }
 
+  // 非经理不能预约大型会议室
+  if (!accountInfo.value?.isManager && room.roomType === 'LARGE') {
+    ElMessage.warning('只有经理可以预约大型会议室')
+    return
+  }
+
   selectedRoom.value = room
   reserveForm.roomId = room.roomId
   reserveDialogVisible.value = true
@@ -538,12 +583,16 @@ const compareTime = (time1, time2) => {
 // 提交预约
 const submitReservation = async () => {
   try {
-    // 获取当前用户的jwtClaim，实际应用中需要从登录状态获取
-    // const jwtClaim = JSON.parse(localStorage.getItem('jwtClaim'))
+    // 验证经理是否使用了@全体功能
+    if (!accountInfo.value?.isManager && reserveForm.mentionAll) {
+      ElMessage.warning('只有经理可以使用@全体功能')
+      return
+    }
 
-    // const response = await http.post('/res/reservation', reserveForm, {
-    //   params: { jwtClaim: JSON.stringify(jwtClaim) }
-    // })
+    // @全体优先级高于邀请
+    if (reserveForm.mentionAll && reserveForm.attendees.length > 0) {
+      reserveForm.attendees = [] // 清空
+    }
 
     // 先进行表单验证
     await reserveFormRef.value.validate()
@@ -560,6 +609,9 @@ const submitReservation = async () => {
   } catch (error) {
     console.error('提交预约失败:', error)
     ElMessage.error('预约失败，请稍后重试')
+  } finally {
+    // 重置预约信息
+    resetReservationForm()
   }
 }
 
@@ -686,10 +738,21 @@ const defaultImage = 'https://picsum.photos/seed/meetingroom/600/300'
   text-align: center;
   margin-top: 10px;
   flex-shrink: 0;
+  width: 100%;
+}
+
+.reserve-btn-container .el-button {
+  width: 100%;
 }
 
 /* 预约表单样式 */
 .reserve-form {
   margin-top: 10px;
+}
+
+.form-hint {
+  font-size: 12px;
+  color: #909399;
+  margin-top: 4px;
 }
 </style>

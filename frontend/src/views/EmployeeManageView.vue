@@ -15,7 +15,7 @@
           <el-col :span="5">
             <div class="filter-item">
               <label class="filter-label">部门</label>
-              <el-select v-model="filters.deptId" placeholder="请选择部门" clearable>
+              <el-select v-model="filters.deptId" placeholder="请选择部门" clearable @change="handleQuery">
                 <el-option
                   v-for="dept in departmentMap"
                   :key="dept.deptId"
@@ -30,7 +30,7 @@
           <el-col :span="5">
             <div class="filter-item">
               <label class="filter-label">是否在职</label>
-              <el-select v-model="filters.isActive" placeholder="请选择在职状态" clearable>
+              <el-select v-model="filters.isActive" placeholder="请选择在职状态" clearable @change="handleQuery">
                 <el-option label="在职" value="true" />
                 <el-option label="离职" value="false" />
               </el-select>
@@ -41,7 +41,7 @@
           <el-col :span="5">
             <div class="filter-item">
               <label class="filter-label">是否为管理者</label>
-              <el-select v-model="filters.isManager" placeholder="请选择是否管理" clearable>
+              <el-select v-model="filters.isManager" placeholder="请选择是否管理" clearable @change="handleQuery">
                 <el-option label="是" value="true" />
                 <el-option label="否" value="false" />
               </el-select>

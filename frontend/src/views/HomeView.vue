@@ -342,7 +342,7 @@ const fetchNotifications = async (append = false) => {
     notifications.value = []
     hasMore.value = true
   }
-  
+
   loading.value = true
   try {
     const response = await http.post('/notify/getNotifications', {
@@ -357,7 +357,7 @@ const fetchNotifications = async (append = false) => {
         notifications.value = response.data.list
       }
       totalNotifications.value = response.data.total
-      
+
       // 判断是否还有更多数据
       hasMore.value = notifications.value.length < totalNotifications.value
     }
@@ -392,10 +392,10 @@ const startPolling = () => {
   // 先立即执行一次
   fetchUnreadCount()
 
-  // 每分钟轮询一次
+  // 每15秒轮询一次
   pollTimer.value = setInterval(() => {
     fetchUnreadCount()
-  }, 60000)
+  }, 15000)
 }
 
 // 停止轮询
@@ -413,11 +413,7 @@ const hasMore = ref(true)
 const handleScroll = (e) => {
   const container = e.target
   // 判断是否滚动到了底部（留出20px的缓冲）
-  if (
-    container.scrollTop + container.clientHeight >= container.scrollHeight - 20 &&
-    !loading.value &&
-    hasMore.value
-  ) {
+  if (container.scrollTop + container.clientHeight >= container.scrollHeight - 20 && !loading.value && hasMore.value) {
     // 加载下一页
     currentPage.value++
     fetchNotifications(true)
