@@ -108,7 +108,7 @@
               type="primary"
               size="small"
               @click="handleReserveClick(room)"
-              :disabled="room.roomStatus !== 'AVAILABLE'"
+              :disabled="room.roomStatus !== 'AVAILABLE' || (room.roomType === 'LARGE' && !accountInfo.isManager)"
             >
               预约
             </el-button>
@@ -127,7 +127,7 @@
       <el-pagination
         v-model:current-page="pagination.pageNum"
         v-model:page-size="pagination.pageSize"
-        :page-sizes="[6, 12, 24]"
+        :page-sizes="[8, 12, 20]"
         :total="pagination.total"
         layout="total, sizes, prev, pager, next, jumper"
         @size-change="handleSizeChange"
@@ -195,11 +195,11 @@
           <el-form-item label="开始时间" prop="startTime">
             <el-select v-model="reserveForm.startTime" placeholder="请选择开始时间" @change="handleStartTimeChange">
               <el-option
-                v-for="slot in availableTimeSlots"
+                v-for="(slot, index) in availableTimeSlots"
                 :key="slot.startTime"
                 :label="slot.startTime"
                 :value="slot.startTime"
-                :disabled="isSlotDisabled(slot.startTime)"
+                :disabled="isSlotDisabled(slot.startTime, index)"
               />
             </el-select>
           </el-form-item>
@@ -207,11 +207,11 @@
           <el-form-item label="结束时间" prop="endTime">
             <el-select v-model="reserveForm.endTime" placeholder="请选择结束时间" :disabled="!reserveForm.startTime">
               <el-option
-                v-for="slot in availableTimeSlots"
+                v-for="(slot, index) in availableTimeSlots"
                 :key="slot.endTime"
                 :label="slot.endTime"
                 :value="slot.endTime"
-                :disabled="isEndTimeDisabled(slot.endTime)"
+                :disabled="isEndTimeDisabled(slot.endTime, index)"
               />
             </el-select>
           </el-form-item>
@@ -297,7 +297,7 @@ const filters = reactive({
 // 分页信息
 const pagination = reactive({
   pageNum: 1,
-  pageSize: 6,
+  pageSize: 8,
   total: 0,
   pages: 0,
 })
@@ -355,9 +355,7 @@ const fetchDeptEmployees = async () => {
   try {
     const response = await http.post('/emp/getSimpleDeptEmp')
     if (response.code === 2001) {
-      deptEmployees.value = (response.data || []).filter (
-        emp => emp.empId !== accountId
-      )
+      deptEmployees.value = (response.data || []).filter((emp) => emp.empId !== accountId)
     } else {
       ElMessage.error(response.msg || '获取部门员工列表失败')
     }
@@ -546,6 +544,7 @@ const handleDateChange = async (date) => {
       date: date,
     })
     if (response.code === 2001) {
+      // console.log(response.data)
       availableTimeSlots.value = response.data.timeSlotList || []
     } else {
       ElMessage.error(response.msg || '获取可用时间段失败')
@@ -558,26 +557,52 @@ const handleDateChange = async (date) => {
 
 // 处理开始时间变更
 const handleStartTimeChange = () => {
-  reserveForm.endTime = ''
+  if (!reserveForm.startTime) return
+
+  // 找到选中的开始时间段
+  const selectedSlot = availableTimeSlots.value.find((slot) => slot.startTime === reserveForm.startTime)
+
+  if (selectedSlot) {
+    // 结束时间默认设为当前时间段的结束时间
+    reserveForm.endTime = selectedSlot.endTime
+  } else {
+    reserveForm.endTime = ''
+  }
 }
 
-// 判断时间段是否禁用
-const isSlotDisabled = (startTime) => {
-  if (!reserveForm.endTime) return false
-  return compareTime(startTime, reserveForm.endTime) >= 0
+// 添加新的时间段禁用判断方法
+const isSlotDisabled = (startTime, currentIndex) => {
+  // 检查当前时间段是否与前一个时间段连续
+  if (currentIndex > 0) {
+    const prevSlot = availableTimeSlots.value[currentIndex - 1]
+    // 如果与前一个时间段不连续，则该时间段不能作为开始时间
+    return prevSlot.endTime !== startTime
+  }
+  return false
 }
 
-// 判断结束时间是否禁用
-const isEndTimeDisabled = (endTime) => {
+// 更新结束时间禁用判断方法
+const isEndTimeDisabled = (endTime, currentIndex) => {
   if (!reserveForm.startTime) return true
-  return compareTime(endTime, reserveForm.startTime) <= 0
-}
 
-// 时间比较工具函数
-const compareTime = (time1, time2) => {
-  const t1 = new Date(`2000-01-01 ${time1}`).getTime()
-  const t2 = new Date(`2000-01-01 ${time2}`).getTime()
-  return t1 - t2
+  // 找到开始时间所在的时间段索引
+  const startIndex = availableTimeSlots.value.findIndex((slot) => slot.startTime === reserveForm.startTime)
+
+  if (startIndex === -1) return true
+
+  // 结束时间必须在开始时间之后
+  if (currentIndex < startIndex) return true
+
+  // 检查时间段是否连续
+  for (let i = startIndex; i < currentIndex; i++) {
+    const current = availableTimeSlots.value[i]
+    const next = availableTimeSlots.value[i + 1]
+    if (current.endTime !== next.startTime) {
+      return true // 时间段不连续，禁用
+    }
+  }
+
+  return false
 }
 
 // 提交预约

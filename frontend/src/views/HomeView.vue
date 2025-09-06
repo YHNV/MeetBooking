@@ -17,7 +17,13 @@
         <!-- 右侧个人信息 -->
         <div class="right-tools">
           <!--消息通知按钮-->
-          <el-button circle size="default" class="notification-btn" @click="handleNotificationClick">
+          <el-button
+            v-if="!accountInfo.isAdmin"
+            circle
+            size="default"
+            class="notification-btn"
+            @click="handleNotificationClick"
+          >
             <!--通知icon-->
             <Bell class="notification-icon" />
             <!--消息数量-->
@@ -297,11 +303,15 @@ watch(
 onMounted(() => {
   // accountStore.init()
   // console.log(accountStore.accountInfo)
-  startPolling()
+  if (!accountInfo.value.isAdmin) {
+    startPolling()
+  }
 })
 
 onUnmounted(() => {
-  stopPolling()
+  if (!accountInfo.value.isAdmin) {
+    stopPolling()
+  }
 })
 
 // 当消息面板显示时加载通知列表
