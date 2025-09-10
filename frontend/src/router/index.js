@@ -22,6 +22,8 @@ const routes = [
       { path: 'booking', component: EmployeeManageView },
       { path: 'notice', component: DarkAndLight },
       { path: 'profile', component: ProfileView },
+      { path: 'employee-manage', component: EmployeeManageView },
+      { path: 'room-manage', component: RoomManageView },
     ],
     meta: { requiresAuth: true },
   },

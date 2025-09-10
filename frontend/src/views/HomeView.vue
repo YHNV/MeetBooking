@@ -168,6 +168,7 @@ import { formatDate } from '@/utils/date.js'
 import { useRouter } from 'vue-router'
 import { useAccountStore } from '@/stores/account.js'
 import { useApi } from '@/composables/useApi.js'
+import { computed } from 'vue'
 
 const http = useApi()
 const router = useRouter()
@@ -194,12 +195,36 @@ accountInfo.value.lastLoginTime = formatDate(accountStore.accountInfo.lastLoginT
 console.log(accountInfo.value)
 
 // 菜单栏
-const menuItems = ref([
-  { index: '1', name: '首页', route: '/' },
-  { index: '2', name: '会议室列表', route: '/rooms' },
-  { index: '3', name: '我的预约', route: '/booking' },
-  { index: '4', name: '公告中心', route: '/notice' },
-])
+// const menuItems = ref([
+//   { index: '1', name: '首页', route: '/' },
+//   { index: '2', name: '会议室列表', route: '/rooms' },
+//   { index: '3', name: '我的预约', route: '/booking' },
+//   { index: '4', name: '公告中心', route: '/notice' },
+// ])
+const menuItems = computed(() => {
+  // 基础菜单（所有用户可见，包含首页）
+  const baseMenu = [
+    { index: '1', name: '首页', route: '/' },
+    { index: '4', name: '公告中心', route: '/notice' },
+  ]
+
+  // 管理员菜单
+  if (accountInfo.value.isAdmin) {
+    return [
+      ...baseMenu,
+      { index: '5', name: '员工管理', route: '/employee-manage' },
+      { index: '6', name: '会议室管理', route: '/room-manage' },
+    ]
+  }
+  // 员工菜单
+  else {
+    return [
+      ...baseMenu,
+      { index: '2', name: '会议室列表', route: '/rooms' },
+      { index: '3', name: '我的预约', route: '/booking' },
+    ]
+  }
+})
 
 // 定义默认激活菜单索引
 const activeIndex = ref('1')

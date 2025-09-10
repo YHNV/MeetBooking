@@ -109,14 +109,12 @@
         <el-table-column label="图片" width="120">
           <template #default="scope">
             <el-image
-              v-if="scope.row.imageUrl"
-              :src="scope.row.imageUrl"
+              :src="scope.row.imageUrl || defaultImage"
               :preview-src-list="[scope.row.imageUrl]"
               style="width: 60px; height: 40px; object-fit: cover"
               fit="cover"
               :preview-teleported="true"
             />
-            <span v-else>无图片</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -662,6 +660,9 @@ const handleSave = async () => {
     ElMessage.error('操作失败，请稍后重试')
   }
 }
+
+// 默认图片
+const defaultImage = 'https://picsum.photos/seed/meetingroom/600/300'
 </script>
 
 <style scoped>
