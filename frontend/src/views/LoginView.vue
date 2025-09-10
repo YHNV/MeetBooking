@@ -25,7 +25,7 @@
       <!-- 底部信息 -->
       <div class="login-footer">
         <p>登录账号：员工工号</p>
-        <p>登录密码：yh@6位数生日</p>
+        <p>登录密码：123456</p>
         <p class="footer-msg">© 企业会议室预约系统</p>
       </div>
     </div>

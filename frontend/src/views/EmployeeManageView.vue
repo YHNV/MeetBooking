@@ -27,7 +27,7 @@
           </el-col>
 
           <!-- 是否在职 -->
-          <el-col :span="5">
+          <el-col :span="4">
             <div class="filter-item">
               <label class="filter-label">是否在职</label>
               <el-select v-model="filters.isActive" placeholder="请选择在职状态" clearable @change="handleQuery">
@@ -37,11 +37,11 @@
             </div>
           </el-col>
 
-          <!-- 是否为管理者 -->
-          <el-col :span="5">
+          <!-- 是否为经理 -->
+          <el-col :span="4">
             <div class="filter-item">
-              <label class="filter-label">是否为管理者</label>
-              <el-select v-model="filters.isManager" placeholder="请选择是否管理" clearable @change="handleQuery">
+              <label class="filter-label">是否为经理</label>
+              <el-select v-model="filters.isManager" placeholder="请选择是否经理" clearable @change="handleQuery">
                 <el-option label="是" value="true" />
                 <el-option label="否" value="false" />
               </el-select>
@@ -49,12 +49,13 @@
           </el-col>
 
           <!-- 操作按钮 -->
-          <el-col :span="4">
+          <el-col :span="6">
             <div class="filter-item">
               <label class="filter-label">&nbsp;</label>
               <div>
                 <el-button type="primary" @click="handleQuery"> 查询 </el-button>
                 <el-button @click="handleReset"> 重置 </el-button>
+                <el-button type="success" @click="handleAdd"> 添加员工 </el-button>
               </div>
             </div>
           </el-col>
@@ -118,6 +119,36 @@
           <el-button @click="handleDialogClose">取消</el-button>
           <el-button type="primary" @click="handleResetPassword" v-if="editForm.empId"> 重置密码 </el-button>
           <el-button type="success" @click="handleSave">保存</el-button>
+        </template>
+      </el-dialog>
+
+      <!-- 添加员工信息 -->
+      <el-dialog title="添加员工信息" v-model="addDialogVisible" width="500px" :before-close="handleAddDialogClose">
+        <el-form :model="addForm" ref="addFormRef" :rules="addRules" label-width="100px">
+          <el-form-item label="员工姓名" prop="empName">
+            <el-input v-model="addForm.empName" />
+          </el-form-item>
+          <el-form-item label="部门" prop="deptId">
+            <el-select v-model="addForm.deptId" placeholder="请选择部门">
+              <el-option v-for="dept in departmentMap" :key="dept.deptId" :label="dept.deptName" :value="dept.deptId" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="职位" prop="position">
+            <el-input v-model="addForm.position" />
+          </el-form-item>
+          <el-form-item label="手机号" prop="phone">
+            <el-input v-model="addForm.phone" />
+          </el-form-item>
+          <el-form-item label="邮箱" prop="email">
+            <el-input v-model="addForm.email" />
+          </el-form-item>
+          <el-form-item label="身份证号" prop="idCard">
+            <el-input v-model="addForm.idCard" />
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button @click="handleAddDialogClose">取消</el-button>
+          <el-button type="success" @click="handleAddSave">保存</el-button>
         </template>
       </el-dialog>
 
@@ -317,7 +348,7 @@ const formatIsActive = (row) => {
   return row.isActive ? '在职' : '离职'
 }
 
-// 格式化是否为管理者
+// 格式化是否为经理
 const formatIsManager = (row) => {
   return row.isManager ? '是' : '否'
 }
@@ -403,6 +434,76 @@ const handleResetPassword = async () => {
     if (error !== 'cancel') {
       console.error('重置密码失败:', error)
       ElMessage.error('操作失败，请稍后重试')
+    }
+  }
+}
+
+// 添加员工对话框状态
+const addDialogVisible = ref(false)
+const addFormRef = ref(null)
+
+// 添加员工表单数据
+const addForm = reactive({
+  empName: '',
+  deptId: '',
+  phone: '',
+  idCard: '',
+  position: '',
+  email: '',
+})
+
+// 添加员工表单验证规则
+const addRules = reactive({
+  empName: [{ required: true, message: '请输入员工姓名', trigger: 'blur' }],
+  deptId: [{ required: true, message: '请选择部门', trigger: 'change' }],
+  phone: [
+    { required: true, message: '请输入手机号', trigger: 'blur' },
+    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'blur' },
+  ],
+  idCard: [
+    { required: true, message: '请输入身份证号', trigger: 'blur' },
+    { pattern: /(^\d{18}$)|(^\d{17}(\d|X|x)$)/, message: '请输入正确的身份证号', trigger: 'blur' },
+  ],
+  email: [{ type: 'email', message: '请输入正确的邮箱格式', trigger: ['blur', 'change'] }],
+})
+
+// 打开添加员工对话框
+const handleAdd = () => {
+  // 重置表单
+  addFormRef.value?.resetFields()
+  // 重置表单数据
+  Object.keys(addForm).forEach((key) => {
+    addForm[key] = ''
+  })
+  addDialogVisible.value = true
+}
+
+// 关闭添加对话框
+const handleAddDialogClose = () => {
+  addDialogVisible.value = false
+  addFormRef.value?.resetFields()
+}
+
+// 保存新增员工
+const handleAddSave = async () => {
+  try {
+    // 表单验证
+    await addFormRef.value.validate()
+
+    // 调用API添加员工
+    const response = await http.post('/auth/register', addForm)
+
+    if (response.code === 2001) {
+      ElMessage.success('员工添加成功')
+      addDialogVisible.value = false
+      fetchEmployeeList() // 刷新列表
+    } else {
+      ElMessage.error(response.msg || '添加失败')
+    }
+  } catch (error) {
+    if (error.name === 'Error') {
+      console.error('添加员工失败:', error)
+      ElMessage.error('添加失败，请稍后重试')
     }
   }
 }
