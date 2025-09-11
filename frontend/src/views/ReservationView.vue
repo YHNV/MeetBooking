@@ -1,18 +1,10 @@
 <template>
-  <div class="reservation-management-page">
+  <div class="reservation-view-page">
     <el-card>
       <div class="filter-container">
         <el-row :gutter="20">
-          <!-- 预约人ID筛选 -->
-          <el-col :span="5">
-            <div class="filter-item">
-              <label class="filter-label">预约人ID</label>
-              <el-input v-model="filters.accountId" placeholder="请输入预约人ID" clearable @keyup.enter="handleQuery" />
-            </div>
-          </el-col>
-
           <!-- 预约日期筛选 -->
-          <el-col :span="5">
+          <el-col :span="8">
             <div class="filter-item">
               <label class="filter-label">预约日期</label>
               <el-date-picker
@@ -26,7 +18,7 @@
           </el-col>
 
           <!-- 预约状态筛选 -->
-          <el-col :span="5">
+          <el-col :span="8">
             <div class="filter-item">
               <label class="filter-label">预约状态</label>
               <el-select
@@ -45,7 +37,7 @@
           </el-col>
 
           <!-- 操作按钮 -->
-          <el-col :span="9">
+          <el-col :span="8">
             <div class="filter-item">
               <label class="filter-label">&nbsp;</label>
               <div>
@@ -61,8 +53,6 @@
       <el-table :data="reservationList" border stripe v-loading="loading" element-loading-text="加载中...">
         <el-table-column prop="reservationId" label="预约ID" width="100" />
         <el-table-column prop="roomId" label="会议室ID" width="100" />
-        <el-table-column prop="accountId" label="预约人ID" width="100" />
-        <el-table-column prop="empName" label="预约人姓名" width="120" />
         <el-table-column prop="meetingTopic" label="会议主题" />
         <el-table-column prop="reservationDate" label="预约日期" width="120" />
         <el-table-column prop="startTime" label="开始时间" width="120" />
@@ -74,44 +64,33 @@
             </el-tag>
           </template>
         </el-table-column>
+        <el-table-column prop="rejectReason" label="拒绝原因" width="180" :show-overflow-tooltip="true" />
         <el-table-column
           prop="createTime"
           label="创建时间"
           width="180"
           :formatter="(row) => formatDate(row.createTime)"
         />
-        <el-table-column label="操作" width="240">
+        <el-table-column label="操作" width="120">
           <template #default="scope">
             <el-button
               size="small"
-              type="success"
-              @click="handleApprove(scope.row)"
-              :disabled="!canModify(scope.row.reservationStatus)"
+              type="warning"
+              @click="handleCancel(scope.row)"
+              :disabled="!canCancel(scope.row.reservationStatus)"
             >
-              同意
-            </el-button>
-            <el-button
-              size="small"
-              type="danger"
-              @click="handleReject(scope.row)"
-              :disabled="!canModify(scope.row.reservationStatus)"
-            >
-              拒绝
+              取消
             </el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <!-- 拒绝原因对话框 -->
-      <el-dialog title="拒绝预约" v-model="rejectDialogVisible" width="400px">
-        <el-form :model="rejectForm" ref="rejectFormRef" :rules="rejectRules" label-width="80px">
-          <el-form-item label="拒绝原因" prop="rejectReason">
-            <el-input v-model="rejectForm.rejectReason" type="textarea" :rows="4" placeholder="请输入拒绝原因" />
-          </el-form-item>
-        </el-form>
+      <!-- 取消预约确认对话框 -->
+      <el-dialog title="取消预约" v-model="cancelDialogVisible" width="400px">
+        <p>确定要取消此预约吗？</p>
         <template #footer>
-          <el-button @click="rejectDialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="confirmReject">确认拒绝</el-button>
+          <el-button @click="cancelDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="confirmCancel">确认取消</el-button>
         </template>
       </el-dialog>
 
@@ -132,7 +111,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAccountStore } from '@/stores/account.js'
 import { useApi } from '@/composables/useApi.js'
@@ -148,7 +127,6 @@ const reservationList = ref([])
 
 // 筛选条件
 const filters = reactive({
-  accountId: null,
   reservationDate: null,
   reservationStatus: '',
 })
@@ -161,28 +139,18 @@ const pagination = reactive({
   pages: 0,
 })
 
-// 拒绝原因表单
-const rejectDialogVisible = ref(false)
-const rejectFormRef = ref(null)
-const rejectForm = reactive({
+// 取消预约表单
+const cancelDialogVisible = ref(false)
+const cancelFormRef = ref(null)
+const cancelForm = reactive({
   reservationId: null,
-  rejectReason: '',
 })
-
-// 拒绝原因验证规则
-const rejectRules = reactive({
-  rejectReason: [{ required: true, message: '请输入拒绝原因', trigger: 'blur' }],
-})
-
-// 判断是否为管理员
-const isAdmin = computed(() => accountStore.accountInfo.isAdmin)
 
 // 页面加载时查询数据
 onMounted(() => {
-  if (!isAdmin.value) {
-    // 不是管理员，进行拦截
-    ElMessage.warning('您没有权限访问此页面')
-    router.replace('/') // 重定向到首页
+  if (!accountStore.isLoggedIn) {
+    ElMessage.warning('请先登录')
+    router.replace('/login')
   } else {
     fetchReservationList()
   }
@@ -191,34 +159,32 @@ onMounted(() => {
 // 格式化日期为YYYY-MM-DD，解决时区问题
 const formatDateForBackend = (date) => {
   if (!date) return null
-  // 创建一个新的Date对象，避免修改原始日期
   const d = new Date(date)
-  // 手动获取年、月、日，确保是本地日期
   const year = d.getFullYear()
   const month = String(d.getMonth() + 1).padStart(2, '0')
   const day = String(d.getDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
 }
 
-// 查询预约列表
+// 查询预约列表（只查询当前员工自己的）
 const fetchReservationList = async () => {
   try {
     loading.value = true
 
-    // 构建请求体数据（合并分页参数和筛选条件）
+    // 获取当前登录员工ID
+    const accountId = accountStore.accountInfo.accountId
+
+    // 构建请求体数据
     const requestData = {
       pageNum: pagination.pageNum,
       pageSize: pagination.pageSize,
-      // 仅包含有值的筛选条件
-      ...(filters.accountId && { accountId: filters.accountId }),
+      accountId, // 固定查询当前员工的预约
       ...(filters.reservationDate && { reservationDate: formatDateForBackend(filters.reservationDate) }),
       ...(filters.reservationStatus && { reservationStatus: filters.reservationStatus }),
     }
 
-    // 调用API查询
     const response = await http.post('/res/queryReservations', requestData)
 
-    // 如果 code 正常，则显示数据
     if (response.code === 2001) {
       reservationList.value = response.data.list || []
       pagination.total = response.data.total || 0
@@ -234,35 +200,29 @@ const fetchReservationList = async () => {
   }
 }
 
-// 修改预约状态
-const updateReservationStatus = async (reservationId, status, reason = '') => {
+// 取消预约
+const cancelReservation = async () => {
   try {
     loading.value = true
 
-    // 获取当前登录管理员ID
-    const approvalAccountId = accountStore.accountInfo.accountId
-
     // 构建请求数据
     const requestData = {
-      reservationId,
-      reservationStatus: status,
-      ...(reason && { rejectReason: reason }),
-      approvalAccountId,
+      reservationId: cancelForm.reservationId,
+      reservationStatus: 'CANCELLED',
+      accountId: accountStore.accountInfo.accountId,
     }
 
-    // 调用API更新状态
     const response = await http.post('/res/updateReservation', requestData)
 
     if (response.code === 2001 && response.data) {
-      // ElMessage.success(`${status === 'APPROVAL' ? '同意' : '拒绝'}预约成功`)
-      ElMessage.success(response.msg)
-      rejectDialogVisible.value = false
+      ElMessage.success('取消预约成功')
+      cancelDialogVisible.value = false
       fetchReservationList() // 刷新列表
     } else {
-      ElMessage.error(response.msg || `操作失败`)
+      ElMessage.error(response.msg || '取消预约失败')
     }
   } catch (error) {
-    console.error('更新预约状态失败:', error)
+    console.error('取消预约失败:', error)
     ElMessage.error('操作失败，请稍后重试')
   } finally {
     loading.value = false
@@ -278,7 +238,6 @@ const handleQuery = () => {
 // 处理重置
 const handleReset = () => {
   // 重置筛选条件
-  filters.accountId = null
   filters.reservationDate = null
   filters.reservationStatus = ''
 
@@ -326,58 +285,30 @@ const getStatusTagType = (status) => {
   return typeMap[status] || 'default'
 }
 
-// 判断是否可以修改状态
-const canModify = (status) => {
-  // 根据业务需求调整可修改的状态
-  return ['PENDING'].includes(status)
+// 判断是否可以取消预约
+const canCancel = (status) => {
+  // 只有待处理和已批准的预约可以取消
+  return ['PENDING', 'APPROVED'].includes(status)
 }
 
-// 处理同意操作
-const handleApprove = (row) => {
-  ElMessageBox.confirm(`确定要同意预约【${row.reservationId}】吗？`, '确认操作', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'success',
-  })
-    .then(() => {
-      updateReservationStatus(row.reservationId, 'APPROVED')
-    })
-    .catch(() => {
-      ElMessage.info('已取消操作')
-    })
-}
-
-// 处理拒绝操作
-const handleReject = (row) => {
+// 处理取消操作
+const handleCancel = (row) => {
   // 重置表单
-  rejectForm.reservationId = row.reservationId
-  rejectForm.rejectReason = ''
-  rejectFormRef.value?.resetFields()
+  cancelForm.reservationId = row.reservationId
+  cancelFormRef.value?.resetFields()
 
-  // 显示拒绝原因对话框
-  rejectDialogVisible.value = true
+  // 显示取消原因对话框
+  cancelDialogVisible.value = true
 }
 
-// 确认拒绝
-const confirmReject = async () => {
-  try {
-    // 表单验证
-    await rejectFormRef.value.validate()
-
-    // 调用更新状态方法
-    updateReservationStatus(rejectForm.reservationId, 'REJECTED', rejectForm.rejectReason)
-  } catch (error) {
-    // 表单验证失败不做处理
-    if (error.name !== 'Error') return
-
-    console.error('确认拒绝失败:', error)
-    ElMessage.error('操作失败，请稍后重试')
-  }
+// 确认取消
+const confirmCancel = async () => {
+  cancelReservation()
 }
 </script>
 
 <style scoped>
-.reservation-management-page {
+.reservation-view-page {
   padding: 24px;
   max-width: 1500px;
   margin: 0 auto;
@@ -417,6 +348,7 @@ const confirmReject = async () => {
 .el-button {
   height: 36px;
   padding: 0 16px;
+  margin-right: 10px;
 }
 
 .pagination-container {

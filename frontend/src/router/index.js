@@ -13,6 +13,7 @@ import ProfileView from '@/views/ProfileView.vue'
 import RoomManageView from '@/views/RoomManageView.vue'
 import EmployeeMeetingRoomView from '@/views/EmployeeMeetingRoomView.vue'
 import ReservationManageView from '@/views/ReservationManageView.vue'
+import ReservationView from '@/views/ReservationView.vue'
 
 const routes = [
   {
@@ -20,7 +21,7 @@ const routes = [
     component: HomeView,
     children: [
       { path: 'rooms', component: EmployeeMeetingRoomView },
-      { path: 'booking', component: EmployeeManageView },
+      { path: 'reservation', component: ReservationView },
       { path: 'notice', component: DarkAndLight },
       { path: 'profile', component: ProfileView },
       { path: 'employee-manage', component: EmployeeManageView },

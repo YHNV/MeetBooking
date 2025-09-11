@@ -222,7 +222,7 @@ const menuItems = computed(() => {
     return [
       ...baseMenu,
       { index: '2', name: '会议室列表', route: '/rooms' },
-      { index: '3', name: '我的预约', route: '/booking' },
+      { index: '3', name: '我的预约', route: '/reservation' },
     ]
   }
 })
