@@ -12,6 +12,7 @@ import EmployeeManageView from '@/views/EmployeeManageView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import RoomManageView from '@/views/RoomManageView.vue'
 import EmployeeMeetingRoomView from '@/views/EmployeeMeetingRoomView.vue'
+import ReservationManageView from '@/views/ReservationManageView.vue'
 
 const routes = [
   {
@@ -24,6 +25,7 @@ const routes = [
       { path: 'profile', component: ProfileView },
       { path: 'employee-manage', component: EmployeeManageView },
       { path: 'room-manage', component: RoomManageView },
+      { path: 'reservation-manage', component: ReservationManageView },
     ],
     meta: { requiresAuth: true },
   },

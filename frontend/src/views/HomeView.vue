@@ -214,6 +214,7 @@ const menuItems = computed(() => {
       ...baseMenu,
       { index: '5', name: '员工管理', route: '/employee-manage' },
       { index: '6', name: '会议室管理', route: '/room-manage' },
+      { index: '7', name: '预约管理', route: '/reservation-manage' },
     ]
   }
   // 员工菜单

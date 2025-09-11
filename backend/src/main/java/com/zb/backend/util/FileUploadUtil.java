@@ -11,8 +11,8 @@ import java.util.UUID;
 public class FileUploadUtil {
 
     // 配置上传路径 - 根据实际部署环境调整
-    private static final String UPLOAD_DIR = "/Users/yhcm/Documents/Code/Project/Resources/MeetBooking/images/";
-    // private static final String UPLOAD_DIR = "/root/haohao/project/huaihuai/images/";
+    // private static final String UPLOAD_DIR = "/Users/yhcm/Documents/Code/Project/Resources/MeetBooking/images/";
+    private static final String UPLOAD_DIR = "/root/haohao/project/huaihuai/images/";
 
     /**
      * 上传图片文件

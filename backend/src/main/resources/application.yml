@@ -3,10 +3,10 @@ spring:
   datasource:
     driver-class-name: org.h2.Driver
     # 设置H2数据库为内存模式
-    # url: jdbc:h2:mem:db
+    url: jdbc:h2:mem:db
 
     # 设置H2数据库模式为文件模式，并开启服务 文件存储位置为当前项目下创建db文件夹
-    url: jdbc:h2:file:./db/sample;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1
+    # url: jdbc:h2:file:./db/sample;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1
     username: hh
     password: hh123456
   sql:
