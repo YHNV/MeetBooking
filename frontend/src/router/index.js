@@ -14,6 +14,7 @@ import RoomManageView from '@/views/RoomManageView.vue'
 import EmployeeMeetingRoomView from '@/views/EmployeeMeetingRoomView.vue'
 import ReservationManageView from '@/views/ReservationManageView.vue'
 import ReservationView from '@/views/ReservationView.vue'
+import EquipmentManageView from '@/views/EquipmentManageView.vue'
 
 const routes = [
   {
@@ -27,6 +28,7 @@ const routes = [
       { path: 'employee-manage', component: EmployeeManageView },
       { path: 'room-manage', component: RoomManageView },
       { path: 'reservation-manage', component: ReservationManageView },
+      { path: 'equipment-manage', component: EquipmentManageView },
     ],
     meta: { requiresAuth: true },
   },
