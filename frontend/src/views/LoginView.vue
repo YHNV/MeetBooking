@@ -127,7 +127,7 @@ const login = async () => {
 }
 
 /* 输入框样式调整 */
-::v-deep .el-input__inner {
+:deep(.el-input__inner) {
   /* 圆角设置 */
   border-radius: 6px; /* 圆角大小，数值越大弧度越明显 */
   /* 高度设置 */

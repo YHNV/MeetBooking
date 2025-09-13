@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref } from 'vue'
+import { ref } from 'vue'
 
 // 定义组件属性
 const props = defineProps({

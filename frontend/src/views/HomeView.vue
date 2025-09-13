@@ -195,12 +195,6 @@ accountInfo.value.lastLoginTime = formatDate(accountStore.accountInfo.lastLoginT
 console.log(accountInfo.value)
 
 // 菜单栏
-// const menuItems = ref([
-//   { index: '1', name: '首页', route: '/' },
-//   { index: '2', name: '会议室列表', route: '/rooms' },
-//   { index: '3', name: '我的预约', route: '/booking' },
-//   { index: '4', name: '公告中心', route: '/notice' },
-// ])
 const menuItems = computed(() => {
   // 基础菜单（所有用户可见，包含首页）
   const baseMenu = [
@@ -217,6 +211,7 @@ const menuItems = computed(() => {
       { index: '7', name: '设备管理', route: '/equipment-manage' },
       { index: '8', name: '预约管理', route: '/reservation-manage' },
       { index: '9', name: '通知列表', route: '/notification-list' },
+      { index: '10', name: '公告管理', route: '/announcement-manage' },
     ]
   }
   // 员工菜单

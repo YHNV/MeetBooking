@@ -22,3 +22,12 @@ html {
   margin: 0;
   padding: 0;
 }
+
+/* tooltip 的过长换行 */
+.el-popper {
+  max-width: 250px;
+  word-break: break-all;
+  white-space: normal;
+  line-height: 1.8;
+  font-size: 14px !important;
+}

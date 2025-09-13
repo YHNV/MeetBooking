@@ -16,6 +16,7 @@ import ReservationManageView from '@/views/ReservationManageView.vue'
 import ReservationView from '@/views/ReservationView.vue'
 import EquipmentManageView from '@/views/EquipmentManageView.vue'
 import NotificationListView from '@/views/NotificationListView.vue'
+import AnnouncementManageView from '@/views/AnnouncementManageView.vue'
 
 const routes = [
   {
@@ -31,6 +32,7 @@ const routes = [
       { path: 'reservation-manage', component: ReservationManageView },
       { path: 'equipment-manage', component: EquipmentManageView },
       { path: 'notification-list', component: NotificationListView },
+      { path: 'announcement-manage', component: AnnouncementManageView },
     ],
     meta: { requiresAuth: true },
   },
