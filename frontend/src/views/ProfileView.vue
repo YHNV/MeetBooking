@@ -216,8 +216,12 @@ const getAccountInfo = async () => {
       ElMessage.error(response.msg || '个人信息查询失败')
     }
   } catch (error) {
-    console.error('获取个人信息失败：', error)
-    ElMessage.error('查询失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '查询失败，请稍后重试')
+    } else {
+      console.error('获取个人信息失败：', error)
+      ElMessage.error('查询失败，请稍后重试')
+    }
   }
 }
 
@@ -244,8 +248,12 @@ const changePassword = async () => {
       // 关闭弹窗
       passwordDialogVisible.value = false
     } catch (error) {
-      console.error('修改密码失败：', error)
-      ElMessage.error('修改失败，请稍后重试')
+      if (error.response && error.response.data) {
+        ElMessage.error(error.response.data.msg || '修改失败，请稍后重试')
+      } else {
+        console.error('修改密码失败：', error)
+        ElMessage.error('修改失败，请稍后重试')
+      }
     }
   })
 }

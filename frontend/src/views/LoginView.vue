@@ -85,8 +85,12 @@ const login = async () => {
     accountStore.setAccountInfo(response.data)
     return router.push('/')
   } catch (error) {
-    console.log('服务器异常' + error)
-    ElMessage.error('服务器异常')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '服务器异常')
+    } else {
+      console.log('服务器异常：' + error)
+      ElMessage.error('服务器异常')
+    }
     return
   }
 }

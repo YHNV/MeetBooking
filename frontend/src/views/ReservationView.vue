@@ -193,8 +193,12 @@ const fetchReservationList = async () => {
       ElMessage.error(response.msg || '预约信息查询失败')
     }
   } catch (error) {
-    console.error('查询预约列表失败:', error)
-    ElMessage.error('查询失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '查询失败，请稍后重试')
+    } else {
+      console.error('查询预约列表失败:', error)
+      ElMessage.error('查询失败，请稍后重试')
+    }
   } finally {
     loading.value = false
   }
@@ -222,8 +226,12 @@ const cancelReservation = async () => {
       ElMessage.error(response.msg || '取消预约失败')
     }
   } catch (error) {
-    console.error('取消预约失败:', error)
-    ElMessage.error('操作失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '操作失败，请稍后重试')
+    } else {
+      console.error('取消预约失败:', error)
+      ElMessage.error('操作失败，请稍后重试')
+    }
   } finally {
     loading.value = false
   }

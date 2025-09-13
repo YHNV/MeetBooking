@@ -288,8 +288,12 @@ const fetchAnnouncementList = async () => {
       ElMessage.error(response.msg || '公告查询失败')
     }
   } catch (error) {
-    console.error('查询公告列表失败:', error)
-    ElMessage.error('查询失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '查询失败，请稍后重试')
+    } else {
+      console.error('查询公告列表失败:', error)
+      ElMessage.error('查询失败，请稍后重试')
+    }
   } finally {
     loading.value = false
   }
@@ -350,7 +354,9 @@ const handleToggleStatus = async (row) => {
       ElMessage.error(response.msg || `${actionText}失败`)
     }
   } catch (error) {
-    if (error !== 'cancel') {
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '操作失败，请稍后重试')
+    } else {
       console.error(`切换公告状态失败:`, error)
       ElMessage.error('操作失败，请稍后重试')
     }
@@ -390,7 +396,9 @@ const handleSave = async () => {
       ElMessage.error(response.msg || '更新失败')
     }
   } catch (error) {
-    if (error.name === 'Error') {
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '更新失败，请稍后重试')
+    } else {
       console.error('更新公告失败:', error)
       ElMessage.error('更新失败，请稍后重试')
     }
@@ -428,7 +436,9 @@ const handleAddSave = async () => {
       ElMessage.error(response.msg || '发布失败')
     }
   } catch (error) {
-    if (error.name === 'Error') {
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '发布失败，请稍后重试')
+    } else {
       console.error('发布公告失败:', error)
       ElMessage.error('发布失败，请稍后重试')
     }
@@ -453,7 +463,9 @@ const handleDelete = async (row) => {
       ElMessage.error(response.msg || '删除失败')
     }
   } catch (error) {
-    if (error !== 'cancel') {
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '删除失败，请稍后重试')
+    } else {
       console.error('删除公告失败:', error)
       ElMessage.error('删除失败，请稍后重试')
     }

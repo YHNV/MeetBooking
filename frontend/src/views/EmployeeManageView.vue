@@ -270,8 +270,12 @@ const fetchEmployeeList = async () => {
       ElMessage.error(response.msg || '员工信息查询失败')
     }
   } catch (error) {
-    console.error('查询员工列表失败:', error)
-    ElMessage.error('查询失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '查询失败，请稍后重试')
+    } else {
+      console.error('查询员工列表失败:', error)
+      ElMessage.error('查询失败，请稍后重试')
+    }
   } finally {
     loading.value = false
   }
@@ -289,8 +293,12 @@ const fetchDepartmentMap = async () => {
       ElMessage.error(response.msg || '部门映射查询失败')
     }
   } catch (error) {
-    console.error('获取部门映射信息失败:', error)
-    ElMessage.error('查询失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '查询失败，请稍后重试')
+    } else {
+      console.error('获取部门映射信息失败:', error)
+      ElMessage.error('查询失败，请稍后重试')
+    }
   }
 }
 
@@ -307,8 +315,12 @@ const toggleAccountStatus = async (empId, currentStatus) => {
       ElMessage.error(response.msg || '操作失败')
     }
   } catch (error) {
-    console.error('切换用户状态失败：', error)
-    ElMessage.error('切换失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '切换失败，请稍后重试')
+    } else {
+      console.error('切换用户状态失败：', error)
+      ElMessage.error('切换失败，请稍后重试')
+    }
   }
 }
 
@@ -407,7 +419,9 @@ const handleSave = async () => {
       ElMessage.error(response.msg || '更新失败')
     }
   } catch (error) {
-    if (error.name === 'Error') {
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '更新失败，请稍后重试')
+    } else {
       console.error('更新员工信息失败:', error)
       ElMessage.error('更新失败，请稍后重试')
     }
@@ -431,7 +445,9 @@ const handleResetPassword = async () => {
       }
     })
   } catch (error) {
-    if (error !== 'cancel') {
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '操作失败，请稍后重试')
+    } else {
       console.error('重置密码失败:', error)
       ElMessage.error('操作失败，请稍后重试')
     }
@@ -501,7 +517,9 @@ const handleAddSave = async () => {
       ElMessage.error(response.msg || '添加失败')
     }
   } catch (error) {
-    if (error.name === 'Error') {
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '添加失败，请稍后重试')
+    } else {
       console.error('添加员工失败:', error)
       ElMessage.error('添加失败，请稍后重试')
     }

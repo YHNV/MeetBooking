@@ -171,8 +171,12 @@ const fetchEquipmentList = async () => {
       ElMessage.error(response.msg || '设备信息查询失败')
     }
   } catch (error) {
-    console.error('查询设备列表失败:', error)
-    ElMessage.error('查询失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '查询失败，请稍后重试')
+    } else {
+      console.error('查询设备列表失败:', error)
+      ElMessage.error('查询失败，请稍后重试')
+    }
   } finally {
     loading.value = false
   }
@@ -200,8 +204,12 @@ const addEquipment = async () => {
       ElMessage.error(response.msg || '新增设备失败')
     }
   } catch (error) {
-    console.error('新增设备失败:', error)
-    ElMessage.error('操作失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '操作失败，请稍后重试')
+    } else {
+      console.error('新增设备失败:', error)
+      ElMessage.error('操作失败，请稍后重试')
+    }
   } finally {
     loading.value = false
   }
@@ -230,8 +238,12 @@ const updateEquipment = async () => {
       ElMessage.error(response.msg || '更新设备失败')
     }
   } catch (error) {
-    console.error('更新设备失败:', error)
-    ElMessage.error('操作失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '操作失败，请稍后重试')
+    } else {
+      console.error('更新设备失败:', error)
+      ElMessage.error('操作失败，请稍后重试')
+    }
   } finally {
     loading.value = false
   }
@@ -252,8 +264,12 @@ const deleteEquipment = async (equipmentId) => {
       ElMessage.error(response.msg || '删除设备失败')
     }
   } catch (error) {
-    console.error('删除设备失败:', error)
-    ElMessage.error('操作失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '操作失败，请稍后重试')
+    } else {
+      console.error('删除设备失败:', error)
+      ElMessage.error('操作失败，请稍后重试')
+    }
   } finally {
     loading.value = false
   }
@@ -346,8 +362,12 @@ const confirmSave = async () => {
     // 表单验证失败不做处理
     if (error.name !== 'Error') return
 
-    console.error('保存设备失败:', error)
-    ElMessage.error('操作失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '操作失败，请稍后重试')
+    } else {
+      console.error('保存设备失败:', error)
+      ElMessage.error('操作失败，请稍后重试')
+    }
   }
 }
 </script>

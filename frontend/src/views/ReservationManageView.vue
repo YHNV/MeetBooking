@@ -227,8 +227,12 @@ const fetchReservationList = async () => {
       ElMessage.error(response.msg || '预约信息查询失败')
     }
   } catch (error) {
-    console.error('查询预约列表失败:', error)
-    ElMessage.error('查询失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '查询失败，请稍后重试')
+    } else {
+      console.error('查询预约列表失败:', error)
+      ElMessage.error('查询失败，请稍后重试')
+    }
   } finally {
     loading.value = false
   }
@@ -262,8 +266,12 @@ const updateReservationStatus = async (reservationId, status, reason = '') => {
       ElMessage.error(response.msg || `操作失败`)
     }
   } catch (error) {
-    console.error('更新预约状态失败:', error)
-    ElMessage.error('操作失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '操作失败，请稍后重试')
+    } else {
+      console.error('更新预约状态失败:', error)
+      ElMessage.error('操作失败，请稍后重试')
+    }
   } finally {
     loading.value = false
   }
@@ -370,8 +378,12 @@ const confirmReject = async () => {
     // 表单验证失败不做处理
     if (error.name !== 'Error') return
 
-    console.error('确认拒绝失败:', error)
-    ElMessage.error('操作失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '操作失败，请稍后重试')
+    } else {
+      console.error('确认拒绝失败:', error)
+      ElMessage.error('操作失败，请稍后重试')
+    }
   }
 }
 </script>

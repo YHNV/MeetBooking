@@ -299,8 +299,12 @@ const logout = async (empId) => {
 
     await router.push('/')
   } catch (error) {
-    console.log('服务器异常' + error)
-    ElMessage.error('服务器异常')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '服务器异常')
+    } else {
+      console.log('服务器异常：' + error)
+      ElMessage.error('服务器异常')
+    }
     return
   }
 }
@@ -365,7 +369,12 @@ const fetchUnreadCount = async () => {
       msgCount.value = response.data
     }
   } catch (error) {
-    console.error('获取未读消息数量失败:', error)
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '获取未读消息失败')
+    } else {
+      console.error('获取未读消息数量失败:', error)
+      ElMessage.error('获取未读消息失败')
+    }
   }
 }
 
@@ -396,8 +405,12 @@ const fetchNotifications = async (append = false) => {
       hasMore.value = notifications.value.length < totalNotifications.value
     }
   } catch (error) {
-    console.error('获取通知列表失败:', error)
-    ElMessage.error('获取通知失败')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '获取通知失败')
+    } else {
+      console.error('获取通知列表失败:', error)
+      ElMessage.error('获取通知失败')
+    }
   } finally {
     loading.value = false
   }
@@ -416,8 +429,12 @@ const markAllAsRead = async () => {
       msgCount.value = 0
     }
   } catch (error) {
-    console.error('标记所有通知为已读失败:', error)
-    ElMessage.error('操作失败')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '操作失败')
+    } else {
+      console.error('标记所有通知为已读失败:', error)
+      ElMessage.error('操作失败')
+    }
   }
 }
 

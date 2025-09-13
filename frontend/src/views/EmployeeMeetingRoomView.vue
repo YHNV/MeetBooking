@@ -360,8 +360,12 @@ const fetchDeptEmployees = async () => {
       ElMessage.error(response.msg || '获取部门员工列表失败')
     }
   } catch (error) {
-    console.error('获取部门员工列表失败:', error)
-    ElMessage.error('获取部门员工列表失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '获取部门员工列表失败，请稍后重试')
+    } else {
+      console.error('获取部门员工列表失败:', error)
+      ElMessage.error('获取部门员工列表失败，请稍后重试')
+    }
   }
 }
 
@@ -396,8 +400,12 @@ const fetchMeetingRoomList = async () => {
       ElMessage.error(response.msg || '会议室信息查询失败')
     }
   } catch (error) {
-    console.error('查询会议室列表失败:', error)
-    ElMessage.error('查询失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '查询失败，请稍后重试')
+    } else {
+      console.error('查询会议室列表失败:', error)
+      ElMessage.error('查询失败，请稍后重试')
+    }
   } finally {
     loading.value = false
   }
@@ -413,8 +421,12 @@ const fetchEquipmentList = async () => {
       ElMessage.error(response.msg || '设备列表查询失败')
     }
   } catch (error) {
-    console.error('获取设备列表失败:', error)
-    ElMessage.error('查询失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '查询失败，请稍后重试')
+    } else {
+      console.error('获取设备列表失败:', error)
+      ElMessage.error('查询失败，请稍后重试')
+    }
   }
 }
 
@@ -430,7 +442,12 @@ const fetchRoomEquipment = async (roomId) => {
       return false
     }
   } catch (error) {
-    console.error('获取会议室设备失败:', error)
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '获取会议室设备失败，请稍后重试')
+    } else {
+      console.error('获取会议室设备失败:', error)
+      ElMessage.error('获取会议室设备失败，请稍后重试')
+    }
     return false
   }
 }
@@ -510,8 +527,12 @@ const fetchAvailableDates = async (roomId) => {
       ElMessage.error(response.msg || '获取可用日期失败')
     }
   } catch (error) {
-    console.error('获取可用日期失败:', error)
-    ElMessage.error('获取可用日期失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '获取可用日期失败，请稍后重试')
+    } else {
+      console.error('获取可用日期失败:', error)
+      ElMessage.error('获取可用日期失败，请稍后重试')
+    }
   }
 }
 
@@ -550,8 +571,12 @@ const handleDateChange = async (date) => {
       ElMessage.error(response.msg || '获取可用时间段失败')
     }
   } catch (error) {
-    console.error('获取可用时间段失败:', error)
-    ElMessage.error('获取可用时间段失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '获取可用时间段失败，请稍后重试')
+    } else {
+      console.error('获取可用时间段失败:', error)
+      ElMessage.error('获取可用时间段失败，请稍后重试')
+    }
   }
 }
 
@@ -632,8 +657,12 @@ const submitReservation = async () => {
       ElMessage.error(response.msg || '预约失败')
     }
   } catch (error) {
-    console.error('提交预约失败:', error)
-    ElMessage.error('预约失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '预约失败，请稍后重试')
+    } else {
+      console.error('提交预约失败:', error)
+      ElMessage.error('预约失败，请稍后重试')
+    }
   } finally {
     // 重置预约信息
     resetReservationForm()

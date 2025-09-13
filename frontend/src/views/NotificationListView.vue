@@ -120,8 +120,12 @@ const fetchNotificationsList = async () => {
       ElMessage.error(response.msg || '通知信息查询失败')
     }
   } catch (error) {
-    console.error('查询通知列表失败:', error)
-    ElMessage.error('查询失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '查询失败，请稍后重试')
+    } else {
+      console.error('查询通知列表失败:', error)
+      ElMessage.error('查询失败，请稍后重试')
+    }
   } finally {
     loading.value = false
   }

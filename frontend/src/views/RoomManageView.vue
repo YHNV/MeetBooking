@@ -387,8 +387,12 @@ const fetchMeetingRoomList = async () => {
       ElMessage.error(response.msg || '会议室信息查询失败')
     }
   } catch (error) {
-    console.error('查询会议室列表失败:', error)
-    ElMessage.error('查询失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '查询失败，请稍后重试')
+    } else {
+      console.error('查询会议室列表失败:', error)
+      ElMessage.error('查询失败，请稍后重试')
+    }
   } finally {
     loading.value = false
   }
@@ -404,8 +408,12 @@ const fetchEquipmentList = async () => {
       ElMessage.error(response.msg || '设备列表查询失败')
     }
   } catch (error) {
-    console.error('获取设备列表失败:', error)
-    ElMessage.error('查询失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '查询失败，请稍后重试')
+    } else {
+      console.error('获取设备列表失败:', error)
+      ElMessage.error('查询失败，请稍后重试')
+    }
   }
 }
 
@@ -421,8 +429,12 @@ const fetchRoomEquipment = async (roomId) => {
       return false
     }
   } catch (error) {
-    console.error('获取会议室设备失败:', error)
-    ElMessage.error('操作失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '操作失败，请稍后重试')
+    } else {
+      console.error('获取会议室设备失败:', error)
+      ElMessage.error('操作失败，请稍后重试')
+    }
     return false
   }
 }
@@ -656,8 +668,12 @@ const handleSave = async () => {
       ElMessage.error(response.msg || (editForm.roomId ? '更新失败' : '新增失败'))
     }
   } catch (error) {
-    console.error('操作会议室失败:', error)
-    ElMessage.error('操作失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '操作失败，请稍后重试')
+    } else {
+      console.error('操作会议室失败:', error)
+      ElMessage.error('操作失败，请稍后重试')
+    }
   }
 }
 

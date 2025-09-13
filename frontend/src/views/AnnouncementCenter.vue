@@ -104,8 +104,12 @@ const fetchAnnouncements = async () => {
       ElMessage.error(response.msg || '获取公告失败')
     }
   } catch (error) {
-    console.error('获取公告失败:', error)
-    ElMessage.error('获取公告失败，请稍后重试')
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.msg || '获取公告失败，请稍后重试')
+    } else {
+      console.error('获取公告失败:', error)
+      ElMessage.error('获取公告失败，请稍后重试')
+    }
   } finally {
     loading.value = false
   }
