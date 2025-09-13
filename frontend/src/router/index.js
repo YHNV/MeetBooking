@@ -17,6 +17,7 @@ import ReservationView from '@/views/ReservationView.vue'
 import EquipmentManageView from '@/views/EquipmentManageView.vue'
 import NotificationListView from '@/views/NotificationListView.vue'
 import AnnouncementManageView from '@/views/AnnouncementManageView.vue'
+import AnnouncementCenter from '@/views/AnnouncementCenter.vue'
 
 const routes = [
   {
@@ -25,7 +26,7 @@ const routes = [
     children: [
       { path: 'rooms', component: EmployeeMeetingRoomView },
       { path: 'reservation', component: ReservationView },
-      { path: 'notice', component: DarkAndLight },
+      { path: 'notice', component: AnnouncementCenter },
       { path: 'profile', component: ProfileView },
       { path: 'employee-manage', component: EmployeeManageView },
       { path: 'room-manage', component: RoomManageView },

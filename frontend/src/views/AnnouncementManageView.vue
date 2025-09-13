@@ -51,16 +51,9 @@
         <!-- 内容列 -->
         <el-table-column prop="content" label="内容" min-width="200">
           <template #default="scope">
-            <el-tooltip
-              :content="scope.row.content"
-              placement="top"
-              effect="light"
-              :disabled="scope.row.content.length <= 20"
-            >
-              <div class="content-cell">
-                {{ scope.row.content.length > 20 ? scope.row.content.slice(0, 40) + '...' : scope.row.content }}
-              </div>
-            </el-tooltip>
+            <div class="content-cell">
+              {{ scope.row.content.length > 20 ? scope.row.content.slice(0, 40) + '...' : scope.row.content }}
+            </div>
           </template>
         </el-table-column>
         <el-table-column prop="senderId" label="发布人ID" width="120" />
