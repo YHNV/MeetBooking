@@ -18,6 +18,7 @@ import EquipmentManageView from '@/views/EquipmentManageView.vue'
 import NotificationListView from '@/views/NotificationListView.vue'
 import AnnouncementManageView from '@/views/AnnouncementManageView.vue'
 import AnnouncementCenter from '@/views/AnnouncementCenter.vue'
+import DepartmentManageView from '@/views/DepartmentManageView.vue'
 
 const routes = [
   {
@@ -34,6 +35,7 @@ const routes = [
       { path: 'equipment-manage', component: EquipmentManageView },
       { path: 'notification-list', component: NotificationListView },
       { path: 'announcement-manage', component: AnnouncementManageView },
+      { path: 'department-manage', component: DepartmentManageView },
     ],
     meta: { requiresAuth: true },
   },

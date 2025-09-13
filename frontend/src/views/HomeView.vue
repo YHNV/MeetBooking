@@ -206,12 +206,13 @@ const menuItems = computed(() => {
   if (accountInfo.value.isAdmin) {
     return [
       ...baseMenu,
-      { index: '5', name: '员工管理', route: '/employee-manage' },
-      { index: '6', name: '会议室管理', route: '/room-manage' },
-      { index: '7', name: '设备管理', route: '/equipment-manage' },
-      { index: '8', name: '预约管理', route: '/reservation-manage' },
-      { index: '9', name: '通知列表', route: '/notification-list' },
-      { index: '10', name: '公告管理', route: '/announcement-manage' },
+      { index: '5', name: '员工', route: '/employee-manage' },
+      { index: '6', name: '会议室', route: '/room-manage' },
+      { index: '7', name: '设备', route: '/equipment-manage' },
+      { index: '8', name: '预约', route: '/reservation-manage' },
+      { index: '9', name: '通知', route: '/notification-list' },
+      { index: '10', name: '公告', route: '/announcement-manage' },
+      { index: '11', name: '部门', route: '/department-manage' },
     ]
   }
   // 员工菜单

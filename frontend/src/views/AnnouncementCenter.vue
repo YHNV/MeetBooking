@@ -65,7 +65,6 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useApi } from '@/composables/useApi.js'
-import { ElMessage } from 'element-plus'
 import AnnouncementCard from '@/components/AnnouncementCard.vue'
 
 const http = useApi()
