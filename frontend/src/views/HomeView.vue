@@ -158,7 +158,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { provide, ref, watch, onMounted, onUnmounted } from 'vue'
 import Bell from '@/components/svg/Bell.vue'
 import Avatar from '@/components/svg/Avatar.vue'
 import Logout from '@/components/svg/Logout.vue'
@@ -197,15 +197,12 @@ console.log(accountInfo.value)
 // 菜单栏
 const menuItems = computed(() => {
   // 基础菜单（所有用户可见，包含首页）
-  const baseMenu = [
-    { index: '1', name: '首页', route: '/' },
-    { index: '4', name: '公告中心', route: '/notice' },
-  ]
+  // const baseMenu = [{ index: '4', name: '公告中心', route: '/notice' }]
 
   // 管理员菜单
   if (accountInfo.value.isAdmin) {
     return [
-      ...baseMenu,
+      { index: '4', name: '公告中心', route: '/notice' },
       { index: '5', name: '员工', route: '/employee-manage' },
       { index: '6', name: '会议室', route: '/room-manage' },
       { index: '7', name: '设备', route: '/equipment-manage' },
@@ -218,7 +215,9 @@ const menuItems = computed(() => {
   // 员工菜单
   else {
     return [
-      ...baseMenu,
+      // ...baseMenu,
+      { index: '1', name: '首页', route: '/' },
+      { index: '4', name: '公告中心', route: '/notice' },
       { index: '2', name: '会议室列表', route: '/rooms' },
       { index: '3', name: '我的预约', route: '/reservation' },
     ]
@@ -247,8 +246,14 @@ const handleSelect = (index) => {
 // logo点击事件
 const logo = () => {
   console.log('点击logo')
-  router.push('/')
-  activeIndex.value = '1'
+  if (accountInfo.value.isAdmin) {
+    // 管理员点击logo跳转到公告中心
+    router.push('/notice')
+    activeIndex.value = '4'
+  } else {
+    router.push('/')
+    activeIndex.value = '1'
+  }
   console.log(activeIndex.value)
 }
 
@@ -321,7 +326,12 @@ watch(
       activeIndex.value = matchedItem.index
       console.log(activeIndex.value, matchedItem.index)
     } else {
-      activeIndex.value = 0
+      // 对于管理员，默认公告中心
+      if (accountInfo.value.isAdmin) {
+        activeIndex.value = '4'
+      } else {
+        activeIndex.value = '0'
+      }
     }
   },
   { immediate: true }, // 初始加载时就执行一次
@@ -446,7 +456,7 @@ const startPolling = () => {
   // 每15秒轮询一次
   pollTimer.value = setInterval(() => {
     fetchUnreadCount()
-  }, 15000)
+  }, 7500)
 }
 
 // 停止轮询
@@ -456,6 +466,16 @@ const stopPolling = () => {
     pollTimer.value = null
   }
 }
+
+// 用于给子组件获取未读消息和打开消息面板
+provide('notification', {
+  msgCount,
+  showNotificationPanel,
+  toggleNotifications: () => {
+    showNotificationPanel.value = !showNotificationPanel.value
+  },
+  fetchUnreadCount, // 提供获取消息数量的方法
+})
 
 // 是否还有更多数据的标记
 const hasMore = ref(true)

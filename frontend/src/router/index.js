@@ -19,12 +19,14 @@ import NotificationListView from '@/views/NotificationListView.vue'
 import AnnouncementManageView from '@/views/AnnouncementManageView.vue'
 import AnnouncementCenter from '@/views/AnnouncementCenter.vue'
 import DepartmentManageView from '@/views/DepartmentManageView.vue'
+import DashboardView from '@/views/DashboardView.vue'
 
 const routes = [
   {
     path: '/',
     component: HomeView,
     children: [
+      { path: '', component: DashboardView },
       { path: 'rooms', component: EmployeeMeetingRoomView },
       { path: 'reservation', component: ReservationView },
       { path: 'notice', component: AnnouncementCenter },
